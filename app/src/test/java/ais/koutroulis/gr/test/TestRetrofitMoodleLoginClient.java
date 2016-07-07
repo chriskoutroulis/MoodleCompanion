@@ -15,19 +15,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import ais.koutroulis.gr.client.MoodleLoginClient;
+import ais.koutroulis.gr.client.RetrofitMoodleLoginClient;
 import ais.koutroulis.gr.model.Token;
 import ais.koutroulis.gr.service.MoodleRetroFitService;
-import ais.koutroulis.gr.service.RetroFitClientInitializer;
-import retrofit2.Call;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Chris on 02-Jul-16.
  */
-public class TestMoodleLoginClient {
+public class TestRetrofitMoodleLoginClient {
 
     @ClassRule
     public static WireMockClassRule wireMockRule = new WireMockClassRule();
@@ -51,62 +47,39 @@ public class TestMoodleLoginClient {
     private String callingUsername;
     private String callingPassword;
 
-    private MoodleLoginClient loginClient;
+    private RetrofitMoodleLoginClient loginClient;
 
     private Token expectedToken = new Token();
     private MoodleRetroFitService service;
+    private Response<Token> response;
 
     private static Map<String, String> registeredUsers;
 
     @Before
     public void setup() {
+        response = null;
         registeredUsers = new HashMap<>();
         registeredUsers.put("user1", "rightpassword1");
         registeredUsers.put("user2", "rightpassword2");
         registeredUsers.put("user3", "rightpassword3");
         registeredUsers.put("admin", "rightpassword4");
-
         callingUsername = "user1";
         callingPassword = "rightpassword1";
-
         expectedToken.setToken("grantAccessToken");
-
-        loginClient = new MoodleLoginClient(BASE_URL, SCRIPT, SERVICE);
-
-//        RetroFitClientInitializer<MoodleRetroFitService> clientInitializer =
-//                new RetroFitClientInitializer<>(BASE_URL, MoodleRetroFitService.class);
-//        service = clientInitializer.getService();
+        loginClient = new RetrofitMoodleLoginClient(BASE_URL, SCRIPT, SERVICE);
     }
 
     @Test
     public void registeredUserGetsToken() {
-//        Call<Token> loginCall = service.getToken(SCRIPT, callingUsername, callingPassword, SERVICE);
-
         createAppropriateStubForThisUser(callingUsername, callingPassword);
 
-        loginClient.login(callingUsername,callingPassword);
-
-        //Synchronous...
-//        try {
-//            Response<Token> response = loginCall.execute();
-//            Assert.assertEquals("The status code is not 200.", 200, response.code());
-//            if (response.isSuccessful()) {
-
-        //How to poll until the Token gets back asynchronously - The Thread.sleep() should go
         try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            response = loginClient.login(callingUsername, callingPassword);
+            Assert.assertEquals("The incoming token does not match the expected.",
+                    expectedToken.getToken(), response.body().getToken());
+        } catch (IOException ie) {
+
         }
-
-        Assert.assertEquals("The incoming token does not match the expected.",
-                        expectedToken.getToken(), loginClient.getToken().getToken());
-
-
-//            }
-//        } catch (IOException ie) {
-//            Assert.fail(ie.getLocalizedMessage());
-//        }
 
         WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/login/" + SCRIPT + "?username="
                 + callingUsername + "&password="
@@ -118,19 +91,13 @@ public class TestMoodleLoginClient {
     public void notRegisteredUsersDoNotGetToken() {
         callingUsername = "wrongUser";
         callingPassword = "wrongPass";
-
-        Call<Token> loginCall = service.getToken(SCRIPT, callingUsername, callingPassword, SERVICE);
         createAppropriateStubForThisUser(callingUsername, callingPassword);
 
-        //Synchronous...
         try {
-            Response<Token> response = loginCall.execute();
+            response = loginClient.login(callingUsername, callingPassword);
             Assert.assertEquals("The status code is not 200.", 200, response.code());
-            if (response.isSuccessful()) {
-                Assert.assertNull("A token was returned for non registered user.", response.body().getToken());
-            }
+            Assert.assertNull("A token was returned for non registered user.", response.body().getToken());
         } catch (IOException ie) {
-            Assert.fail(ie.getLocalizedMessage());
         }
 
         WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/login/" + SCRIPT + "?username="
@@ -144,14 +111,10 @@ public class TestMoodleLoginClient {
 
         wireMockRule.stop();
 
-        Response<Token> response = null;
-
-        Call<Token> loginCall = service.getToken(SCRIPT, callingUsername, callingPassword, SERVICE);
         try {
-            response = loginCall.execute();
+            response = loginClient.login(callingUsername, callingPassword);
             Assert.fail("Server should have been out of reach.");
-
-        } catch (IOException ie) {
+        } catch (IOException e) {
             Assert.assertNull(response);
         }
     }
