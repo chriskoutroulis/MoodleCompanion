@@ -7,7 +7,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 import ais.koutroulis.gr.model.Token;
-import ais.koutroulis.gr.service.MoodleRestService;
+import ais.koutroulis.gr.service.MoodleRetroFitService;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -26,8 +26,15 @@ public class LearningRetrofitOnLiveServer {
     private static final String RESPONSE_STRING = "{\n" +
             "  \"token\": \"2800aeb20f71838d9405768415096765\"\n" +
             "}";
+    private static final String MISSING_PARAMETER_STRING = "" +
+            "{\n" +
+            "  \"error\": \"A required parameter (username) was missing\",\n" +
+            "  \"stacktrace\": null,\n" +
+            "  \"debuginfo\": null,\n" +
+            "  \"reproductionlink\": null\n" +
+            "}";
 
-    private MoodleRestService moodleService;
+    private MoodleRetroFitService moodleService;
     private Token expectedToken = new Token();
 
     @Before
@@ -37,7 +44,7 @@ public class LearningRetrofitOnLiveServer {
                 .baseUrl(BASE_URL)
                 .build();
 
-        moodleService = retrofit.create(MoodleRestService.class);
+        moodleService = retrofit.create(MoodleRetroFitService.class);
         expectedToken.setToken("2800aeb20f71838d9405768415096765");
     }
 
@@ -56,7 +63,6 @@ public class LearningRetrofitOnLiveServer {
                         expectedToken.getToken(), response.body().getToken());
             }
 
-
         } catch (IOException ie) {
             Assert.fail(ie.getLocalizedMessage());
         }
@@ -71,6 +77,25 @@ public class LearningRetrofitOnLiveServer {
 //            Assert.assertNotEquals("The token received was the same as the expected one.",
 //                    expectedToken.getToken(), response.body().getToken());
         }catch(IOException ie) {
+            Assert.fail(ie.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    public void wrongOrMissingParameterShouldReturnAppropriateMessage(){
+        String wrongService = "wrong_service_string";
+        Call<Token> loginCall = moodleService.getToken(SCRIPT, USERNAME, PASSWORD, wrongService);
+
+        //Synchronous...
+        try {
+            Response<Token> response = loginCall.execute();
+            Assert.assertEquals("The status code is not 200.", 200, response.code());
+
+            if (response.isSuccessful()) {
+                Assert.assertNull("A token was returned but it should not.", response.body().getToken());
+            }
+
+        } catch (IOException ie) {
             Assert.fail(ie.getLocalizedMessage());
         }
     }

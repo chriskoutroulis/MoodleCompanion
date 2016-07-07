@@ -11,7 +11,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 import ais.koutroulis.gr.model.Token;
-import ais.koutroulis.gr.service.MoodleRestService;
+import ais.koutroulis.gr.service.MoodleRetroFitService;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -58,7 +58,7 @@ public class LearningWireMockAndRetrofitTest {
                 .baseUrl(BASE_URL)
                 .build();
 
-        MoodleRestService service = retrofit.create(MoodleRestService.class);
+        MoodleRetroFitService service = retrofit.create(MoodleRetroFitService.class);
 
         final Token expectedToken = new Token();
         expectedToken.setToken("2800aeb20f71838d9405768415096765");
