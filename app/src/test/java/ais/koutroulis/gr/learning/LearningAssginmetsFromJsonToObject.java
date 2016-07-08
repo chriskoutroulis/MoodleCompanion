@@ -47,10 +47,10 @@ public class LearningAssginmetsFromJsonToObject {
 
     @Test
     public void shouldContainFourCourses() {
-        Call<Courses> assginmentsCall = moodleService.getCourses(SCRIPT, FORMAT, TOKEN, FUNCTION);
+        Call<Courses> getCoursesCall = moodleService.getCourses(SCRIPT, FORMAT, TOKEN, FUNCTION);
         //Synchronous...
         try {
-            Response<Courses> response = assginmentsCall.execute();
+            Response<Courses> response = getCoursesCall.execute();
             assertEquals("The status code is not 200.", 200, response.code());
 
             assertEquals("The courses list size was not 4", 4,response.body().getCourses().size());

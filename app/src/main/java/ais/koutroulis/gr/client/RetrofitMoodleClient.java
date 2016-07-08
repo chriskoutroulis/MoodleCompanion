@@ -2,6 +2,7 @@ package ais.koutroulis.gr.client;
 
 import java.io.IOException;
 
+import ais.koutroulis.gr.model.Courses;
 import ais.koutroulis.gr.model.Token;
 import ais.koutroulis.gr.service.MoodleRetroFitService;
 import retrofit2.Call;
@@ -14,21 +15,14 @@ public class RetrofitMoodleClient implements MoodleClient{
 
     private RetroFitClientInitializer<MoodleRetroFitService> clientInitializer;
     private String baseUrl;
-    private String script;
-    private String apiService;
-    private String username;
-    private String password;
 
-    public RetrofitMoodleClient(String baseUrl, String script, String apiService) {
-        this.script = script;
-        this.apiService = apiService;
+    public RetrofitMoodleClient(String baseUrl) {
         clientInitializer = new RetroFitClientInitializer<>(baseUrl, MoodleRetroFitService.class);
-
     }
 
-    public Response<Token> login(String username, String password) throws IOException {
+    public Response<Token> login(String script, String loginService, String username, String password) throws IOException {
         Call<Token> loginCall = clientInitializer.getService()
-                .getToken(script, username, password, apiService);
+                .getToken(script, username, password, loginService);
 
 
 
@@ -48,6 +42,14 @@ public class RetrofitMoodleClient implements MoodleClient{
 
         //Synchronous...
         Response<Token> response = loginCall.execute();
+
+        return response;
+    }
+
+    public Response<Courses> getCourses(String script, String format, String token, String function) throws IOException {
+        Call<Courses> getCoursesCall = clientInitializer.getService()
+                .getCourses(script, format, token, function);
+        Response<Courses> response = getCoursesCall.execute();
 
         return response;
     }
