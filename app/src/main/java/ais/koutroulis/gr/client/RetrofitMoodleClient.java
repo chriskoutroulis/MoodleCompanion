@@ -1,19 +1,16 @@
 package ais.koutroulis.gr.client;
 
-import junit.framework.Assert;
-
 import java.io.IOException;
 
 import ais.koutroulis.gr.model.Token;
 import ais.koutroulis.gr.service.MoodleRetroFitService;
-import ais.koutroulis.gr.service.RetroFitClientInitializer;
 import retrofit2.Call;
 import retrofit2.Response;
 
 /**
  * Created by c0nfr0ntier on 7/7/2016.
  */
-public class RetrofitMoodleLoginClient {
+public class RetrofitMoodleClient implements MoodleClient{
 
     private RetroFitClientInitializer<MoodleRetroFitService> clientInitializer;
     private String baseUrl;
@@ -22,7 +19,7 @@ public class RetrofitMoodleLoginClient {
     private String username;
     private String password;
 
-    public RetrofitMoodleLoginClient(String baseUrl, String script, String apiService) {
+    public RetrofitMoodleClient(String baseUrl, String script, String apiService) {
         this.script = script;
         this.apiService = apiService;
         clientInitializer = new RetroFitClientInitializer<>(baseUrl, MoodleRetroFitService.class);
@@ -32,6 +29,7 @@ public class RetrofitMoodleLoginClient {
     public Response<Token> login(String username, String password) throws IOException {
         Call<Token> loginCall = clientInitializer.getService()
                 .getToken(script, username, password, apiService);
+
 
 
         //Asynchronous...

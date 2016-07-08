@@ -15,7 +15,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import ais.koutroulis.gr.client.RetrofitMoodleLoginClient;
+import ais.koutroulis.gr.client.MoodleClient;
+import ais.koutroulis.gr.client.RetrofitMoodleClient;
 import ais.koutroulis.gr.model.Token;
 import ais.koutroulis.gr.service.MoodleRetroFitService;
 import retrofit2.Response;
@@ -46,8 +47,7 @@ public class TestRetrofitMoodleLoginClient {
     private static final String SERVICE = "moodle_mobile_app";
     private String callingUsername;
     private String callingPassword;
-
-    private RetrofitMoodleLoginClient loginClient;
+    private MoodleClient loginClient;
 
     private Token expectedToken = new Token();
     private MoodleRetroFitService service;
@@ -66,7 +66,8 @@ public class TestRetrofitMoodleLoginClient {
         callingUsername = "user1";
         callingPassword = "rightpassword1";
         expectedToken.setToken("grantAccessToken");
-        loginClient = new RetrofitMoodleLoginClient(BASE_URL, SCRIPT, SERVICE);
+        loginClient = new RetrofitMoodleClient(BASE_URL, SCRIPT, SERVICE);
+
     }
 
     @Test

@@ -1,4 +1,4 @@
-package ais.koutroulis.gr.service;
+package ais.koutroulis.gr.client;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
