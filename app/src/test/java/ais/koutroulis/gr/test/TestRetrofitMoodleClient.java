@@ -14,11 +14,15 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ais.koutroulis.gr.client.MoodleClient;
 import ais.koutroulis.gr.client.RetrofitMoodleClient;
+import ais.koutroulis.gr.model.Assignment;
+import ais.koutroulis.gr.model.Course;
 import ais.koutroulis.gr.model.Courses;
 import ais.koutroulis.gr.model.Token;
 import ais.koutroulis.gr.service.MoodleRetroFitService;
@@ -50,7 +54,8 @@ public class TestRetrofitMoodleClient {
     private static final String FORMAT = "json";
     private static final String ASSIGNMENTS_FUNCTION = "mod_assign_get_assignments";
 
-    private static final String SCRIPT = "token.php";
+    private static final String LOGIN_SCRIPT = "token.php";
+    private static final String FUNCTIONS_SCRIPT = "server.php";
     private static final String LOGIN_SERVICE = "moodle_mobile_app";
     private String callingUsername;
     private String callingPassword;
@@ -83,14 +88,14 @@ public class TestRetrofitMoodleClient {
         createAppropriateStubForThisUser(callingUsername, callingPassword);
 
         try {
-            response = moodleClient.login(SCRIPT, LOGIN_SERVICE, callingUsername, callingPassword);
+            response = moodleClient.login(LOGIN_SCRIPT, LOGIN_SERVICE, callingUsername, callingPassword);
             Assert.assertEquals("The incoming token does not match the expected.",
                     expectedToken.getToken(), response.body().getToken());
         } catch (IOException ie) {
 
         }
 
-        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/login/" + SCRIPT + "?username="
+        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/login/" + LOGIN_SCRIPT + "?username="
                 + callingUsername + "&password="
                 + callingPassword + "&service=" + LOGIN_SERVICE)));
         WireMock.reset();
@@ -103,13 +108,13 @@ public class TestRetrofitMoodleClient {
         createAppropriateStubForThisUser(callingUsername, callingPassword);
 
         try {
-            response = moodleClient.login(SCRIPT, LOGIN_SERVICE, callingUsername, callingPassword);
+            response = moodleClient.login(LOGIN_SCRIPT, LOGIN_SERVICE, callingUsername, callingPassword);
             Assert.assertEquals("The status code is not 200.", 200, response.code());
             Assert.assertNull("A token was returned for non registered user.", response.body().getToken());
         } catch (IOException ie) {
         }
 
-        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/login/" + SCRIPT + "?username="
+        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/login/" + LOGIN_SCRIPT + "?username="
                 + callingUsername + "&password="
                 + callingPassword + "&service=" + LOGIN_SERVICE)));
         WireMock.reset();
@@ -121,7 +126,7 @@ public class TestRetrofitMoodleClient {
         wireMockRule.stop();
 
         try {
-            response = moodleClient.login(SCRIPT, LOGIN_SERVICE, callingUsername, callingPassword);
+            response = moodleClient.login(LOGIN_SCRIPT, LOGIN_SERVICE, callingUsername, callingPassword);
             Assert.fail("Server should have been out of reach.");
         } catch (IOException e) {
             Assert.assertNull(response);
@@ -131,13 +136,9 @@ public class TestRetrofitMoodleClient {
     @Test
     public void responseShouldContainFourCourses() {
         assertNotNull("The response string is null!", assignmentsResponseString);
-
         wireMockStubForFuntions(ASSIGNMENTS_FUNCTION);
-
-
-
         try {
-            Response<Courses> responseCourses = moodleClient.getCourses("server.php", "json", expectedToken.getToken(), ASSIGNMENTS_FUNCTION);
+            Response<Courses> responseCourses = moodleClient.getCourses(FUNCTIONS_SCRIPT, FORMAT, expectedToken.getToken(), ASSIGNMENTS_FUNCTION);
             Assert.assertEquals("The status code is not 200.", 200, responseCourses.code());
             assertEquals("There should be 4 courses in this response.", 4, responseCourses.body().getCourses().size());
         } catch (IOException ie) {
@@ -149,9 +150,32 @@ public class TestRetrofitMoodleClient {
         WireMock.reset();
     }
 
+    @Test
+    public void responseShouldContainTwoAssignments() {
+        wireMockStubForFuntions(ASSIGNMENTS_FUNCTION);
+
+        try {
+            Response<Courses> responseCourses = moodleClient.getCourses(FUNCTIONS_SCRIPT, FORMAT,
+                    expectedToken.getToken(), ASSIGNMENTS_FUNCTION);
+            List<Course> courses = responseCourses.body().getCourses();
+            List<Assignment> aggregatedAssignments = new ArrayList<>();
+            for (Course oneCourse: courses) {
+                aggregatedAssignments.addAll(oneCourse.getAssignments());
+            }
+            assertEquals("The Assignments were not 2.", 2, aggregatedAssignments.size() );
+
+        } catch (IOException e) {
+        }
+
+        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + "server.php" + "?moodlewsrestformat="
+                + "json" + "&wstoken="
+                + expectedToken.getToken() + "&wsfunction=" + ASSIGNMENTS_FUNCTION)));
+        WireMock.reset();
+    }
+
     private void createAppropriateStubForThisUser(String username, String password) {
         if (isRegisteredUser()) {
-            stubFor(get(urlPathEqualTo("/moodle/login/" + SCRIPT))
+            stubFor(get(urlPathEqualTo("/moodle/login/" + LOGIN_SCRIPT))
                     .withQueryParam("username", equalTo(callingUsername))
                     .withQueryParam("password", equalTo(callingPassword))
                     .withQueryParam("service", equalTo(LOGIN_SERVICE))
@@ -160,7 +184,7 @@ public class TestRetrofitMoodleClient {
                             .withHeader("Content-Type", "application/json; charset=utf-8")
                             .withBody(GRANT_TOKEN_RESPONSE_STRING)));
         } else {
-            stubFor(get(urlPathEqualTo("/moodle/login/" + SCRIPT))
+            stubFor(get(urlPathEqualTo("/moodle/login/" + LOGIN_SCRIPT))
                     .withQueryParam("username", equalTo(callingUsername))
                     .withQueryParam("password", equalTo(callingPassword))
                     .withQueryParam("service", equalTo(LOGIN_SERVICE))
