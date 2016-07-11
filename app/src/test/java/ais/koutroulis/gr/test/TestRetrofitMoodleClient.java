@@ -243,7 +243,7 @@ public class TestRetrofitMoodleClient {
     }
 
     @Test
-    public void shouldContainTwoUnreadMessages() {
+    public void shouldContainTwoSpecificUnreadMessages() {
         String ais0058UserId = "5";
         String anyUser = "0";
         String script = "server.php";
@@ -264,6 +264,12 @@ public class TestRetrofitMoodleClient {
             Response<Messages> responseUnreadMessages = moodleClient.getMessages(FUNCTIONS_SCRIPT, FORMAT,
                     expectedToken.getToken(), GET_MESSAGES_FUNCTION, ais0058UserId, anyUser, readFalse);
             assertEquals("The unread messages were not 2 as expected.", 2, responseUnreadMessages.body().getMessages().size());
+
+            assertTrue("The first message is not the one that was expected.",
+                    responseUnreadMessages.body().getMessages().get(0).getFullmessage().contains("Σου στέλνω ξανά"));
+
+            assertTrue("The second message is not the one that was expected.",
+                    responseUnreadMessages.body().getMessages().get(1).getFullmessage().contains("Πάρε κι εσύ ένα μήνυμα."));
 
         } catch (IOException e) {
         }
