@@ -12,4 +12,7 @@ public interface MoodleClient {
     public <T> T getCourses(String script, String format, String token, String function) throws IOException;
 
     public <T> T getUserDetails(String script, String format, String token, String function, String byField, String fieldValue) throws IOException;
+
+    public <T> T getMessages(String script, String format, String token, String function,
+                             String sentToId, String sentFromId, String oneForReadZeroForUnread) throws IOException;
 }

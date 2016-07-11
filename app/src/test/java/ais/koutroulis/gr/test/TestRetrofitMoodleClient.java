@@ -24,6 +24,7 @@ import ais.koutroulis.gr.client.RetrofitMoodleClient;
 import ais.koutroulis.gr.model.Assignment;
 import ais.koutroulis.gr.model.Course;
 import ais.koutroulis.gr.model.Courses;
+import ais.koutroulis.gr.model.Messages;
 import ais.koutroulis.gr.model.Token;
 import ais.koutroulis.gr.model.User;
 import ais.koutroulis.gr.service.MoodleRetroFitService;
@@ -52,10 +53,13 @@ public class TestRetrofitMoodleClient {
             "}";
     private String fourCoursesAndTwoAssignmentsResponse;
     private String ais0058UserDetails;
+    private String ais0058UnreadMessages;
+    private String ais0058ReadMessages;
 
     private static final String FORMAT = "json";
     private static final String ASSIGNMENTS_FUNCTION = "mod_assign_get_assignments";
     private static final String USER_DETAILS_FUNCTION = "core_user_get_users_by_field";
+    private static final String GET_MESSAGES_FUNCTION = "core_message_get_messages";
 
     private static final String LOGIN_SCRIPT = "token.php";
     private static final String FUNCTIONS_SCRIPT = "server.php";
@@ -72,6 +76,8 @@ public class TestRetrofitMoodleClient {
 
     @Before
     public void setup() {
+        resetAis0058ReadMessages();
+        resetAis0058UnreadMessages();
         resetAis0058UserDetails();
         resetAssignmentsResponseString();
         response = null;
@@ -223,8 +229,8 @@ public class TestRetrofitMoodleClient {
         try {
             Response<User> responseUserDetails = moodleClient.getUserDetails(FUNCTIONS_SCRIPT, FORMAT,
                     expectedToken.getToken(), USER_DETAILS_FUNCTION, "username", "ais0058");
-           assertEquals("The user does not have the expected full name.", "Ioannis Antonatos",
-                   responseUserDetails.body().getFullname());
+            assertEquals("The user does not have the expected full name.", "Ioannis Antonatos",
+                    responseUserDetails.body().getFullname());
             assertEquals("The user's email is not the expected one.", "antonatos@hotmail.com", responseUserDetails.body().getEmail());
         } catch (IOException e) {
         }
@@ -233,6 +239,72 @@ public class TestRetrofitMoodleClient {
                 + "json" + "&wstoken="
                 + expectedToken.getToken() + "&wsfunction=" + USER_DETAILS_FUNCTION
                 + "&field=" + "username" + "&values[0]=" + "ais0058")));
+        WireMock.reset();
+    }
+
+    @Test
+    public void shouldContainTwoUnreadMessages() {
+        String ais0058UserId = "5";
+        String anyUser = "0";
+        String script = "server.php";
+        String readFalse = "0";
+        stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + script))
+                .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
+                .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
+                .withQueryParam("wsfunction", equalTo(GET_MESSAGES_FUNCTION))
+                .withQueryParam("useridto", equalTo(ais0058UserId))
+                .withQueryParam("useridfrom", equalTo(anyUser))
+                .withQueryParam("read", equalTo(readFalse))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json; charset=utf-8")
+                        .withBody(ais0058UnreadMessages)));
+
+        try {
+            Response<Messages> responseUnreadMessages = moodleClient.getMessages(FUNCTIONS_SCRIPT, FORMAT,
+                    expectedToken.getToken(), GET_MESSAGES_FUNCTION, ais0058UserId, anyUser, readFalse);
+            assertEquals("The unread messages were not 2 as expected.", 2, responseUnreadMessages.body().getMessages().size());
+
+        } catch (IOException e) {
+        }
+
+        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + "server.php" + "?moodlewsrestformat="
+                + "json" + "&wstoken="
+                + expectedToken.getToken() + "&wsfunction=" + GET_MESSAGES_FUNCTION
+                + "&useridto=" + ais0058UserId + "&useridfrom=" + anyUser + "&read=" + readFalse)));
+        WireMock.reset();
+    }
+
+    @Test
+    public void shouldContainThreeReadMessages() {
+        String ais0058UserId = "5";
+        String anyUser = "0";
+        String script = "server.php";
+        String readTrue = "1";
+        stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + script))
+                .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
+                .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
+                .withQueryParam("wsfunction", equalTo(GET_MESSAGES_FUNCTION))
+                .withQueryParam("useridto", equalTo(ais0058UserId))
+                .withQueryParam("useridfrom", equalTo(anyUser))
+                .withQueryParam("read", equalTo(readTrue))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json; charset=utf-8")
+                        .withBody(ais0058ReadMessages)));
+
+        try {
+            Response<Messages> responseReadMessages = moodleClient.getMessages(FUNCTIONS_SCRIPT, FORMAT,
+                    expectedToken.getToken(), GET_MESSAGES_FUNCTION, ais0058UserId, anyUser, readTrue);
+            assertEquals("The read messages were not 3 as expected.", 3, responseReadMessages.body().getMessages().size());
+
+        } catch (IOException e) {
+        }
+
+        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + "server.php" + "?moodlewsrestformat="
+                + "json" + "&wstoken="
+                + expectedToken.getToken() + "&wsfunction=" + GET_MESSAGES_FUNCTION
+                + "&useridto=" + ais0058UserId + "&useridfrom=" + anyUser + "&read=" + readTrue)));
         WireMock.reset();
     }
 
@@ -576,6 +648,112 @@ public class TestRetrofitMoodleClient {
                 "      }\n" +
                 "    ]\n" +
                 "  }\n";
+    }
+
+    private void resetAis0058UnreadMessages() {
+        this.ais0058UnreadMessages = "{\n" +
+                "  \"messages\": [\n" +
+                "    {\n" +
+                "      \"id\": 4,\n" +
+                "      \"useridfrom\": 3,\n" +
+                "      \"useridto\": 5,\n" +
+                "      \"subject\": \"New message from Christodoulos Koutroulis\",\n" +
+                "      \"text\": \"<p>&Icirc;&pound;&Icirc;&iquest;&Iuml;&#133; &Iuml;&#131;&Iuml;&#132;&Icirc;&shy;&Icirc;&raquo;&Icirc;&frac12;&Iuml;&#137; &Icirc;&frac34;&Icirc;&plusmn;&Icirc;&frac12;&Icirc;&not;</p>\",\n" +
+                "      \"fullmessage\": \"Σου στέλνω ξανά\\n\\n---------------------------------------------------------------------\\nThis is a copy of a message sent to you at \\\"MSc AIS\\\". Go to http://ais-temp.daidalos.teipir.gr/moodle/message/index.php?user=5&id=3 to reply.\",\n" +
+                "      \"fullmessageformat\": 0,\n" +
+                "      \"fullmessagehtml\": \"\",\n" +
+                "      \"smallmessage\": \"Σου στέλνω ξανά\",\n" +
+                "      \"notification\": 0,\n" +
+                "      \"contexturl\": null,\n" +
+                "      \"contexturlname\": null,\n" +
+                "      \"timecreated\": 1467568241,\n" +
+                "      \"timeread\": 0,\n" +
+                "      \"usertofullname\": \"Ioannis Antonatos\",\n" +
+                "      \"userfromfullname\": \"Christodoulos Koutroulis\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"id\": 2,\n" +
+                "      \"useridfrom\": 3,\n" +
+                "      \"useridto\": 5,\n" +
+                "      \"subject\": \"New message from Christodoulos Koutroulis\",\n" +
+                "      \"text\": \"<p>&Icirc;&nbsp;&Icirc;&not;&Iuml;&#129;&Icirc;&micro; &Icirc;&ordm;&Icirc;&sup1; &Icirc;&micro;&Iuml;&#131;&Iuml;&#141; &Icirc;&shy;&Icirc;&frac12;&Icirc;&plusmn; &Icirc;&frac14;&Icirc;&reg;&Icirc;&frac12;&Iuml;&#133;&Icirc;&frac14;&Icirc;&plusmn;.</p>\",\n" +
+                "      \"fullmessage\": \"Πάρε κι εσύ ένα μήνυμα.\\n\\n---------------------------------------------------------------------\\nThis is a copy of a message sent to you at \\\"MSc AIS\\\". Go to http://ais-temp.daidalos.teipir.gr/moodle/message/index.php?user=5&id=3 to reply.\",\n" +
+                "      \"fullmessageformat\": 0,\n" +
+                "      \"fullmessagehtml\": \"\",\n" +
+                "      \"smallmessage\": \"Πάρε κι εσύ ένα μήνυμα.\",\n" +
+                "      \"notification\": 0,\n" +
+                "      \"contexturl\": null,\n" +
+                "      \"contexturlname\": null,\n" +
+                "      \"timecreated\": 1467567827,\n" +
+                "      \"timeread\": 0,\n" +
+                "      \"usertofullname\": \"Ioannis Antonatos\",\n" +
+                "      \"userfromfullname\": \"Christodoulos Koutroulis\"\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"warnings\": []\n" +
+                "}";
+    }
+
+    private void resetAis0058ReadMessages() {
+        this.ais0058ReadMessages = "{\n" +
+                "  \"messages\": [\n" +
+                "    {\n" +
+                "      \"id\": 3,\n" +
+                "      \"useridfrom\": 3,\n" +
+                "      \"useridto\": 5,\n" +
+                "      \"subject\": \"New message from Christodoulos Koutroulis\",\n" +
+                "      \"text\": \"<p>&Icirc;&pound;&Icirc;&iquest;&Iuml;&#133; &Iuml;&#131;&Iuml;&#132;&Icirc;&shy;&Icirc;&raquo;&Icirc;&frac12;&Iuml;&#137; &Icirc;&plusmn;&Icirc;&ordm;&Iuml;&#140;&Icirc;&frac14;&Icirc;&plusmn; &Icirc;&shy;&Icirc;&frac12;&Icirc;&plusmn; &Icirc;&sup3;&Icirc;&sup1;&Icirc;&plusmn; &Icirc;&frac12;&Icirc;&plusmn; &Icirc;&acute;&Icirc;&sup1;&Icirc;&plusmn;&Icirc;&sup2;&Icirc;&not;&Iuml;&#131;&Icirc;&micro;&Icirc;&sup1;&Iuml;&#130; &Icirc;&shy;&Icirc;&frac12;&Icirc;&plusmn; &Icirc;&plusmn;&Iuml;&#128;&Iuml;&#140; &Iuml;&#132;&Icirc;&plusmn; &Iuml;&#128;&Iuml;&#129;&Icirc;&iquest;&Icirc;&middot;&Icirc;&sup3;&Icirc;&iquest;&Iuml;&#141;&Icirc;&frac14;&Icirc;&micro;&Icirc;&frac12;&Icirc;&plusmn;.</p>\",\n" +
+                "      \"fullmessage\": \"Σου στέλνω ακόμα ένα για να διαβάσεις ένα από τα προηγούμενα.\\n\\n---------------------------------------------------------------------\\nThis is a copy of a message sent to you at \\\"MSc AIS\\\". Go to http://ais-temp.daidalos.teipir.gr/moodle/message/index.php?user=5&id=3 to reply.\",\n" +
+                "      \"fullmessageformat\": 0,\n" +
+                "      \"fullmessagehtml\": \"\",\n" +
+                "      \"smallmessage\": \"Σου στέλνω ακόμα ένα για να διαβάσεις ένα από τα προηγούμενα.\",\n" +
+                "      \"notification\": 0,\n" +
+                "      \"contexturl\": null,\n" +
+                "      \"contexturlname\": null,\n" +
+                "      \"timecreated\": 1468241947,\n" +
+                "      \"timeread\": 1468241988,\n" +
+                "      \"usertofullname\": \"Ioannis Antonatos\",\n" +
+                "      \"userfromfullname\": \"Christodoulos Koutroulis\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"id\": 2,\n" +
+                "      \"useridfrom\": 3,\n" +
+                "      \"useridto\": 5,\n" +
+                "      \"subject\": \"New message from Christodoulos Koutroulis\",\n" +
+                "      \"text\": \"<p>&Icirc;&pound;&Icirc;&iquest;&Iuml;&#133; &Iuml;&#131;&Iuml;&#132;&Icirc;&shy;&Icirc;&raquo;&Icirc;&frac12;&Iuml;&#137; &Icirc;&frac34;&Icirc;&plusmn;&Icirc;&frac12;&Icirc;&not;</p>\",\n" +
+                "      \"fullmessage\": \"Σου στέλνω ξανά\\n\\n---------------------------------------------------------------------\\nThis is a copy of a message sent to you at \\\"MSc AIS\\\". Go to http://ais-temp.daidalos.teipir.gr/moodle/message/index.php?user=5&id=3 to reply.\",\n" +
+                "      \"fullmessageformat\": 0,\n" +
+                "      \"fullmessagehtml\": \"\",\n" +
+                "      \"smallmessage\": \"Σου στέλνω ξανά\",\n" +
+                "      \"notification\": 0,\n" +
+                "      \"contexturl\": null,\n" +
+                "      \"contexturlname\": null,\n" +
+                "      \"timecreated\": 1467568241,\n" +
+                "      \"timeread\": 1468241988,\n" +
+                "      \"usertofullname\": \"Ioannis Antonatos\",\n" +
+                "      \"userfromfullname\": \"Christodoulos Koutroulis\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"id\": 1,\n" +
+                "      \"useridfrom\": 3,\n" +
+                "      \"useridto\": 5,\n" +
+                "      \"subject\": \"New message from Christodoulos Koutroulis\",\n" +
+                "      \"text\": \"<p>&Icirc;&nbsp;&Icirc;&not;&Iuml;&#129;&Icirc;&micro; &Icirc;&ordm;&Icirc;&sup1; &Icirc;&micro;&Iuml;&#131;&Iuml;&#141; &Icirc;&shy;&Icirc;&frac12;&Icirc;&plusmn; &Icirc;&frac14;&Icirc;&reg;&Icirc;&frac12;&Iuml;&#133;&Icirc;&frac14;&Icirc;&plusmn;.</p>\",\n" +
+                "      \"fullmessage\": \"Πάρε κι εσύ ένα μήνυμα.\\n\\n---------------------------------------------------------------------\\nThis is a copy of a message sent to you at \\\"MSc AIS\\\". Go to http://ais-temp.daidalos.teipir.gr/moodle/message/index.php?user=5&id=3 to reply.\",\n" +
+                "      \"fullmessageformat\": 0,\n" +
+                "      \"fullmessagehtml\": \"\",\n" +
+                "      \"smallmessage\": \"Πάρε κι εσύ ένα μήνυμα.\",\n" +
+                "      \"notification\": 0,\n" +
+                "      \"contexturl\": null,\n" +
+                "      \"contexturlname\": null,\n" +
+                "      \"timecreated\": 1467567827,\n" +
+                "      \"timeread\": 1468241987,\n" +
+                "      \"usertofullname\": \"Ioannis Antonatos\",\n" +
+                "      \"userfromfullname\": \"Christodoulos Koutroulis\"\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"warnings\": []\n" +
+                "}";
     }
 
 }
