@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import ais.koutroulis.gr.model.Courses;
 import ais.koutroulis.gr.model.Token;
+import ais.koutroulis.gr.model.User;
 import ais.koutroulis.gr.service.MoodleRetroFitService;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -51,6 +52,14 @@ public class RetrofitMoodleClient implements MoodleClient{
                 .getCourses(script, format, token, function);
         Response<Courses> response = getCoursesCall.execute();
 
+        return response;
+    }
+
+    public Response<User> getUserDetails(String script, String format, String token,
+                                         String function, String byField, String fieldValue) throws IOException {
+        Call<User> getUserDetailsCall = clientInitializer.getService()
+                .getUserDetails(script, format, token, function, byField, fieldValue);
+        Response<User> response = getUserDetailsCall.execute();
         return response;
     }
 

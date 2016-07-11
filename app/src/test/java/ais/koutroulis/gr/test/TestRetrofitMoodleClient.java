@@ -25,6 +25,7 @@ import ais.koutroulis.gr.model.Assignment;
 import ais.koutroulis.gr.model.Course;
 import ais.koutroulis.gr.model.Courses;
 import ais.koutroulis.gr.model.Token;
+import ais.koutroulis.gr.model.User;
 import ais.koutroulis.gr.service.MoodleRetroFitService;
 import retrofit2.Response;
 
@@ -49,10 +50,12 @@ public class TestRetrofitMoodleClient {
             "  \"debuginfo\": null,\n" +
             "  \"reproductionlink\": null\n" +
             "}";
-    private String assignmentsResponseString;
+    private String fourCoursesAndTwoAssignmentsResponse;
+    private String ais0058UserDetails;
 
     private static final String FORMAT = "json";
     private static final String ASSIGNMENTS_FUNCTION = "mod_assign_get_assignments";
+    private static final String USER_DETAILS_FUNCTION = "core_user_get_users_by_field";
 
     private static final String LOGIN_SCRIPT = "token.php";
     private static final String FUNCTIONS_SCRIPT = "server.php";
@@ -69,6 +72,7 @@ public class TestRetrofitMoodleClient {
 
     @Before
     public void setup() {
+        resetAis0058UserDetails();
         resetAssignmentsResponseString();
         response = null;
         registeredUsers = new HashMap<>();
@@ -135,7 +139,7 @@ public class TestRetrofitMoodleClient {
 
     @Test
     public void responseShouldContainFourCourses() {
-        assertNotNull("The response string is null!", assignmentsResponseString);
+        assertNotNull("The response string is null!", fourCoursesAndTwoAssignmentsResponse);
         wireMockStubForFuntions(ASSIGNMENTS_FUNCTION);
         try {
             Response<Courses> responseCourses = moodleClient.getCourses(FUNCTIONS_SCRIPT, FORMAT, expectedToken.getToken(), ASSIGNMENTS_FUNCTION);
@@ -159,10 +163,10 @@ public class TestRetrofitMoodleClient {
                     expectedToken.getToken(), ASSIGNMENTS_FUNCTION);
             List<Course> courses = responseCourses.body().getCourses();
             List<Assignment> aggregatedAssignments = new ArrayList<>();
-            for (Course oneCourse: courses) {
+            for (Course oneCourse : courses) {
                 aggregatedAssignments.addAll(oneCourse.getAssignments());
             }
-            assertEquals("The Assignments were not 2.", 2, aggregatedAssignments.size() );
+            assertEquals("The Assignments were not 2.", 2, aggregatedAssignments.size());
 
         } catch (IOException e) {
         }
@@ -170,6 +174,65 @@ public class TestRetrofitMoodleClient {
         WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + "server.php" + "?moodlewsrestformat="
                 + "json" + "&wstoken="
                 + expectedToken.getToken() + "&wsfunction=" + ASSIGNMENTS_FUNCTION)));
+        WireMock.reset();
+    }
+
+    @Test
+    public void responseShouldHaveASpecificAssignmentIntro() {
+        wireMockStubForFuntions(ASSIGNMENTS_FUNCTION);
+
+        try {
+            Response<Courses> responseCourses = moodleClient.getCourses(FUNCTIONS_SCRIPT, FORMAT,
+                    expectedToken.getToken(), ASSIGNMENTS_FUNCTION);
+            List<Course> courses = responseCourses.body().getCourses();
+            List<Assignment> aggregatedAssignments = new ArrayList<>();
+            for (Course oneCourse : courses) {
+                aggregatedAssignments.addAll(oneCourse.getAssignments());
+            }
+            boolean found = false;
+            for (Assignment assignment : aggregatedAssignments) {
+                if (assignment.getIntro().equals("<p>Μια διαδικτυακή εφαρμογή με Java και MySQL.</p>")) {
+                    found = true;
+                }
+            }
+            assertTrue("The Assignments list should contain a specific Assignment", found);
+
+        } catch (IOException e) {
+        }
+
+        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + "server.php" + "?moodlewsrestformat="
+                + "json" + "&wstoken="
+                + expectedToken.getToken() + "&wsfunction=" + ASSIGNMENTS_FUNCTION)));
+        WireMock.reset();
+    }
+
+    @Test
+    public void shouldContainSpecificDetailsForAGivenUsername() {
+        String script = "server.php";
+        stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + script))
+                .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
+                .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
+                .withQueryParam("wsfunction", equalTo(USER_DETAILS_FUNCTION))
+                .withQueryParam("field", equalTo("username"))
+                .withQueryParam("values[0]", equalTo("ais0058"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json; charset=utf-8")
+                        .withBody(ais0058UserDetails)));
+
+        try {
+            Response<User> responseUserDetails = moodleClient.getUserDetails(FUNCTIONS_SCRIPT, FORMAT,
+                    expectedToken.getToken(), USER_DETAILS_FUNCTION, "username", "ais0058");
+           assertEquals("The user does not have the expected full name.", "Ioannis Antonatos",
+                   responseUserDetails.body().getFullname());
+            assertEquals("The user's email is not the expected one.", "antonatos@hotmail.com", responseUserDetails.body().getEmail());
+        } catch (IOException e) {
+        }
+
+        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + "server.php" + "?moodlewsrestformat="
+                + "json" + "&wstoken="
+                + expectedToken.getToken() + "&wsfunction=" + USER_DETAILS_FUNCTION
+                + "&field=" + "username" + "&values[0]=" + "ais0058")));
         WireMock.reset();
     }
 
@@ -203,7 +266,7 @@ public class TestRetrofitMoodleClient {
         }
     }
 
-    private void wireMockStubForFuntions(String function){
+    private void wireMockStubForFuntions(String function) {
         String script = "server.php";
         stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + script))
                 .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
@@ -212,11 +275,11 @@ public class TestRetrofitMoodleClient {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json; charset=utf-8")
-                        .withBody(assignmentsResponseString)));
+                        .withBody(fourCoursesAndTwoAssignmentsResponse)));
     }
 
     private void resetAssignmentsResponseString() {
-        assignmentsResponseString = "{\n" +
+        fourCoursesAndTwoAssignmentsResponse = "{\n" +
                 "  \"courses\": [\n" +
                 "    {\n" +
                 "      \"id\": 2,\n" +
@@ -473,6 +536,46 @@ public class TestRetrofitMoodleClient {
                 "  ],\n" +
                 "  \"warnings\": []\n" +
                 "}";
+    }
+
+    private void resetAis0058UserDetails() {
+        this.ais0058UserDetails = "  {\n" +
+                "    \"id\": 5,\n" +
+                "    \"username\": \"ais0058\",\n" +
+                "    \"fullname\": \"Ioannis Antonatos\",\n" +
+                "    \"email\": \"antonatos@hotmail.com\",\n" +
+                "    \"department\": \"\",\n" +
+                "    \"firstaccess\": 1467307347,\n" +
+                "    \"lastaccess\": 1468219321,\n" +
+                "    \"description\": \"\",\n" +
+                "    \"descriptionformat\": 1,\n" +
+                "    \"city\": \"Athens\",\n" +
+                "    \"country\": \"GR\",\n" +
+                "    \"profileimageurlsmall\": \"http://ais-temp.daidalos.teipir.gr/moodle/theme/image.php/clean/core/1467270948/u/f2\",\n" +
+                "    \"profileimageurl\": \"http://ais-temp.daidalos.teipir.gr/moodle/theme/image.php/clean/core/1467270948/u/f1\",\n" +
+                "    \"preferences\": [\n" +
+                "      {\n" +
+                "        \"name\": \"auth_forcepasswordchange\",\n" +
+                "        \"value\": \"0\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"name\": \"email_bounce_count\",\n" +
+                "        \"value\": \"1\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"name\": \"email_send_count\",\n" +
+                "        \"value\": \"3\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"name\": \"login_failed_count_since_success\",\n" +
+                "        \"value\": \"1\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"name\": \"_lastloaded\",\n" +
+                "        \"value\": 1468221629\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  }\n";
     }
 
 }

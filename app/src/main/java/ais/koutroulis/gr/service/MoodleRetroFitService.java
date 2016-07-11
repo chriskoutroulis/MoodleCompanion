@@ -3,6 +3,7 @@ package ais.koutroulis.gr.service;
 import ais.koutroulis.gr.model.Assignments;
 import ais.koutroulis.gr.model.Courses;
 import ais.koutroulis.gr.model.Token;
+import ais.koutroulis.gr.model.User;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -20,4 +21,9 @@ public interface MoodleRetroFitService {
     @GET("webservice/rest/{script}")
     Call<Courses> getCourses(@Path("script") String script, @Query("moodlewsrestformat") String format,
                                  @Query("wstoken") String token, @Query("wsfunction") String function);
+
+    @GET("webservice/rest/{script}")
+    Call<User> getUserDetails(@Path("script") String script, @Query("moodlewsrestformat") String format,
+                              @Query("wstoken") String token, @Query("wsfunction") String function, @Query("field") String field,
+                              @Query("values[0]") String username );
 }
