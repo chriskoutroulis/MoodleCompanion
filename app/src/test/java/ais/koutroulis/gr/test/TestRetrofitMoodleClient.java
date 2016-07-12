@@ -282,7 +282,7 @@ public class TestRetrofitMoodleClient {
     }
 
     @Test
-    public void shouldContainThreeReadMessages() {
+    public void shouldContainThreeSpecificReadMessages() {
         String ais0058UserId = "5";
         String anyUser = "0";
         String script = "server.php";
@@ -303,6 +303,13 @@ public class TestRetrofitMoodleClient {
             Response<Messages> responseReadMessages = moodleClient.getMessages(FUNCTIONS_SCRIPT, FORMAT,
                     expectedToken.getToken(), GET_MESSAGES_FUNCTION, ais0058UserId, anyUser, readTrue);
             assertEquals("The read messages were not 3 as expected.", 3, responseReadMessages.body().getMessages().size());
+            assertTrue("The first message is not the one that was expected.",
+                    responseReadMessages.body().getMessages().get(0).getFullmessage()
+                            .contains("Σου στέλνω ακόμα ένα για να διαβάσεις ένα από τα προηγούμενα."));
+            assertTrue("The second message is not the one that was expected.",
+                    responseReadMessages.body().getMessages().get(1).getFullmessage().contains("Σου στέλνω ξανά"));
+            assertTrue("The third message is not the one that was expected.",
+                    responseReadMessages.body().getMessages().get(2).getFullmessage().contains("Πάρε κι εσύ ένα μήνυμα."));
 
         } catch (IOException e) {
         }
