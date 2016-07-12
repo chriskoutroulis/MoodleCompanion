@@ -409,22 +409,36 @@ public class JsonResponseProvider {
             "  \"warnings\": []\n" +
             "}";
 
-    public static String getAis0058GrantTokenJsonString(){
+    private static String ais0058MarkAsReadMessageJsonString = "{\n" +
+            "  \"messageid\": 4,\n" +
+            "  \"warnings\": []\n" +
+            "}";
+
+    public static String getAis0058GrantTokenJsonString() {
         return ais0058GrantTokenJsonString;
     }
+
     public static String getAis0058DeniedTokenJsonString() {
         return ais0058DeniedTokenJsonString;
     }
+
     public static String getFourCoursesAndTwoAssignmentsJsonString() {
         return fourCoursesAndTwoAssignmentsJsonString;
     }
+
     public static String getAis0058UserDetailsJsonString() {
         return ais0058UserDetailsJsonString;
     }
+
     public static String getAis0058UnreadMessagesJsonString() {
         return ais0058UnreadMessagesJsonString;
     }
+
     public static String getAis0058ReadMessagesJsonString() {
         return ais0058ReadMessagesJsonString;
+    }
+
+    public static String getAis0058MarkAsReadMessageJsonString() {
+        return ais0058MarkAsReadMessageJsonString;
     }
 }

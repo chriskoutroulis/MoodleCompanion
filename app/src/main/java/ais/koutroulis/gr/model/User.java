@@ -11,7 +11,7 @@ public class User {
 
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private int id;
     @SerializedName("username")
     @Expose
     private String username;
@@ -26,16 +26,16 @@ public class User {
     private String department;
     @SerializedName("firstaccess")
     @Expose
-    private Integer firstaccess;
+    private int firstaccess;
     @SerializedName("lastaccess")
     @Expose
-    private Integer lastaccess;
+    private int lastaccess;
     @SerializedName("description")
     @Expose
     private String description;
     @SerializedName("descriptionformat")
     @Expose
-    private Integer descriptionformat;
+    private int descriptionformat;
     @SerializedName("city")
     @Expose
     private String city;
@@ -52,14 +52,14 @@ public class User {
     /**
      * @return The id
      */
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
     /**
      * @param id The id
      */
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -122,28 +122,28 @@ public class User {
     /**
      * @return The firstaccess
      */
-    public Integer getFirstaccess() {
+    public int getFirstaccess() {
         return firstaccess;
     }
 
     /**
      * @param firstaccess The firstaccess
      */
-    public void setFirstaccess(Integer firstaccess) {
+    public void setFirstaccess(int firstaccess) {
         this.firstaccess = firstaccess;
     }
 
     /**
      * @return The lastaccess
      */
-    public Integer getLastaccess() {
+    public int getLastaccess() {
         return lastaccess;
     }
 
     /**
      * @param lastaccess The lastaccess
      */
-    public void setLastaccess(Integer lastaccess) {
+    public void setLastaccess(int lastaccess) {
         this.lastaccess = lastaccess;
     }
 
@@ -164,14 +164,14 @@ public class User {
     /**
      * @return The descriptionformat
      */
-    public Integer getDescriptionformat() {
+    public int getDescriptionformat() {
         return descriptionformat;
     }
 
     /**
      * @param descriptionformat The descriptionformat
      */
-    public void setDescriptionformat(Integer descriptionformat) {
+    public void setDescriptionformat(int descriptionformat) {
         this.descriptionformat = descriptionformat;
     }
 

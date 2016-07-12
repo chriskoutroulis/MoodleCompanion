@@ -2,6 +2,7 @@ package ais.koutroulis.gr.service;
 
 import ais.koutroulis.gr.model.Assignments;
 import ais.koutroulis.gr.model.Courses;
+import ais.koutroulis.gr.model.MarkAsReadResponse;
 import ais.koutroulis.gr.model.Messages;
 import ais.koutroulis.gr.model.Token;
 import ais.koutroulis.gr.model.User;
@@ -32,4 +33,9 @@ public interface MoodleRetroFitService {
     Call<Messages> getMessages(@Path("script") String script, @Query("moodlewsrestformat") String format,
                                @Query("wstoken") String token, @Query("wsfunction") String function, @Query("useridto") String sentToId,
                                @Query("useridfrom") String sentFromId, @Query("read") String oneForReadZeroForUnread);
+
+    @GET("webservice/rest/{script}")
+    Call<MarkAsReadResponse> markAsReadMessage (@Path("script") String script, @Query("moodlewsrestformat") String format,
+                                                @Query("wstoken") String token, @Query("wsfunction") String function, @Query("messageid") String unreadMessageId,
+                                                @Query("timeread") String timeReadInMillis);
 }

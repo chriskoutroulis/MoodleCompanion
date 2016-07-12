@@ -11,13 +11,13 @@ public class Message {
 
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private int id;
     @SerializedName("useridfrom")
     @Expose
-    private Integer useridfrom;
+    private int useridfrom;
     @SerializedName("useridto")
     @Expose
-    private Integer useridto;
+    private int useridto;
     @SerializedName("subject")
     @Expose
     private String subject;
@@ -29,7 +29,7 @@ public class Message {
     private String fullmessage;
     @SerializedName("fullmessageformat")
     @Expose
-    private Integer fullmessageformat;
+    private int fullmessageformat;
     @SerializedName("fullmessagehtml")
     @Expose
     private String fullmessagehtml;
@@ -38,7 +38,7 @@ public class Message {
     private String smallmessage;
     @SerializedName("notification")
     @Expose
-    private Integer notification;
+    private int notification;
     @SerializedName("contexturl")
     @Expose
     private Object contexturl;
@@ -47,10 +47,10 @@ public class Message {
     private Object contexturlname;
     @SerializedName("timecreated")
     @Expose
-    private Integer timecreated;
+    private int timecreated;
     @SerializedName("timeread")
     @Expose
-    private Integer timeread;
+    private int timeread;
     @SerializedName("usertofullname")
     @Expose
     private String usertofullname;
@@ -61,42 +61,42 @@ public class Message {
     /**
      * @return The id
      */
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
     /**
      * @param id The id
      */
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
     /**
      * @return The useridfrom
      */
-    public Integer getUseridfrom() {
+    public int getUseridfrom() {
         return useridfrom;
     }
 
     /**
      * @param useridfrom The useridfrom
      */
-    public void setUseridfrom(Integer useridfrom) {
+    public void setUseridfrom(int useridfrom) {
         this.useridfrom = useridfrom;
     }
 
     /**
      * @return The useridto
      */
-    public Integer getUseridto() {
+    public int getUseridto() {
         return useridto;
     }
 
     /**
      * @param useridto The useridto
      */
-    public void setUseridto(Integer useridto) {
+    public void setUseridto(int useridto) {
         this.useridto = useridto;
     }
 
@@ -145,14 +145,14 @@ public class Message {
     /**
      * @return The fullmessageformat
      */
-    public Integer getFullmessageformat() {
+    public int getFullmessageformat() {
         return fullmessageformat;
     }
 
     /**
      * @param fullmessageformat The fullmessageformat
      */
-    public void setFullmessageformat(Integer fullmessageformat) {
+    public void setFullmessageformat(int fullmessageformat) {
         this.fullmessageformat = fullmessageformat;
     }
 
@@ -187,14 +187,14 @@ public class Message {
     /**
      * @return The notification
      */
-    public Integer getNotification() {
+    public int getNotification() {
         return notification;
     }
 
     /**
      * @param notification The notification
      */
-    public void setNotification(Integer notification) {
+    public void setNotification(int notification) {
         this.notification = notification;
     }
 
@@ -229,28 +229,28 @@ public class Message {
     /**
      * @return The timecreated
      */
-    public Integer getTimecreated() {
+    public int getTimecreated() {
         return timecreated;
     }
 
     /**
      * @param timecreated The timecreated
      */
-    public void setTimecreated(Integer timecreated) {
+    public void setTimecreated(int timecreated) {
         this.timecreated = timecreated;
     }
 
     /**
      * @return The timeread
      */
-    public Integer getTimeread() {
+    public int getTimeread() {
         return timeread;
     }
 
     /**
      * @param timeread The timeread
      */
-    public void setTimeread(Integer timeread) {
+    public void setTimeread(int timeread) {
         this.timeread = timeread;
     }
 

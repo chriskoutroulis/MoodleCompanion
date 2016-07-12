@@ -3,6 +3,7 @@ package ais.koutroulis.gr.client;
 import java.io.IOException;
 
 import ais.koutroulis.gr.model.Courses;
+import ais.koutroulis.gr.model.MarkAsReadResponse;
 import ais.koutroulis.gr.model.Messages;
 import ais.koutroulis.gr.model.Token;
 import ais.koutroulis.gr.model.User;
@@ -13,7 +14,7 @@ import retrofit2.Response;
 /**
  * Created by c0nfr0ntier on 7/7/2016.
  */
-public class RetrofitMoodleClient implements MoodleClient{
+public class RetrofitMoodleClient implements MoodleClient {
 
     private RetroFitClientInitializer<MoodleRetroFitService> clientInitializer;
     private String baseUrl;
@@ -25,7 +26,6 @@ public class RetrofitMoodleClient implements MoodleClient{
     public Response<Token> login(String script, String loginService, String username, String password) throws IOException {
         Call<Token> loginCall = clientInitializer.getService()
                 .getToken(script, username, password, loginService);
-
 
 
         //Asynchronous...
@@ -65,10 +65,18 @@ public class RetrofitMoodleClient implements MoodleClient{
     }
 
     public Response<Messages> getMessages(String script, String format, String token, String function,
-                                      String sentToId, String sentFromId, String oneForReadZeroForUnread) throws IOException {
+                                          String sentToId, String sentFromId, String oneForReadZeroForUnread) throws IOException {
         Call<Messages> getMessagesCall = clientInitializer.getService()
-                .getMessages(script, format, token, function, sentToId, sentFromId, oneForReadZeroForUnread );
+                .getMessages(script, format, token, function, sentToId, sentFromId, oneForReadZeroForUnread);
         Response<Messages> response = getMessagesCall.execute();
+        return response;
+    }
+
+    public Response<MarkAsReadResponse> markAsReadMessage(String script, String format, String token, String function,
+                                                    String unreadMessageId, String timeReadInMillis) throws IOException {
+        Call<MarkAsReadResponse> markAsReadCall = clientInitializer.getService()
+                .markAsReadMessage(script, format, token, function, unreadMessageId, timeReadInMillis);
+        Response<MarkAsReadResponse> response = markAsReadCall.execute();
         return response;
     }
 

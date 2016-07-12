@@ -20,6 +20,7 @@ import ais.koutroulis.gr.client.RetrofitMoodleClient;
 import ais.koutroulis.gr.model.Assignment;
 import ais.koutroulis.gr.model.Course;
 import ais.koutroulis.gr.model.Courses;
+import ais.koutroulis.gr.model.MarkAsReadResponse;
 import ais.koutroulis.gr.model.Messages;
 import ais.koutroulis.gr.model.Token;
 import ais.koutroulis.gr.model.User;
@@ -51,6 +52,7 @@ public class TestRetrofitMoodleClient {
     private static final String ASSIGNMENTS_FUNCTION = "mod_assign_get_assignments";
     private static final String USER_DETAILS_FUNCTION = "core_user_get_users_by_field";
     private static final String GET_MESSAGES_FUNCTION = "core_message_get_messages";
+    private static final String MARK_AS_READ_FUNCTION="core_message_mark_message_read";
 
     private static final String LOGIN_SCRIPT = "token.php";
     private static final String FUNCTIONS_SCRIPT = "server.php";
@@ -309,6 +311,47 @@ public class TestRetrofitMoodleClient {
                 + expectedToken.getToken() + "&wsfunction=" + GET_MESSAGES_FUNCTION
                 + "&useridto=" + ais0058UserId + "&useridfrom=" + anyUser + "&read=" + readTrue)));
         WireMock.reset();
+    }
+
+    @Test
+    public void markAsReadCallShouldReturnAReadMessageId() {
+        String ais0058UserId = "5";
+        String script = "server.php";
+        String unReadMessageId = "4";
+        String timeReadinMillis = "1468315655";
+        stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + script))
+                .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
+                .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
+                .withQueryParam("wsfunction", equalTo(MARK_AS_READ_FUNCTION))
+                .withQueryParam("messageid", equalTo(unReadMessageId))
+                .withQueryParam("timeread", equalTo(timeReadinMillis))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json; charset=utf-8")
+                        .withBody(JsonResponseProvider.getAis0058MarkAsReadMessageJsonString())));
+
+        try {
+            Response<MarkAsReadResponse> responseMarkAsRead = moodleClient.markAsReadMessage(FUNCTIONS_SCRIPT, FORMAT,
+                    expectedToken.getToken(), MARK_AS_READ_FUNCTION, unReadMessageId, timeReadinMillis);
+
+            assertNotNull("There was no read message id returned.", responseMarkAsRead.body().getMessageIdAsRead());
+            assertEquals("The returned read message id was not 4", 4, responseMarkAsRead.body().getMessageIdAsRead());
+
+        } catch (IOException e) {
+        }
+
+        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + "server.php" + "?moodlewsrestformat="
+                + "json" + "&wstoken="
+                + expectedToken.getToken() + "&wsfunction=" + MARK_AS_READ_FUNCTION
+                + "&messageid=" + unReadMessageId + "&timeread=" + timeReadinMillis)));
+        WireMock.reset();
+    }
+
+    @Test
+    public void gettingUnreadMessagesShouldAlsoMarkThemAsRead() {
+        //TODO Implement this test
+        //Check that the unread message list got empty
+        //Check that the read messages list has acquired the previously unread messages.
     }
 
     private void createAppropriateStubForThisUser(String username, String password) {

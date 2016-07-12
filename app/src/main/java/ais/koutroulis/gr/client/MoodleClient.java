@@ -15,4 +15,7 @@ public interface MoodleClient {
 
     public <T> T getMessages(String script, String format, String token, String function,
                              String sentToId, String sentFromId, String oneForReadZeroForUnread) throws IOException;
+
+    public <T> T markAsReadMessage(String script, String format, String token, String function,
+                             String unreadMessageId, String timeReadInMillis) throws IOException;
 }

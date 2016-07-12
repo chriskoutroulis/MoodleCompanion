@@ -13,7 +13,7 @@ public class Course {
 
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private int id;
     @SerializedName("fullname")
     @Expose
     private String fullname;
@@ -22,7 +22,7 @@ public class Course {
     private String shortname;
     @SerializedName("timemodified")
     @Expose
-    private Integer timemodified;
+    private int timemodified;
     @SerializedName("assignments")
     @Expose
     private List<Assignment> assignments = new ArrayList<Assignment>();
@@ -30,14 +30,14 @@ public class Course {
     /**
      * @return The id
      */
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
     /**
      * @param id The id
      */
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -72,14 +72,14 @@ public class Course {
     /**
      * @return The timemodified
      */
-    public Integer getTimemodified() {
+    public int getTimemodified() {
         return timemodified;
     }
 
     /**
      * @param timemodified The timemodified
      */
-    public void setTimemodified(Integer timemodified) {
+    public void setTimemodified(int timemodified) {
         this.timemodified = timemodified;
     }
 

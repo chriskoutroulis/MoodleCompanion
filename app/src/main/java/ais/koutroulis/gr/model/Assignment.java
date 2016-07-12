@@ -11,80 +11,80 @@ public class Assignment {
 
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private int id;
     @SerializedName("cmid")
     @Expose
-    private Integer cmid;
+    private int cmid;
     @SerializedName("course")
     @Expose
-    private Integer course;
+    private int course;
     @SerializedName("name")
     @Expose
     private String name;
     @SerializedName("duedate")
     @Expose
-    private Integer duedate;
+    private int duedate;
     @SerializedName("allowsubmissionsfromdate")
     @Expose
-    private Integer allowsubmissionsfromdate;
+    private int allowsubmissionsfromdate;
     @SerializedName("grade")
     @Expose
-    private Integer grade;
+    private int grade;
     @SerializedName("timemodified")
     @Expose
-    private Integer timemodified;
+    private int timemodified;
     @SerializedName("completionsubmit")
     @Expose
-    private Integer completionsubmit;
+    private int completionsubmit;
     @SerializedName("cutoffdate")
     @Expose
-    private Integer cutoffdate;
+    private int cutoffdate;
     @SerializedName("intro")
     @Expose
     private String intro;
     @SerializedName("introformat")
     @Expose
-    private Integer introformat;
+    private int introformat;
 
     /**
      * @return The id
      */
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
     /**
      * @param id The id
      */
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
     /**
      * @return The cmid
      */
-    public Integer getCmid() {
+    public int getCmid() {
         return cmid;
     }
 
     /**
      * @param cmid The cmid
      */
-    public void setCmid(Integer cmid) {
+    public void setCmid(int cmid) {
         this.cmid = cmid;
     }
 
     /**
      * @return The course
      */
-    public Integer getCourse() {
+    public int getCourse() {
         return course;
     }
 
     /**
      * @param course The course
      */
-    public void setCourse(Integer course) {
+    public void setCourse(int course) {
         this.course = course;
     }
 
@@ -105,84 +105,84 @@ public class Assignment {
     /**
      * @return The duedate
      */
-    public Integer getDuedate() {
+    public int getDuedate() {
         return duedate;
     }
 
     /**
      * @param duedate The duedate
      */
-    public void setDuedate(Integer duedate) {
+    public void setDuedate(int duedate) {
         this.duedate = duedate;
     }
 
     /**
      * @return The allowsubmissionsfromdate
      */
-    public Integer getAllowsubmissionsfromdate() {
+    public int getAllowsubmissionsfromdate() {
         return allowsubmissionsfromdate;
     }
 
     /**
      * @param allowsubmissionsfromdate The allowsubmissionsfromdate
      */
-    public void setAllowsubmissionsfromdate(Integer allowsubmissionsfromdate) {
+    public void setAllowsubmissionsfromdate(int allowsubmissionsfromdate) {
         this.allowsubmissionsfromdate = allowsubmissionsfromdate;
     }
 
     /**
      * @return The grade
      */
-    public Integer getGrade() {
+    public int getGrade() {
         return grade;
     }
 
     /**
      * @param grade The grade
      */
-    public void setGrade(Integer grade) {
+    public void setGrade(int grade) {
         this.grade = grade;
     }
 
     /**
      * @return The timemodified
      */
-    public Integer getTimemodified() {
+    public int getTimemodified() {
         return timemodified;
     }
 
     /**
      * @param timemodified The timemodified
      */
-    public void setTimemodified(Integer timemodified) {
+    public void setTimemodified(int timemodified) {
         this.timemodified = timemodified;
     }
 
     /**
      * @return The completionsubmit
      */
-    public Integer getCompletionsubmit() {
+    public int getCompletionsubmit() {
         return completionsubmit;
     }
 
     /**
      * @param completionsubmit The completionsubmit
      */
-    public void setCompletionsubmit(Integer completionsubmit) {
+    public void setCompletionsubmit(int completionsubmit) {
         this.completionsubmit = completionsubmit;
     }
 
     /**
      * @return The cutoffdate
      */
-    public Integer getCutoffdate() {
+    public int getCutoffdate() {
         return cutoffdate;
     }
 
     /**
      * @param cutoffdate The cutoffdate
      */
-    public void setCutoffdate(Integer cutoffdate) {
+    public void setCutoffdate(int cutoffdate) {
         this.cutoffdate = cutoffdate;
     }
 
@@ -203,14 +203,14 @@ public class Assignment {
     /**
      * @return The introformat
      */
-    public Integer getIntroformat() {
+    public int getIntroformat() {
         return introformat;
     }
 
     /**
      * @param introformat The introformat
      */
-    public void setIntroformat(Integer introformat) {
+    public void setIntroformat(int introformat) {
         this.introformat = introformat;
     }
 }
