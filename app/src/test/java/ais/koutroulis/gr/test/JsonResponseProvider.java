@@ -414,6 +414,11 @@ public class JsonResponseProvider {
             "  \"warnings\": []\n" +
             "}";
 
+    private static String ais0058SecondCallForUnreadMessagesJsonString = "{\n" +
+            "  \"messages\": [],\n" +
+            "  \"warnings\": []\n" +
+            "}";
+
     public static String getAis0058GrantTokenJsonString() {
         return ais0058GrantTokenJsonString;
     }
@@ -440,5 +445,9 @@ public class JsonResponseProvider {
 
     public static String getAis0058MarkAsReadMessageJsonString() {
         return ais0058MarkAsReadMessageJsonString;
+    }
+
+    public static String getAis0058SecondCallForUnreadMessagesJsonString() {
+        return ais0058SecondCallForUnreadMessagesJsonString;
     }
 }

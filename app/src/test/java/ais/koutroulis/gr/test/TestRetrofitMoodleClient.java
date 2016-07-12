@@ -52,7 +52,7 @@ public class TestRetrofitMoodleClient {
     private static final String ASSIGNMENTS_FUNCTION = "mod_assign_get_assignments";
     private static final String USER_DETAILS_FUNCTION = "core_user_get_users_by_field";
     private static final String GET_MESSAGES_FUNCTION = "core_message_get_messages";
-    private static final String MARK_AS_READ_FUNCTION="core_message_mark_message_read";
+    private static final String MARK_AS_READ_FUNCTION = "core_message_mark_message_read";
 
     private static final String LOGIN_SCRIPT = "token.php";
     private static final String FUNCTIONS_SCRIPT = "server.php";
@@ -66,6 +66,12 @@ public class TestRetrofitMoodleClient {
     private Response<Token> response;
 
     private static Map<String, String> registeredUsers;
+    private String ais0058UserId = "5";
+    private String anyUser = "0";
+    private String readFalse = "0";
+    private String readTrue = "1";
+    private String unReadMessageId = "4";
+    private String timeReadinMillis = "1468315655";
 
     @Before
     public void setup() {
@@ -206,8 +212,7 @@ public class TestRetrofitMoodleClient {
 
     @Test
     public void shouldContainSpecificDetailsForAGivenUsername() {
-        String script = "server.php";
-        stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + script))
+        stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT))
                 .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
                 .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
                 .withQueryParam("wsfunction", equalTo(USER_DETAILS_FUNCTION))
@@ -236,25 +241,11 @@ public class TestRetrofitMoodleClient {
 
     @Test
     public void shouldContainTwoSpecificUnreadMessages() {
-        String ais0058UserId = "5";
-        String anyUser = "0";
-        String script = "server.php";
-        String readFalse = "0";
-        stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + script))
-                .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
-                .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
-                .withQueryParam("wsfunction", equalTo(GET_MESSAGES_FUNCTION))
-                .withQueryParam("useridto", equalTo(ais0058UserId))
-                .withQueryParam("useridfrom", equalTo(anyUser))
-                .withQueryParam("read", equalTo(readFalse))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json; charset=utf-8")
-                        .withBody(JsonResponseProvider.getAis0058UnreadMessagesJsonString())));
+        wireMockStubForGettingUnreadMessages();
 
         try {
             Response<Messages> responseUnreadMessages = moodleClient.getMessages(FUNCTIONS_SCRIPT, FORMAT,
-                    expectedToken.getToken(), GET_MESSAGES_FUNCTION, ais0058UserId, anyUser, readFalse);
+                    expectedToken.getToken(), GET_MESSAGES_FUNCTION, MARK_AS_READ_FUNCTION, ais0058UserId, anyUser, readFalse);
             assertEquals("The unread messages were not 2 as expected.", 2, responseUnreadMessages.body().getMessages().size());
 
             assertTrue("The first message is not the one that was expected.",
@@ -275,25 +266,10 @@ public class TestRetrofitMoodleClient {
 
     @Test
     public void shouldContainThreeSpecificReadMessages() {
-        String ais0058UserId = "5";
-        String anyUser = "0";
-        String script = "server.php";
-        String readTrue = "1";
-        stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + script))
-                .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
-                .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
-                .withQueryParam("wsfunction", equalTo(GET_MESSAGES_FUNCTION))
-                .withQueryParam("useridto", equalTo(ais0058UserId))
-                .withQueryParam("useridfrom", equalTo(anyUser))
-                .withQueryParam("read", equalTo(readTrue))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json; charset=utf-8")
-                        .withBody(JsonResponseProvider.getAis0058ReadMessagesJsonString())));
-
+        wireMockStubForGettingReadMessages();
         try {
             Response<Messages> responseReadMessages = moodleClient.getMessages(FUNCTIONS_SCRIPT, FORMAT,
-                    expectedToken.getToken(), GET_MESSAGES_FUNCTION, ais0058UserId, anyUser, readTrue);
+                    expectedToken.getToken(), GET_MESSAGES_FUNCTION, MARK_AS_READ_FUNCTION, ais0058UserId, anyUser, readTrue);
             assertEquals("The read messages were not 3 as expected.", 3, responseReadMessages.body().getMessages().size());
             assertTrue("The first message is not the one that was expected.",
                     responseReadMessages.body().getMessages().get(0).getFullmessage()
@@ -315,21 +291,8 @@ public class TestRetrofitMoodleClient {
 
     @Test
     public void markAsReadCallShouldReturnAReadMessageId() {
-        String ais0058UserId = "5";
-        String script = "server.php";
-        String unReadMessageId = "4";
-        String timeReadinMillis = "1468315655";
-        stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + script))
-                .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
-                .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
-                .withQueryParam("wsfunction", equalTo(MARK_AS_READ_FUNCTION))
-                .withQueryParam("messageid", equalTo(unReadMessageId))
-                .withQueryParam("timeread", equalTo(timeReadinMillis))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json; charset=utf-8")
-                        .withBody(JsonResponseProvider.getAis0058MarkAsReadMessageJsonString())));
 
+        wireMockStubForMarkingAsReadMessages();
         try {
             Response<MarkAsReadResponse> responseMarkAsRead = moodleClient.markAsReadMessage(FUNCTIONS_SCRIPT, FORMAT,
                     expectedToken.getToken(), MARK_AS_READ_FUNCTION, unReadMessageId, timeReadinMillis);
@@ -352,6 +315,8 @@ public class TestRetrofitMoodleClient {
         //TODO Implement this test
         //Check that the unread message list got empty
         //Check that the read messages list has acquired the previously unread messages.
+        //Check that when asking for unread messages, the markAllUnreadMessagesAsRead() gets called
+        //as many times as the unread messages. Maybe with WireMock.verify in a loop for each messageId.
     }
 
     private void createAppropriateStubForThisUser(String username, String password) {
@@ -394,6 +359,61 @@ public class TestRetrofitMoodleClient {
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json; charset=utf-8")
                         .withBody(JsonResponseProvider.getFourCoursesAndTwoAssignmentsJsonString())));
+    }
+
+    private void wireMockStubForGettingUnreadMessages() {
+        stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT))
+                .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
+                .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
+                .withQueryParam("wsfunction", equalTo(GET_MESSAGES_FUNCTION))
+                .withQueryParam("useridto", equalTo(ais0058UserId))
+                .withQueryParam("useridfrom", equalTo(anyUser))
+                .withQueryParam("read", equalTo(readFalse))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json; charset=utf-8")
+                        .withBody(JsonResponseProvider.getAis0058UnreadMessagesJsonString())));
+    }
+
+    private void wireMockStubForGettingReadMessages() {
+        stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT))
+                .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
+                .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
+                .withQueryParam("wsfunction", equalTo(GET_MESSAGES_FUNCTION))
+                .withQueryParam("useridto", equalTo(ais0058UserId))
+                .withQueryParam("useridfrom", equalTo(anyUser))
+                .withQueryParam("read", equalTo(readTrue))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json; charset=utf-8")
+                        .withBody(JsonResponseProvider.getAis0058ReadMessagesJsonString())));
+    }
+
+    private void wireMockStubForMarkingAsReadMessages() {
+        stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT))
+                .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
+                .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
+                .withQueryParam("wsfunction", equalTo(MARK_AS_READ_FUNCTION))
+                .withQueryParam("messageid", equalTo(unReadMessageId))
+                .withQueryParam("timeread", equalTo(timeReadinMillis))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json; charset=utf-8")
+                        .withBody(JsonResponseProvider.getAis0058MarkAsReadMessageJsonString())));
+    }
+
+    private void wireMockStubForGettingZeroUnreadMessages() {
+        stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT))
+                .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
+                .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
+                .withQueryParam("wsfunction", equalTo(GET_MESSAGES_FUNCTION))
+                .withQueryParam("useridto", equalTo(ais0058UserId))
+                .withQueryParam("useridfrom", equalTo(anyUser))
+                .withQueryParam("read", equalTo(readFalse))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json; charset=utf-8")
+                        .withBody(JsonResponseProvider.getAis0058SecondCallForUnreadMessagesJsonString())));
     }
 }
 

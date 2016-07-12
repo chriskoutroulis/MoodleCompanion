@@ -1,9 +1,11 @@
 package ais.koutroulis.gr.client;
 
 import java.io.IOException;
+import java.util.List;
 
 import ais.koutroulis.gr.model.Courses;
 import ais.koutroulis.gr.model.MarkAsReadResponse;
+import ais.koutroulis.gr.model.Message;
 import ais.koutroulis.gr.model.Messages;
 import ais.koutroulis.gr.model.Token;
 import ais.koutroulis.gr.model.User;
@@ -64,20 +66,37 @@ public class RetrofitMoodleClient implements MoodleClient {
         return response;
     }
 
-    public Response<Messages> getMessages(String script, String format, String token, String function,
+    public Response<Messages> getMessages(String script, String format, String token, String getMessagesFunction, String markAsReadFunction,
                                           String sentToId, String sentFromId, String oneForReadZeroForUnread) throws IOException {
         Call<Messages> getMessagesCall = clientInitializer.getService()
-                .getMessages(script, format, token, function, sentToId, sentFromId, oneForReadZeroForUnread);
+                .getMessages(script, format, token, getMessagesFunction, sentToId, sentFromId, oneForReadZeroForUnread);
         Response<Messages> response = getMessagesCall.execute();
+
+        //if the call was for unread messages
+        if(oneForReadZeroForUnread.equals("0")) {
+            markAllUnreadMessagesAsRead(script, format, token, markAsReadFunction, response.body().getMessages());
+        }
+
         return response;
     }
 
     public Response<MarkAsReadResponse> markAsReadMessage(String script, String format, String token, String function,
-                                                    String unreadMessageId, String timeReadInMillis) throws IOException {
+                                                          String unreadMessageId, String timeReadInMillis) throws IOException {
         Call<MarkAsReadResponse> markAsReadCall = clientInitializer.getService()
                 .markAsReadMessage(script, format, token, function, unreadMessageId, timeReadInMillis);
         Response<MarkAsReadResponse> response = markAsReadCall.execute();
         return response;
+    }
+
+    private void markAllUnreadMessagesAsRead(String script, String format, String token,
+                                            String function, List<Message> messageList) throws IOException {
+        if (!messageList.isEmpty()) {
+            for (Message oneMessage: messageList) {
+                markAsReadMessage(script, format, token, function,
+                        Integer.toString(oneMessage.getId()), Long.toString(System.currentTimeMillis()));
+            }
+        }
+
     }
 
 }
