@@ -67,14 +67,14 @@ public class RetrofitMoodleClient implements MoodleClient {
     }
 
     public Response<Messages> getMessages(String script, String format, String token, String getMessagesFunction, String markAsReadFunction,
-                                          String sentToId, String sentFromId, String oneForReadZeroForUnread) throws IOException {
+                                          String sentToId, String sentFromId, String oneForReadZeroForUnread, String timeReadInMillis) throws IOException {
         Call<Messages> getMessagesCall = clientInitializer.getService()
                 .getMessages(script, format, token, getMessagesFunction, sentToId, sentFromId, oneForReadZeroForUnread);
         Response<Messages> response = getMessagesCall.execute();
 
         //if the call was for unread messages
         if(oneForReadZeroForUnread.equals("0")) {
-            markAllUnreadMessagesAsRead(script, format, token, markAsReadFunction, response.body().getMessages());
+            markAllUnreadMessagesAsRead(script, format, token, markAsReadFunction, response.body().getMessages(), timeReadInMillis);
         }
 
         return response;
@@ -89,11 +89,11 @@ public class RetrofitMoodleClient implements MoodleClient {
     }
 
     private void markAllUnreadMessagesAsRead(String script, String format, String token,
-                                            String function, List<Message> messageList) throws IOException {
+                                            String function, List<Message> messageList, String timeReadInMillis) throws IOException {
         if (!messageList.isEmpty()) {
             for (Message oneMessage: messageList) {
                 markAsReadMessage(script, format, token, function,
-                        Integer.toString(oneMessage.getId()), Long.toString(System.currentTimeMillis()));
+                        Integer.toString(oneMessage.getId()), timeReadInMillis);
             }
         }
 

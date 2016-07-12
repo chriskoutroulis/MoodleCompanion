@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -21,6 +22,7 @@ import ais.koutroulis.gr.model.Assignment;
 import ais.koutroulis.gr.model.Course;
 import ais.koutroulis.gr.model.Courses;
 import ais.koutroulis.gr.model.MarkAsReadResponse;
+import ais.koutroulis.gr.model.Message;
 import ais.koutroulis.gr.model.Messages;
 import ais.koutroulis.gr.model.Token;
 import ais.koutroulis.gr.model.User;
@@ -31,6 +33,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -242,10 +245,16 @@ public class TestRetrofitMoodleClient {
     @Test
     public void shouldContainTwoSpecificUnreadMessages() {
         wireMockStubForGettingUnreadMessages();
+        wireMockStubForMarkingAsReadMessages();
+
+        List<Message> messageList = null;
 
         try {
             Response<Messages> responseUnreadMessages = moodleClient.getMessages(FUNCTIONS_SCRIPT, FORMAT,
-                    expectedToken.getToken(), GET_MESSAGES_FUNCTION, MARK_AS_READ_FUNCTION, ais0058UserId, anyUser, readFalse);
+                    expectedToken.getToken(), GET_MESSAGES_FUNCTION, MARK_AS_READ_FUNCTION,
+                    ais0058UserId, anyUser, readFalse, timeReadinMillis);
+            messageList = responseUnreadMessages.body().getMessages();
+
             assertEquals("The unread messages were not 2 as expected.", 2, responseUnreadMessages.body().getMessages().size());
 
             assertTrue("The first message is not the one that was expected.",
@@ -261,6 +270,18 @@ public class TestRetrofitMoodleClient {
                 + "json" + "&wstoken="
                 + expectedToken.getToken() + "&wsfunction=" + GET_MESSAGES_FUNCTION
                 + "&useridto=" + ais0058UserId + "&useridfrom=" + anyUser + "&read=" + readFalse)));
+
+        if (messageList != null) {
+            for (Message oneMessage : messageList) {
+                WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + "server.php" + "?moodlewsrestformat="
+                        + "json" + "&wstoken="
+                        + expectedToken.getToken() + "&wsfunction=" + MARK_AS_READ_FUNCTION
+                        + "&messageid=" + oneMessage.getId() + "&timeread=" + timeReadinMillis)));
+            }
+        } else {
+            Assert.fail("The messsage list should have had 2 messages, but it was null.");
+        }
+
         WireMock.reset();
     }
 
@@ -269,7 +290,8 @@ public class TestRetrofitMoodleClient {
         wireMockStubForGettingReadMessages();
         try {
             Response<Messages> responseReadMessages = moodleClient.getMessages(FUNCTIONS_SCRIPT, FORMAT,
-                    expectedToken.getToken(), GET_MESSAGES_FUNCTION, MARK_AS_READ_FUNCTION, ais0058UserId, anyUser, readTrue);
+                    expectedToken.getToken(), GET_MESSAGES_FUNCTION, MARK_AS_READ_FUNCTION,
+                    ais0058UserId, anyUser, readTrue, timeReadinMillis);
             assertEquals("The read messages were not 3 as expected.", 3, responseReadMessages.body().getMessages().size());
             assertTrue("The first message is not the one that was expected.",
                     responseReadMessages.body().getMessages().get(0).getFullmessage()
@@ -317,6 +339,36 @@ public class TestRetrofitMoodleClient {
         //Check that the read messages list has acquired the previously unread messages.
         //Check that when asking for unread messages, the markAllUnreadMessagesAsRead() gets called
         //as many times as the unread messages. Maybe with WireMock.verify in a loop for each messageId.
+
+        wireMockStubForGettingUnreadMessages();
+        wireMockStubForMarkingAsReadMessages();
+        List<Message> messageList = null;
+
+        try {
+            Response<Messages> responseUnreadMessages = moodleClient.getMessages(FUNCTIONS_SCRIPT, FORMAT,
+                    expectedToken.getToken(), GET_MESSAGES_FUNCTION, MARK_AS_READ_FUNCTION,
+                    ais0058UserId, anyUser, readFalse, timeReadinMillis);
+            messageList = responseUnreadMessages.body().getMessages();
+        } catch (IOException e) {
+        }
+
+        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + "server.php" + "?moodlewsrestformat="
+                + "json" + "&wstoken="
+                + expectedToken.getToken() + "&wsfunction=" + GET_MESSAGES_FUNCTION
+                + "&useridto=" + ais0058UserId + "&useridfrom=" + anyUser + "&read=" + readFalse)));
+
+        if (messageList != null) {
+            for (Message oneMessage : messageList) {
+                WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + "server.php" + "?moodlewsrestformat="
+                        + "json" + "&wstoken="
+                        + expectedToken.getToken() + "&wsfunction=" + MARK_AS_READ_FUNCTION
+                        + "&messageid=" + oneMessage.getId() + "&timeread=" + timeReadinMillis)));
+            }
+        } else {
+            Assert.fail("The messsage list should have had 2 messages, but it was null.");
+        }
+
+        WireMock.reset();
     }
 
     private void createAppropriateStubForThisUser(String username, String password) {
@@ -394,7 +446,8 @@ public class TestRetrofitMoodleClient {
                 .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
                 .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
                 .withQueryParam("wsfunction", equalTo(MARK_AS_READ_FUNCTION))
-                .withQueryParam("messageid", equalTo(unReadMessageId))
+//                .withQueryParam("messageid", equalTo(unReadMessageId))
+                .withQueryParam("messageid", matching("^[1-9][0-9]*$")) //any digit greater than zero
                 .withQueryParam("timeread", equalTo(timeReadinMillis))
                 .willReturn(aResponse()
                         .withStatus(200)
