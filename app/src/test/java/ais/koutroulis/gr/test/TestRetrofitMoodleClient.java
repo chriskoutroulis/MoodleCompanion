@@ -3,6 +3,7 @@ package ais.koutroulis.gr.test;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
+import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -284,6 +285,7 @@ public class TestRetrofitMoodleClient {
                 + expectedToken.getToken() + "&wsfunction=" + GET_MESSAGES_FUNCTION
                 + "&useridto=" + ais0058UserId + "&useridfrom=" + anyUser + "&read=" + readFalse)));
 
+        //Verify the internal calls to mark everything as read
         if (messageList != null) {
             for (Message oneMessage : messageList) {
                 WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + "server.php" + "?moodlewsrestformat="
@@ -346,16 +348,18 @@ public class TestRetrofitMoodleClient {
     }
 
     @Test
-    public void gettingUnreadMessagesShouldAlsoMarkThemAsRead() {
-        //TODO Implement this test
-        //Check that the unread message list got empty
-        //Check that the read messages list has acquired the previously unread messages.
+    public void gettingUnreadMessagesShouldTriggerMarkAsReadCalls() {
         //Check that when asking for unread messages, the markAllUnreadMessagesAsRead() gets called
         //as many times as the unread messages. Maybe with WireMock.verify in a loop for each messageId.
 
         wireMockStubForGettingUnreadMessages();
         wireMockStubForMarkingAsReadMessages();
         List<Message> messageList = null;
+
+        List<String> expectedRequests = new ArrayList();
+        expectedRequests.add("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT + "?moodlewsrestformat=" + FORMAT +
+                "&wstoken=" + expectedToken.getToken() + "&wsfunction=" + GET_MESSAGES_FUNCTION + "&useridto=" + ais0058UserId +
+                "&useridfrom=" + anyUser + "&read=" + readFalse);
 
         try {
             Response<Messages> responseUnreadMessages = moodleClient.getMessages(FUNCTIONS_SCRIPT, FORMAT,
@@ -372,14 +376,68 @@ public class TestRetrofitMoodleClient {
 
         if (messageList != null) {
             for (Message oneMessage : messageList) {
+
+                expectedRequests.add("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT + "?moodlewsrestformat=" + FORMAT +
+                        "&wstoken=" + expectedToken.getToken() + "&wsfunction=" + MARK_AS_READ_FUNCTION +
+                        "&messageid=" + oneMessage.getId() + "&timeread=" + timeReadinMillis);
+
                 WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + "server.php" + "?moodlewsrestformat="
                         + "json" + "&wstoken="
                         + expectedToken.getToken() + "&wsfunction=" + MARK_AS_READ_FUNCTION
                         + "&messageid=" + oneMessage.getId() + "&timeread=" + timeReadinMillis)));
             }
+
+            List<LoggedRequest> loggedRequests = findAll(getRequestedFor(urlMatching("/moodle/.*")));
+
+            assertEquals("The number of expected calls was not the same as the ones logged.",
+                    expectedRequests.size(), loggedRequests.size());
+
+            int i = 0;
+            for (LoggedRequest loggedRequest : loggedRequests) {
+                assertEquals("One expected request was not found in the logged requests.",
+                        expectedRequests.get(i), loggedRequest.getUrl());
+                i++;
+            }
         } else {
             Assert.fail("The messsage list should have had 2 messages, but it was null.");
         }
+
+        WireMock.reset();
+    }
+
+    @Test
+    public void gettingReadMessagesShouldNotTriggerMarkAsReadCalls() {
+
+        wireMockStubForGettingReadMessages();
+
+        List<String> expectedRequests = new ArrayList();
+        expectedRequests.add("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT + "?moodlewsrestformat=" + FORMAT +
+                "&wstoken=" + expectedToken.getToken() + "&wsfunction=" + GET_MESSAGES_FUNCTION + "&useridto=" + ais0058UserId +
+                "&useridfrom=" + anyUser + "&read=" + readTrue);
+
+        try {
+            Response<Messages> responseUnreadMessages = moodleClient.getMessages(FUNCTIONS_SCRIPT, FORMAT,
+                    expectedToken.getToken(), GET_MESSAGES_FUNCTION, MARK_AS_READ_FUNCTION,
+                    ais0058UserId, anyUser, readTrue, timeReadinMillis);
+        } catch (IOException e) {
+        }
+
+        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + "server.php" + "?moodlewsrestformat="
+                + "json" + "&wstoken="
+                + expectedToken.getToken() + "&wsfunction=" + GET_MESSAGES_FUNCTION
+                + "&useridto=" + ais0058UserId + "&useridfrom=" + anyUser + "&read=" + readTrue)));
+
+            List<LoggedRequest> loggedRequests = findAll(getRequestedFor(urlMatching("/moodle/.*")));
+
+            assertEquals("The number of expected calls was not the same as the ones logged.",
+                    expectedRequests.size(), loggedRequests.size());
+
+            int i = 0;
+            for (LoggedRequest loggedRequest : loggedRequests) {
+                assertEquals("One expected request was not found in the logged requests.",
+                        expectedRequests.get(i), loggedRequest.getUrl());
+                i++;
+            }
 
         WireMock.reset();
     }
