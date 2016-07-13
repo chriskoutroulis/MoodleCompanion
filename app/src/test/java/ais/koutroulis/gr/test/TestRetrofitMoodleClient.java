@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import ais.koutroulis.gr.client.MoodleClient;
+import ais.koutroulis.gr.client.MoodleUrlCommonParts;
 import ais.koutroulis.gr.client.RetrofitMoodleClient;
 import ais.koutroulis.gr.model.Assignment;
 import ais.koutroulis.gr.model.Course;
@@ -80,6 +81,8 @@ public class TestRetrofitMoodleClient {
     private String unReadMessageId = "4";
     private String timeReadinMillis = "1468315655";
 
+    private MoodleUrlCommonParts urlCommonParts;
+
     @Before
     public void setup() {
         JsonResponseProvider.getAis0058ReadMessagesJsonString();
@@ -96,6 +99,8 @@ public class TestRetrofitMoodleClient {
         callingPassword = "rightpassword1";
         expectedToken.setToken("grantAccessToken");
         moodleClient = new RetrofitMoodleClient(BASE_URL);
+        urlCommonParts = new MoodleUrlCommonParts(FUNCTIONS_SCRIPT, FORMAT,
+                expectedToken.getToken(), null);
     }
 
     @After
@@ -160,10 +165,11 @@ public class TestRetrofitMoodleClient {
 
     @Test
     public void responseShouldContainFourCourses() {
+        urlCommonParts.setFunction(ASSIGNMENTS_FUNCTION);
         assertNotNull("The response string is null!", JsonResponseProvider.getFourCoursesAndTwoAssignmentsJsonString());
         wireMockStubForFunction(ASSIGNMENTS_FUNCTION);
         try {
-            Response<Courses> responseCourses = moodleClient.getCourses(FUNCTIONS_SCRIPT, FORMAT, expectedToken.getToken(), ASSIGNMENTS_FUNCTION);
+            Response<Courses> responseCourses = moodleClient.getCourses(urlCommonParts);
             Assert.assertEquals("The status code is not 200.", 200, responseCourses.code());
             assertEquals("There should be 4 courses in this response.", 4, responseCourses.body().getCourses().size());
         } catch (IOException ie) {
@@ -177,11 +183,11 @@ public class TestRetrofitMoodleClient {
 
     @Test
     public void responseShouldContainTwoAssignments() {
+        urlCommonParts.setFunction(ASSIGNMENTS_FUNCTION);
         wireMockStubForFunction(ASSIGNMENTS_FUNCTION);
 
         try {
-            Response<Courses> responseCourses = moodleClient.getCourses(FUNCTIONS_SCRIPT, FORMAT,
-                    expectedToken.getToken(), ASSIGNMENTS_FUNCTION);
+            Response<Courses> responseCourses = moodleClient.getCourses(urlCommonParts);
             List<Course> courses = responseCourses.body().getCourses();
             List<Assignment> aggregatedAssignments = new ArrayList<>();
             for (Course oneCourse : courses) {
@@ -200,11 +206,11 @@ public class TestRetrofitMoodleClient {
 
     @Test
     public void responseShouldHaveASpecificAssignmentIntro() {
+        urlCommonParts.setFunction(ASSIGNMENTS_FUNCTION);
         wireMockStubForFunction(ASSIGNMENTS_FUNCTION);
 
         try {
-            Response<Courses> responseCourses = moodleClient.getCourses(FUNCTIONS_SCRIPT, FORMAT,
-                    expectedToken.getToken(), ASSIGNMENTS_FUNCTION);
+            Response<Courses> responseCourses = moodleClient.getCourses(urlCommonParts);
             List<Course> courses = responseCourses.body().getCourses();
             List<Assignment> aggregatedAssignments = new ArrayList<>();
             for (Course oneCourse : courses) {
@@ -229,6 +235,9 @@ public class TestRetrofitMoodleClient {
 
     @Test
     public void shouldContainSpecificDetailsForAGivenUsername() {
+
+        urlCommonParts.setFunction(USER_DETAILS_FUNCTION);
+
         stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT))
                 .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
                 .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
@@ -241,8 +250,7 @@ public class TestRetrofitMoodleClient {
                         .withBody(JsonResponseProvider.getAis0058UserDetailsJsonString())));
 
         try {
-            Response<User> responseUserDetails = moodleClient.getUserDetails(FUNCTIONS_SCRIPT, FORMAT,
-                    expectedToken.getToken(), USER_DETAILS_FUNCTION, "username", "ais0058");
+            Response<User> responseUserDetails = moodleClient.getUserDetails(urlCommonParts, "username", "ais0058");
             assertEquals("The user does not have the expected full name.", "Ioannis Antonatos",
                     responseUserDetails.body().getFullname());
             assertEquals("The user's email is not the expected one.", "antonatos@hotmail.com", responseUserDetails.body().getEmail());
@@ -258,14 +266,15 @@ public class TestRetrofitMoodleClient {
 
     @Test
     public void shouldContainTwoSpecificUnreadMessages() {
+        urlCommonParts.setFunction(GET_MESSAGES_FUNCTION);
+
         wireMockStubForGettingUnreadMessages();
         wireMockStubForMarkingAsReadMessages();
 
         List<Message> messageList = null;
 
         try {
-            Response<Messages> responseUnreadMessages = moodleClient.getMessages(FUNCTIONS_SCRIPT, FORMAT,
-                    expectedToken.getToken(), GET_MESSAGES_FUNCTION, MARK_AS_READ_FUNCTION,
+            Response<Messages> responseUnreadMessages = moodleClient.getMessages(urlCommonParts, MARK_AS_READ_FUNCTION,
                     ais0058UserId, anyUser, readFalse, timeReadinMillis);
             messageList = responseUnreadMessages.body().getMessages();
 
@@ -302,10 +311,12 @@ public class TestRetrofitMoodleClient {
 
     @Test
     public void shouldContainThreeSpecificReadMessages() {
+
+        urlCommonParts.setFunction(GET_MESSAGES_FUNCTION);
+
         wireMockStubForGettingReadMessages();
         try {
-            Response<Messages> responseReadMessages = moodleClient.getMessages(FUNCTIONS_SCRIPT, FORMAT,
-                    expectedToken.getToken(), GET_MESSAGES_FUNCTION, MARK_AS_READ_FUNCTION,
+            Response<Messages> responseReadMessages = moodleClient.getMessages(urlCommonParts, MARK_AS_READ_FUNCTION,
                     ais0058UserId, anyUser, readTrue, timeReadinMillis);
             assertEquals("The read messages were not 3 as expected.", 3, responseReadMessages.body().getMessages().size());
             assertTrue("The first message is not the one that was expected.",
@@ -329,10 +340,12 @@ public class TestRetrofitMoodleClient {
     @Test
     public void markAsReadCallShouldReturnAReadMessageId() {
 
+        urlCommonParts.setFunction(MARK_AS_READ_FUNCTION);
+
         wireMockStubForMarkingAsReadMessages();
         try {
-            Response<MarkAsReadResponse> responseMarkAsRead = moodleClient.markAsReadMessage(FUNCTIONS_SCRIPT, FORMAT,
-                    expectedToken.getToken(), MARK_AS_READ_FUNCTION, unReadMessageId, timeReadinMillis);
+            Response<MarkAsReadResponse> responseMarkAsRead = moodleClient.markAsReadMessage(urlCommonParts,
+                    unReadMessageId, timeReadinMillis);
 
             assertNotNull("There was no read message id returned.", responseMarkAsRead.body().getMessageIdAsRead());
             assertEquals("The returned read message id was not 4", 4, responseMarkAsRead.body().getMessageIdAsRead());
@@ -352,6 +365,8 @@ public class TestRetrofitMoodleClient {
         //Check that when asking for unread messages, the markAllUnreadMessagesAsRead() gets called
         //as many times as the unread messages. Maybe with WireMock.verify in a loop for each messageId.
 
+        urlCommonParts.setFunction(GET_MESSAGES_FUNCTION);
+
         wireMockStubForGettingUnreadMessages();
         wireMockStubForMarkingAsReadMessages();
         List<Message> messageList = null;
@@ -362,8 +377,7 @@ public class TestRetrofitMoodleClient {
                 "&useridfrom=" + anyUser + "&read=" + readFalse);
 
         try {
-            Response<Messages> responseUnreadMessages = moodleClient.getMessages(FUNCTIONS_SCRIPT, FORMAT,
-                    expectedToken.getToken(), GET_MESSAGES_FUNCTION, MARK_AS_READ_FUNCTION,
+            Response<Messages> responseUnreadMessages = moodleClient.getMessages(urlCommonParts, MARK_AS_READ_FUNCTION,
                     ais0058UserId, anyUser, readFalse, timeReadinMillis);
             messageList = responseUnreadMessages.body().getMessages();
         } catch (IOException e) {
@@ -408,6 +422,8 @@ public class TestRetrofitMoodleClient {
     @Test
     public void gettingReadMessagesShouldNotTriggerMarkAsReadCalls() {
 
+        urlCommonParts.setFunction(GET_MESSAGES_FUNCTION);
+
         wireMockStubForGettingReadMessages();
 
         List<String> expectedRequests = new ArrayList();
@@ -416,8 +432,7 @@ public class TestRetrofitMoodleClient {
                 "&useridfrom=" + anyUser + "&read=" + readTrue);
 
         try {
-            Response<Messages> responseUnreadMessages = moodleClient.getMessages(FUNCTIONS_SCRIPT, FORMAT,
-                    expectedToken.getToken(), GET_MESSAGES_FUNCTION, MARK_AS_READ_FUNCTION,
+            Response<Messages> responseUnreadMessages = moodleClient.getMessages(urlCommonParts, MARK_AS_READ_FUNCTION,
                     ais0058UserId, anyUser, readTrue, timeReadinMillis);
         } catch (IOException e) {
         }
@@ -427,17 +442,17 @@ public class TestRetrofitMoodleClient {
                 + expectedToken.getToken() + "&wsfunction=" + GET_MESSAGES_FUNCTION
                 + "&useridto=" + ais0058UserId + "&useridfrom=" + anyUser + "&read=" + readTrue)));
 
-            List<LoggedRequest> loggedRequests = findAll(getRequestedFor(urlMatching("/moodle/.*")));
+        List<LoggedRequest> loggedRequests = findAll(getRequestedFor(urlMatching("/moodle/.*")));
 
-            assertEquals("The number of expected calls was not the same as the ones logged.",
-                    expectedRequests.size(), loggedRequests.size());
+        assertEquals("The number of expected calls was not the same as the ones logged.",
+                expectedRequests.size(), loggedRequests.size());
 
-            int i = 0;
-            for (LoggedRequest loggedRequest : loggedRequests) {
-                assertEquals("One expected request was not found in the logged requests.",
-                        expectedRequests.get(i), loggedRequest.getUrl());
-                i++;
-            }
+        int i = 0;
+        for (LoggedRequest loggedRequest : loggedRequests) {
+            assertEquals("One expected request was not found in the logged requests.",
+                    expectedRequests.get(i), loggedRequest.getUrl());
+            i++;
+        }
 
         WireMock.reset();
     }

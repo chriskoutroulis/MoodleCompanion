@@ -50,50 +50,55 @@ public class RetrofitMoodleClient implements MoodleClient {
         return response;
     }
 
-    public Response<Courses> getCourses(String script, String format, String token, String function) throws IOException {
+    public Response<Courses> getCourses(MoodleUrlCommonParts urlCommonParts) throws IOException {
         Call<Courses> getCoursesCall = clientInitializer.getService()
-                .getCourses(script, format, token, function);
+                .getCourses(urlCommonParts.getPhpScript(), urlCommonParts.getResponseFormat(),
+                        urlCommonParts.getToken(), urlCommonParts.getFunction());
         Response<Courses> response = getCoursesCall.execute();
 
         return response;
     }
 
-    public Response<User> getUserDetails(String script, String format, String token,
-                                         String function, String byField, String fieldValue) throws IOException {
+    public Response<User> getUserDetails(MoodleUrlCommonParts urlCommonParts, String byField,
+                                         String fieldValue) throws IOException {
         Call<User> getUserDetailsCall = clientInitializer.getService()
-                .getUserDetails(script, format, token, function, byField, fieldValue);
+                .getUserDetails(urlCommonParts.getPhpScript(), urlCommonParts.getResponseFormat(),
+                        urlCommonParts.getToken(), urlCommonParts.getFunction(), byField, fieldValue);
         Response<User> response = getUserDetailsCall.execute();
         return response;
     }
 
-    public Response<Messages> getMessages(String script, String format, String token, String getMessagesFunction, String markAsReadFunction,
+    public Response<Messages> getMessages(MoodleUrlCommonParts urlCommonParts, String markAsReadFunction,
                                           String sentToId, String sentFromId, String oneForReadZeroForUnread, String timeReadInMillis) throws IOException {
         Call<Messages> getMessagesCall = clientInitializer.getService()
-                .getMessages(script, format, token, getMessagesFunction, sentToId, sentFromId, oneForReadZeroForUnread);
+                .getMessages(urlCommonParts.getPhpScript(), urlCommonParts.getResponseFormat(),
+                        urlCommonParts.getToken(), urlCommonParts.getFunction(), sentToId, sentFromId, oneForReadZeroForUnread);
         Response<Messages> response = getMessagesCall.execute();
 
         //if the call was for unread messages
         if(oneForReadZeroForUnread.equals("0")) {
-            markAllUnreadMessagesAsRead(script, format, token, markAsReadFunction, response.body().getMessages(), timeReadInMillis);
+
+            urlCommonParts.setFunction(markAsReadFunction);
+            markAllUnreadMessagesAsRead(urlCommonParts, response.body().getMessages(), timeReadInMillis);
         }
 
         return response;
     }
 
-    public Response<MarkAsReadResponse> markAsReadMessage(String script, String format, String token, String function,
-                                                          String unreadMessageId, String timeReadInMillis) throws IOException {
+    public Response<MarkAsReadResponse> markAsReadMessage(MoodleUrlCommonParts urlCommonParts, String unreadMessageId,
+                                                          String timeReadInMillis) throws IOException {
         Call<MarkAsReadResponse> markAsReadCall = clientInitializer.getService()
-                .markAsReadMessage(script, format, token, function, unreadMessageId, timeReadInMillis);
+                .markAsReadMessage(urlCommonParts.getPhpScript(), urlCommonParts.getResponseFormat(),
+                        urlCommonParts.getToken(), urlCommonParts.getFunction(), unreadMessageId, timeReadInMillis);
         Response<MarkAsReadResponse> response = markAsReadCall.execute();
         return response;
     }
 
-    private void markAllUnreadMessagesAsRead(String script, String format, String token,
-                                            String function, List<Message> messageList, String timeReadInMillis) throws IOException {
+    private void markAllUnreadMessagesAsRead(MoodleUrlCommonParts urlCommonParts, List<Message> messageList,
+                                             String timeReadInMillis) throws IOException {
         if (!messageList.isEmpty()) {
             for (Message oneMessage: messageList) {
-                markAsReadMessage(script, format, token, function,
-                        Integer.toString(oneMessage.getId()), timeReadInMillis);
+                markAsReadMessage(urlCommonParts, Integer.toString(oneMessage.getId()), timeReadInMillis);
             }
         }
 
