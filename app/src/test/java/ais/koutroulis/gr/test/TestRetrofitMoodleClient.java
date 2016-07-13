@@ -1,10 +1,13 @@
 package ais.koutroulis.gr.test;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -92,6 +95,16 @@ public class TestRetrofitMoodleClient {
         callingPassword = "rightpassword1";
         expectedToken.setToken("grantAccessToken");
         moodleClient = new RetrofitMoodleClient(BASE_URL);
+    }
+
+    @After
+    public void performanceTearDown() {
+        //This sleep seems to help with the Exception being thrown by jetty.
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
