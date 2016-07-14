@@ -419,6 +419,35 @@ public class JsonResponseProvider {
             "  \"warnings\": []\n" +
             "}";
 
+    private static String ais0058GetForumsByCourseJsonString = "{\n" +
+            "    \"id\": 1,\n" +
+            "    \"course\": 2,\n" +
+            "    \"type\": \"news\",\n" +
+            "    \"name\": \"Announcements\",\n" +
+            "    \"intro\": \"General news and announcements\",\n" +
+            "    \"introformat\": 1,\n" +
+            "    \"assessed\": 0,\n" +
+            "    \"assesstimestart\": 0,\n" +
+            "    \"assesstimefinish\": 0,\n" +
+            "    \"scale\": 0,\n" +
+            "    \"maxbytes\": 0,\n" +
+            "    \"maxattachments\": 1,\n" +
+            "    \"forcesubscribe\": 1,\n" +
+            "    \"trackingtype\": 1,\n" +
+            "    \"rsstype\": 0,\n" +
+            "    \"rssarticles\": 0,\n" +
+            "    \"timemodified\": 1467304056,\n" +
+            "    \"warnafter\": 0,\n" +
+            "    \"blockafter\": 0,\n" +
+            "    \"blockperiod\": 0,\n" +
+            "    \"completiondiscussions\": 0,\n" +
+            "    \"completionreplies\": 0,\n" +
+            "    \"completionposts\": 0,\n" +
+            "    \"cmid\": 1,\n" +
+            "    \"numdiscussions\": 1,\n" +
+            "    \"cancreatediscussions\": true\n" +
+            "  }";
+
     public static String getAis0058GrantTokenJsonString() {
         return ais0058GrantTokenJsonString;
     }
@@ -449,5 +478,9 @@ public class JsonResponseProvider {
 
     public static String getAis0058SecondCallForUnreadMessagesJsonString() {
         return ais0058SecondCallForUnreadMessagesJsonString;
+    }
+
+    public static String getAis0058GetForumsByCourseJsonString() {
+        return ais0058GetForumsByCourseJsonString;
     }
 }

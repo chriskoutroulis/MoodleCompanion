@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import ais.koutroulis.gr.model.Courses;
+import ais.koutroulis.gr.model.ForumByCourse;
 import ais.koutroulis.gr.model.MarkAsReadResponse;
 import ais.koutroulis.gr.model.Message;
 import ais.koutroulis.gr.model.Messages;
@@ -24,6 +25,10 @@ public class RetrofitMoodleClient implements MoodleClient {
     public RetrofitMoodleClient(String baseUrl) {
         clientInitializer = new RetroFitClientInitializer<>(baseUrl, MoodleRetroFitService.class);
     }
+
+    //TODO Create a method to validate the new MoodleUrlCommonParts, before making the call.
+    //Or in a different class maybe?? To perform several validations?
+    //Do not allow unappropriate calls.
 
     public Response<Token> login(String script, String loginService, String username, String password) throws IOException {
         Call<Token> loginCall = clientInitializer.getService()
@@ -94,6 +99,14 @@ public class RetrofitMoodleClient implements MoodleClient {
         return response;
     }
 
+    public Response<ForumByCourse> getForumByCourse(MoodleUrlCommonParts urlCommonParts, String courseId) throws IOException {
+        Call<ForumByCourse> getForumByCourseCall = clientInitializer.getService()
+                .getForumByCourse(urlCommonParts.getPhpScript(), urlCommonParts.getResponseFormat(),
+                        urlCommonParts.getToken(), urlCommonParts.getFunction(), courseId);
+        Response<ForumByCourse> response = getForumByCourseCall.execute();
+        return response;
+    }
+
     private void markAllUnreadMessagesAsRead(MoodleUrlCommonParts urlCommonParts, List<Message> messageList,
                                              String timeReadInMillis) throws IOException {
         if (!messageList.isEmpty()) {
@@ -101,7 +114,5 @@ public class RetrofitMoodleClient implements MoodleClient {
                 markAsReadMessage(urlCommonParts, Integer.toString(oneMessage.getId()), timeReadInMillis);
             }
         }
-
     }
-
 }
