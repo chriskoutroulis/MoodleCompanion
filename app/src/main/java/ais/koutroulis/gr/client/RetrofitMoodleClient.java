@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import ais.koutroulis.gr.model.Courses;
+import ais.koutroulis.gr.model.Discussions;
 import ais.koutroulis.gr.model.ForumByCourse;
 import ais.koutroulis.gr.model.MarkAsReadResponse;
 import ais.koutroulis.gr.model.Message;
@@ -104,6 +105,14 @@ public class RetrofitMoodleClient implements MoodleClient {
                 .getForumByCourse(urlCommonParts.getPhpScript(), urlCommonParts.getResponseFormat(),
                         urlCommonParts.getToken(), urlCommonParts.getFunction(), courseId);
         Response<ForumByCourse> response = getForumByCourseCall.execute();
+        return response;
+    }
+
+    public Response<Discussions> getForumDiscussions(MoodleUrlCommonParts urlCommonParts, String forumId) throws IOException {
+        Call<Discussions> getForumDiscussionsCall = clientInitializer.getService()
+                .getForumDiscussions(urlCommonParts.getPhpScript(), urlCommonParts.getResponseFormat(),
+                        urlCommonParts.getToken(), urlCommonParts.getFunction(), forumId);
+        Response<Discussions> response = getForumDiscussionsCall.execute();
         return response;
     }
 

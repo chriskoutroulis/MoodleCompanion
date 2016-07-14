@@ -419,7 +419,7 @@ public class JsonResponseProvider {
             "  \"warnings\": []\n" +
             "}";
 
-    private static String ais0058GetForumsByCourseJsonString = "{\n" +
+    private static String ais0058ForumsByCourseJsonString = "{\n" +
             "    \"id\": 1,\n" +
             "    \"course\": 2,\n" +
             "    \"type\": \"news\",\n" +
@@ -447,6 +447,70 @@ public class JsonResponseProvider {
             "    \"numdiscussions\": 1,\n" +
             "    \"cancreatediscussions\": true\n" +
             "  }";
+
+    private static String ais0058ForumDiscussionsJsonString = "{\n" +
+            "  \"discussions\": [\n" +
+            "    {\n" +
+            "      \"id\": 3,\n" +
+            "      \"name\": \"Παράδοση εκτυπωμένων σημειώσεων\",\n" +
+            "      \"groupid\": -1,\n" +
+            "      \"timemodified\": 1468482978,\n" +
+            "      \"usermodified\": 2,\n" +
+            "      \"timestart\": 0,\n" +
+            "      \"timeend\": 0,\n" +
+            "      \"discussion\": 3,\n" +
+            "      \"parent\": 0,\n" +
+            "      \"userid\": 2,\n" +
+            "      \"created\": 1468482978,\n" +
+            "      \"modified\": 1468482978,\n" +
+            "      \"mailed\": 0,\n" +
+            "      \"subject\": \"Παράδοση εκτυπωμένων σημειώσεων\",\n" +
+            "      \"message\": \"<p>Το επόμενο Σάββατο θα μπορείτε να προμηθευτείτε σημειώσεις για το 3ο κεφάλαιο από το γραφείο μου.</p>\",\n" +
+            "      \"messageformat\": 1,\n" +
+            "      \"messagetrust\": 0,\n" +
+            "      \"attachment\": \"\",\n" +
+            "      \"totalscore\": 0,\n" +
+            "      \"mailnow\": 0,\n" +
+            "      \"userfullname\": \"Chris Koutroulis\",\n" +
+            "      \"usermodifiedfullname\": \"Chris Koutroulis\",\n" +
+            "      \"userpictureurl\": \"http://ais-temp.daidalos.teipir.gr/moodle/theme/image.php/clean/core/1467270948/u/f1\",\n" +
+            "      \"usermodifiedpictureurl\": \"http://ais-temp.daidalos.teipir.gr/moodle/theme/image.php/clean/core/1467270948/u/f1\",\n" +
+            "      \"numreplies\": \"0\",\n" +
+            "      \"numunread\": 0,\n" +
+            "      \"pinned\": false\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"id\": 1,\n" +
+            "      \"name\": \"Συνάντηση στο εργαστήριο\",\n" +
+            "      \"groupid\": -1,\n" +
+            "      \"timemodified\": 1467558208,\n" +
+            "      \"usermodified\": 2,\n" +
+            "      \"timestart\": 0,\n" +
+            "      \"timeend\": 0,\n" +
+            "      \"discussion\": 1,\n" +
+            "      \"parent\": 0,\n" +
+            "      \"userid\": 2,\n" +
+            "      \"created\": 1467558208,\n" +
+            "      \"modified\": 1467558208,\n" +
+            "      \"mailed\": 0,\n" +
+            "      \"subject\": \"Συνάντηση στο εργαστήριο\",\n" +
+            "      \"message\": \"<p>Το ερόμενο Σάββατο, θα γίνει συνάντηση για να συζητηθούν απορίες σχετικά με το PROFIBus.</p>\",\n" +
+            "      \"messageformat\": 1,\n" +
+            "      \"messagetrust\": 0,\n" +
+            "      \"attachment\": \"\",\n" +
+            "      \"totalscore\": 0,\n" +
+            "      \"mailnow\": 0,\n" +
+            "      \"userfullname\": \"Chris Koutroulis\",\n" +
+            "      \"usermodifiedfullname\": \"Chris Koutroulis\",\n" +
+            "      \"userpictureurl\": \"http://ais-temp.daidalos.teipir.gr/moodle/theme/image.php/clean/core/1467270948/u/f1\",\n" +
+            "      \"usermodifiedpictureurl\": \"http://ais-temp.daidalos.teipir.gr/moodle/theme/image.php/clean/core/1467270948/u/f1\",\n" +
+            "      \"numreplies\": \"0\",\n" +
+            "      \"numunread\": 0,\n" +
+            "      \"pinned\": false\n" +
+            "    }\n" +
+            "  ],\n" +
+            "  \"warnings\": []\n" +
+            "}";
 
     public static String getAis0058GrantTokenJsonString() {
         return ais0058GrantTokenJsonString;
@@ -480,7 +544,11 @@ public class JsonResponseProvider {
         return ais0058SecondCallForUnreadMessagesJsonString;
     }
 
-    public static String getAis0058GetForumsByCourseJsonString() {
-        return ais0058GetForumsByCourseJsonString;
+    public static String getAis0058ForumsByCourseJsonString() {
+        return ais0058ForumsByCourseJsonString;
+    }
+
+    public static String getAis0058ForumDiscussionsJsonString() {
+        return ais0058ForumDiscussionsJsonString;
     }
 }

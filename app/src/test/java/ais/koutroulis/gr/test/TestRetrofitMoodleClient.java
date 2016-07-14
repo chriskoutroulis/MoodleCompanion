@@ -4,6 +4,9 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.codehaus.plexus.component.configurator.converters.composite.CollectionConverter;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,6 +16,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +28,8 @@ import ais.koutroulis.gr.client.RetrofitMoodleClient;
 import ais.koutroulis.gr.model.Assignment;
 import ais.koutroulis.gr.model.Course;
 import ais.koutroulis.gr.model.Courses;
+import ais.koutroulis.gr.model.Discussion;
+import ais.koutroulis.gr.model.Discussions;
 import ais.koutroulis.gr.model.ForumByCourse;
 import ais.koutroulis.gr.model.MarkAsReadResponse;
 import ais.koutroulis.gr.model.Message;
@@ -37,6 +44,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -59,7 +67,8 @@ public class TestRetrofitMoodleClient {
     private static final String USER_DETAILS_FUNCTION = "core_user_get_users_by_field";
     private static final String GET_MESSAGES_FUNCTION = "core_message_get_messages";
     private static final String MARK_AS_READ_FUNCTION = "core_message_mark_message_read";
-    private static final String GET_FORUMS_BY_COURSES_FUNCTION = "mod_forum_get_forums_by_courses";
+    private static final String GET_FORUM_BY_COURSES_FUNCTION = "mod_forum_get_forums_by_courses";
+    private static final String GET_FORUM_DISCUSSIONS_FUNCTION = "mod_forum_get_forum_discussions_paginated";
 
     private static final String LOGIN_SCRIPT = "token.php";
     private static final String FUNCTIONS_SCRIPT = "server.php";
@@ -80,8 +89,10 @@ public class TestRetrofitMoodleClient {
     private String unReadMessageId = "4";
     private String timeReadinMillis = "1468315655";
     private String ais0058CourseId = "2";
+    private String ais0058ForumId = "1";
 
     private MoodleUrlCommonParts urlCommonParts;
+
 
     @Before
     public void setup() {
@@ -107,7 +118,7 @@ public class TestRetrofitMoodleClient {
     public void performanceTearDown() {
         //This sleep seems to help with the Exception being thrown by jetty.
         try {
-            Thread.sleep(200);
+            Thread.sleep(300);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -459,23 +470,55 @@ public class TestRetrofitMoodleClient {
 
     @Test
     public void shouldReturnOneForum() {
-        urlCommonParts.setFunction(GET_FORUMS_BY_COURSES_FUNCTION);
+        urlCommonParts.setFunction(GET_FORUM_BY_COURSES_FUNCTION);
         wireMockStubForGettingForumsByCourse();
 
         try {
             Response<ForumByCourse> responseForumByCourse = moodleClient.getForumByCourse(urlCommonParts, ais0058CourseId);
 
-            assertNotNull("There forum was not supposed to be null.", responseForumByCourse.body().getId());
+            assertNotNull("The forum was not supposed to be null.", responseForumByCourse.body().getId());
             assertEquals("The forum id should have been 1.", 1, responseForumByCourse.body().getId());
             assertEquals("The course id should have been 2.", 2, responseForumByCourse.body().getCourse());
         } catch (IOException ie) {
         }
 
         WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT + "?moodlewsrestformat="
-                + "json" + "&wstoken=" + expectedToken.getToken() + "&wsfunction=" + GET_FORUMS_BY_COURSES_FUNCTION
+                + "json" + "&wstoken=" + expectedToken.getToken() + "&wsfunction=" + GET_FORUM_BY_COURSES_FUNCTION
                 + "&courseids[0]=" + ais0058CourseId)));
         WireMock.reset();
     }
+
+    @Test
+    public void shouldReturnTwoForumDiscussions() {
+        urlCommonParts.setFunction(GET_FORUM_DISCUSSIONS_FUNCTION);
+        wireMockStubForGettingForumDiscussions();
+
+        String[] expectedDiscussionSubjects = {"Παράδοση εκτυπωμένων σημειώσεων", "Συνάντηση στο εργαστήριο"};
+
+        try {
+            Response<Discussions> responseForumDiscussions = moodleClient.getForumDiscussions(urlCommonParts, ais0058ForumId);
+
+            assertEquals("The number of discussions should have been 2.", 2, responseForumDiscussions.body().getDiscussions().size());
+
+            List<Discussion> discussions = responseForumDiscussions.body().getDiscussions();
+            List<String> actualDiscussionSubjects = new ArrayList<>();
+
+            for (Discussion oneDiscussion : discussions) {
+                actualDiscussionSubjects.add(oneDiscussion.getSubject());
+            }
+
+            assertArrayEquals("The discussion subjects are not as expected.", expectedDiscussionSubjects,
+                    actualDiscussionSubjects.toArray());
+
+        } catch (IOException ie) {
+        }
+
+        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT + "?moodlewsrestformat="
+                + "json" + "&wstoken=" + expectedToken.getToken() + "&wsfunction=" + GET_FORUM_DISCUSSIONS_FUNCTION
+                + "&forumid=" + ais0058ForumId)));
+        WireMock.reset();
+    }
+
 
     //TODO somehow enforce urlCommonParts.setFunction(...); before making a call
 
@@ -578,16 +621,28 @@ public class TestRetrofitMoodleClient {
                         .withBody(JsonResponseProvider.getAis0058SecondCallForUnreadMessagesJsonString())));
     }
 
-    private void wireMockStubForGettingForumsByCourse(){
+    private void wireMockStubForGettingForumsByCourse() {
         stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT))
                 .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
                 .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
-                .withQueryParam("wsfunction", equalTo(GET_FORUMS_BY_COURSES_FUNCTION))
+                .withQueryParam("wsfunction", equalTo(GET_FORUM_BY_COURSES_FUNCTION))
                 .withQueryParam("courseids[0]", equalTo(ais0058CourseId))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json; charset=utf-8")
-                        .withBody(JsonResponseProvider.getAis0058GetForumsByCourseJsonString())));
+                        .withBody(JsonResponseProvider.getAis0058ForumsByCourseJsonString())));
+    }
+
+    private void wireMockStubForGettingForumDiscussions() {
+        stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT))
+                .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
+                .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
+                .withQueryParam("wsfunction", equalTo(GET_FORUM_DISCUSSIONS_FUNCTION))
+                .withQueryParam("forumid", equalTo(ais0058ForumId))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json; charset=utf-8")
+                        .withBody(JsonResponseProvider.getAis0058ForumDiscussionsJsonString())));
     }
 }
 

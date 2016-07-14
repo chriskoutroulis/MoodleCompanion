@@ -21,4 +21,6 @@ public interface MoodleClient {
 
     public <T> T getForumByCourse(MoodleUrlCommonParts urlCommonParts, String courseId) throws IOException;
 
+    public <T> T getForumDiscussions(MoodleUrlCommonParts urlCommonParts, String forumId) throws IOException;
+
 }
