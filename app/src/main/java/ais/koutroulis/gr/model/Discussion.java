@@ -11,7 +11,7 @@ public class Discussion {
 
     @SerializedName("id")
     @Expose
-    private int id;
+    private int postId;
     @SerializedName("name")
     @Expose
     private String name;
@@ -32,7 +32,7 @@ public class Discussion {
     private int timeend;
     @SerializedName("discussion")
     @Expose
-    private int discussion;
+    private int discussionId;
     @SerializedName("parent")
     @Expose
     private int parent;
@@ -92,17 +92,17 @@ public class Discussion {
     private boolean pinned;
 
     /**
-     * @return The id
+     * @return The postId
      */
-    public int getId() {
-        return id;
+    public int getPostId() {
+        return postId;
     }
 
     /**
-     * @param id The id
+     * @param postId The id
      */
-    public void setId(int id) {
-        this.id = id;
+    public void setPostId(int postId) {
+        this.postId = postId;
     }
 
     /**
@@ -190,17 +190,17 @@ public class Discussion {
     }
 
     /**
-     * @return The discussion
+     * @return The discussionId
      */
-    public int getDiscussion() {
-        return discussion;
+    public int getdiscussionId() {
+        return discussionId;
     }
 
     /**
-     * @param discussion The discussion
+     * @param discussionId The discussionId
      */
-    public void setDiscussion(int discussion) {
-        this.discussion = discussion;
+    public void setdiscussionId(int discussionId) {
+        this.discussionId = discussionId;
     }
 
     /**
