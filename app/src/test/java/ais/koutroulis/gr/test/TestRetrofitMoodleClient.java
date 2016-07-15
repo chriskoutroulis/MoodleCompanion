@@ -34,6 +34,8 @@ import ais.koutroulis.gr.model.ForumByCourse;
 import ais.koutroulis.gr.model.MarkAsReadResponse;
 import ais.koutroulis.gr.model.Message;
 import ais.koutroulis.gr.model.Messages;
+import ais.koutroulis.gr.model.Post;
+import ais.koutroulis.gr.model.Posts;
 import ais.koutroulis.gr.model.Token;
 import ais.koutroulis.gr.model.User;
 import retrofit2.Response;
@@ -69,6 +71,7 @@ public class TestRetrofitMoodleClient {
     private static final String MARK_AS_READ_FUNCTION = "core_message_mark_message_read";
     private static final String GET_FORUM_BY_COURSES_FUNCTION = "mod_forum_get_forums_by_courses";
     private static final String GET_FORUM_DISCUSSIONS_FUNCTION = "mod_forum_get_forum_discussions_paginated";
+    private static final String GET_FORUM_DISCUSSION_POSTS_FUNCTION = "mod_forum_get_forum_discussion_posts";
 
     private static final String LOGIN_SCRIPT = "token.php";
     private static final String FUNCTIONS_SCRIPT = "server.php";
@@ -90,6 +93,7 @@ public class TestRetrofitMoodleClient {
     private String timeReadinMillis = "1468315655";
     private String ais0058CourseId = "2";
     private String ais0058ForumId = "1";
+    private String ais0058DiscussionId = "1";
 
     private MoodleUrlCommonParts urlCommonParts;
 
@@ -522,6 +526,37 @@ public class TestRetrofitMoodleClient {
 
     //TODO somehow enforce urlCommonParts.setFunction(...); before making a call
 
+    @Test
+    public void shouldReturnThreeSpecificDiscussionPosts() {
+        urlCommonParts.setFunction(GET_FORUM_DISCUSSION_POSTS_FUNCTION);
+        wireMockStubForGettingForumDiscussionPosts();
+
+        String[] expectedPostMessages = {"Μπορεί να γίνει άλλη μέρα;", "Πρέπει να φέρουμε laptop;",
+                "<p>Το ερόμενο Σάββατο, θα γίνει συνάντηση για να συζητηθούν απορίες σχετικά με το PROFIBus.</p>"};
+
+        try {
+            Response<Posts> responseForumDiscussionPosts = moodleClient.getForumDiscussionPosts(urlCommonParts, ais0058DiscussionId);
+
+            assertEquals("The number of posts should have been 3.", 3, responseForumDiscussionPosts.body().getPosts().size());
+
+            List<Post> posts = responseForumDiscussionPosts.body().getPosts();
+            List<String> actualPostMessages = new ArrayList<>();
+
+            for (Post onePost : posts) {
+                actualPostMessages.add(onePost.getMessage());
+            }
+
+            assertArrayEquals("The post messages are not as expected.", expectedPostMessages,
+                    actualPostMessages.toArray());
+        } catch (IOException ie) {
+        }
+
+        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT + "?moodlewsrestformat="
+                + "json" + "&wstoken=" + expectedToken.getToken() + "&wsfunction=" + GET_FORUM_DISCUSSION_POSTS_FUNCTION
+                + "&discussionid=" + ais0058DiscussionId)));
+        WireMock.reset();
+    }
+
 
     private void createAppropriateStubForThisUser(String username, String password) {
         if (isRegisteredUser()) {
@@ -643,6 +678,18 @@ public class TestRetrofitMoodleClient {
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json; charset=utf-8")
                         .withBody(JsonResponseProvider.getAis0058ForumDiscussionsJsonString())));
+    }
+
+    private void wireMockStubForGettingForumDiscussionPosts() {
+        stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT))
+                .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
+                .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
+                .withQueryParam("wsfunction", equalTo(GET_FORUM_DISCUSSION_POSTS_FUNCTION))
+                .withQueryParam("discussionid", equalTo(ais0058DiscussionId))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json; charset=utf-8")
+                        .withBody(JsonResponseProvider.getAis0058ForumDiscussionPostsJsonString())));
     }
 }
 

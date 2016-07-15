@@ -6,6 +6,7 @@ import ais.koutroulis.gr.model.Discussions;
 import ais.koutroulis.gr.model.ForumByCourse;
 import ais.koutroulis.gr.model.MarkAsReadResponse;
 import ais.koutroulis.gr.model.Messages;
+import ais.koutroulis.gr.model.Posts;
 import ais.koutroulis.gr.model.Token;
 import ais.koutroulis.gr.model.User;
 import retrofit2.Call;
@@ -48,5 +49,9 @@ public interface MoodleRetroFitService {
     @GET("webservice/rest/{script}")
     Call<Discussions> getForumDiscussions (@Path("script") String script, @Query("moodlewsrestformat") String format,
                                            @Query("wstoken") String token, @Query("wsfunction") String function, @Query("forumid") String forumId);
+
+    @GET("webservice/rest/{script}")
+    Call<Posts> getForumDiscussionPosts (@Path("script") String script, @Query("moodlewsrestformat") String format,
+                                     @Query("wstoken") String token, @Query("wsfunction") String function, @Query("discussionid") String discussionId);
 
 }

@@ -23,4 +23,6 @@ public interface MoodleClient {
 
     public <T> T getForumDiscussions(MoodleUrlCommonParts urlCommonParts, String forumId) throws IOException;
 
+    public <T> T getForumDiscussionPosts(MoodleUrlCommonParts urlCommonParts, String discussionId) throws IOException;
+
 }

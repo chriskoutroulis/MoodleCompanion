@@ -9,6 +9,7 @@ import ais.koutroulis.gr.model.ForumByCourse;
 import ais.koutroulis.gr.model.MarkAsReadResponse;
 import ais.koutroulis.gr.model.Message;
 import ais.koutroulis.gr.model.Messages;
+import ais.koutroulis.gr.model.Posts;
 import ais.koutroulis.gr.model.Token;
 import ais.koutroulis.gr.model.User;
 import ais.koutroulis.gr.service.MoodleRetroFitService;
@@ -113,6 +114,14 @@ public class RetrofitMoodleClient implements MoodleClient {
                 .getForumDiscussions(urlCommonParts.getPhpScript(), urlCommonParts.getResponseFormat(),
                         urlCommonParts.getToken(), urlCommonParts.getFunction(), forumId);
         Response<Discussions> response = getForumDiscussionsCall.execute();
+        return response;
+    }
+
+    public Response<Posts> getForumDiscussionPosts(MoodleUrlCommonParts urlCommonParts, String discussionId) throws IOException {
+        Call<Posts> getForumDiscussionPostsCall = clientInitializer.getService()
+                .getForumDiscussionPosts(urlCommonParts.getPhpScript(), urlCommonParts.getResponseFormat(),
+                        urlCommonParts.getToken(), urlCommonParts.getFunction(), discussionId);
+        Response<Posts> response = getForumDiscussionPostsCall.execute();
         return response;
     }
 

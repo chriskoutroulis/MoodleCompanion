@@ -511,6 +511,77 @@ public class JsonResponseProvider {
             "  ],\n" +
             "  \"warnings\": []\n" +
             "}";
+    private static String ais0058ForumDiscussionPostsJsonString = "{\n" +
+            "    \"posts\": [\n" +
+            "        {\n" +
+            "            \"id\": 6,\n" +
+            "            \"discussion\": 1,\n" +
+            "            \"parent\": 1,\n" +
+            "            \"userid\": 3,\n" +
+            "            \"created\": 1468495994,\n" +
+            "            \"modified\": 1468495994,\n" +
+            "            \"mailed\": 0,\n" +
+            "            \"subject\": \"Re: Συνάντηση στο εργαστήριο\",\n" +
+            "            \"message\": \"Μπορεί να γίνει άλλη μέρα;\",\n" +
+            "            \"messageformat\": 1,\n" +
+            "            \"messagetrust\": 0,\n" +
+            "            \"attachment\": \"\",\n" +
+            "            \"totalscore\": 0,\n" +
+            "            \"mailnow\": 0,\n" +
+            "            \"children\": [],\n" +
+            "            \"canreply\": true,\n" +
+            "            \"postread\": true,\n" +
+            "            \"userfullname\": \"Christodoulos Koutroulis\",\n" +
+            "            \"userpictureurl\": \"http://ais-temp.daidalos.teipir.gr/moodle/theme/image.php/clean/core/1467270948/u/f1\"\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 5,\n" +
+            "            \"discussion\": 1,\n" +
+            "            \"parent\": 1,\n" +
+            "            \"userid\": 4,\n" +
+            "            \"created\": 1468495827,\n" +
+            "            \"modified\": 1468495827,\n" +
+            "            \"mailed\": 0,\n" +
+            "            \"subject\": \"Re: Συνάντηση στο εργαστήριο\",\n" +
+            "            \"message\": \"Πρέπει να φέρουμε laptop;\",\n" +
+            "            \"messageformat\": 1,\n" +
+            "            \"messagetrust\": 0,\n" +
+            "            \"attachment\": \"\",\n" +
+            "            \"totalscore\": 0,\n" +
+            "            \"mailnow\": 0,\n" +
+            "            \"children\": [],\n" +
+            "            \"canreply\": true,\n" +
+            "            \"postread\": true,\n" +
+            "            \"userfullname\": \"Dimitris Skarpetis\",\n" +
+            "            \"userpictureurl\": \"http://ais-temp.daidalos.teipir.gr/moodle/theme/image.php/clean/core/1467270948/u/f1\"\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 1,\n" +
+            "            \"discussion\": 1,\n" +
+            "            \"parent\": 0,\n" +
+            "            \"userid\": 2,\n" +
+            "            \"created\": 1467558208,\n" +
+            "            \"modified\": 1467558208,\n" +
+            "            \"mailed\": 0,\n" +
+            "            \"subject\": \"Συνάντηση στο εργαστήριο\",\n" +
+            "            \"message\": \"<p>Το ερόμενο Σάββατο, θα γίνει συνάντηση για να συζητηθούν απορίες σχετικά με το PROFIBus.</p>\",\n" +
+            "            \"messageformat\": 1,\n" +
+            "            \"messagetrust\": 0,\n" +
+            "            \"attachment\": \"\",\n" +
+            "            \"totalscore\": 0,\n" +
+            "            \"mailnow\": 0,\n" +
+            "            \"children\": [\n" +
+            "                6,\n" +
+            "                5\n" +
+            "            ],\n" +
+            "            \"canreply\": true,\n" +
+            "            \"postread\": true,\n" +
+            "            \"userfullname\": \"Chris Koutroulis\",\n" +
+            "            \"userpictureurl\": \"http://ais-temp.daidalos.teipir.gr/moodle/theme/image.php/clean/core/1467270948/u/f1\"\n" +
+            "        }\n" +
+            "    ],\n" +
+            "    \"warnings\": []\n" +
+            "}";
 
     public static String getAis0058GrantTokenJsonString() {
         return ais0058GrantTokenJsonString;
@@ -550,5 +621,9 @@ public class JsonResponseProvider {
 
     public static String getAis0058ForumDiscussionsJsonString() {
         return ais0058ForumDiscussionsJsonString;
+    }
+
+    public static String getAis0058ForumDiscussionPostsJsonString() {
+        return ais0058ForumDiscussionPostsJsonString;
     }
 }
