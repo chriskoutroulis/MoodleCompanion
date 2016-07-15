@@ -489,7 +489,7 @@ public class TestRetrofitMoodleClient {
     }
 
     @Test
-    public void shouldReturnTwoForumDiscussions() {
+    public void shouldReturnTwoSpecificForumDiscussions() {
         urlCommonParts.setFunction(GET_FORUM_DISCUSSIONS_FUNCTION);
         wireMockStubForGettingForumDiscussions();
 
