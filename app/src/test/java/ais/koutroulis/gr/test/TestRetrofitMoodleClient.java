@@ -105,12 +105,12 @@ public class TestRetrofitMoodleClient {
         JsonResponseProvider.getFourCoursesAndTwoAssignmentsJsonString();
         response = null;
         registeredUsers = new HashMap<>();
-        registeredUsers.put("user1", "rightpassword1");
+        registeredUsers.put("ais0058", "Masterais0056!");
         registeredUsers.put("user2", "rightpassword2");
         registeredUsers.put("user3", "rightpassword3");
         registeredUsers.put("admin", "rightpassword4");
-        callingUsername = "user1";
-        callingPassword = "rightpassword1";
+        callingUsername = "ais0058";
+        callingPassword = "Masterais0056!";
         expectedToken.setToken("grantAccessToken");
         moodleClient = new RetrofitMoodleClient(BASE_URL);
         urlCommonParts = new MoodleUrlCommonParts(FUNCTIONS_SCRIPT, FORMAT,
@@ -554,12 +554,20 @@ public class TestRetrofitMoodleClient {
     }
 
     @Test
-    public void markForumDiscussionsAsReadShouldReturnHttpStatus200() {
-        //TODO i think it should be accepting a List<Integer> of discussion ids
-        // These will be the discussion ids that have "numunread" > 0
-        //The method will call the appropriate url for each of those discussion ids.
-        //It will be using Jsoup, if the discussion Id is wrong or if the user is not logged in
-        //it returns 404 status.
+    public void markForumDiscussionsAsReadShouldReturnUrlThatContainsDiscussPhp() {
+
+        String baseUrl = "http://ais-temp.daidalos.teipir.gr/moodle";
+        int httpStatusOk = 200;
+        int discussionId = 1;
+        String httpResponseUrl = null;
+        try {
+            httpResponseUrl = moodleClient.markForumDiscussionsAsRead(baseUrl, callingUsername, callingPassword, discussionId);
+        } catch (IOException e) {
+            fail("There was a network error.");
+        }
+        //if the login has failed then the response url, is pointing at the login page.
+        assertTrue("The response url shows that a redirection was made due to possible login failure or that the resource is missing.",
+                httpResponseUrl.contains("discuss.php"));
     }
 
 

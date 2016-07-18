@@ -1,6 +1,7 @@
 package ais.koutroulis.gr.client;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by c0nfr0ntier on 8/7/2016.
@@ -24,5 +25,8 @@ public interface MoodleClient {
     public <T> T getForumDiscussions(MoodleUrlCommonParts urlCommonParts, String forumId) throws IOException;
 
     public <T> T getForumDiscussionPosts(MoodleUrlCommonParts urlCommonParts, String discussionId) throws IOException;
+
+    public  String markForumDiscussionsAsRead(String baseUrl, String username, String password,
+                                            int discussionId) throws IOException;
 
 }

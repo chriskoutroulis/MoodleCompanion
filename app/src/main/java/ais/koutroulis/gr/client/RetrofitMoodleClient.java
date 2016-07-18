@@ -1,7 +1,12 @@
 package ais.koutroulis.gr.client;
 
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import ais.koutroulis.gr.model.Courses;
 import ais.koutroulis.gr.model.Discussions;
@@ -16,13 +21,16 @@ import ais.koutroulis.gr.service.MoodleRetroFitService;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static junit.framework.Assert.assertTrue;
+
 /**
  * Created by c0nfr0ntier on 7/7/2016.
  */
 public class RetrofitMoodleClient implements MoodleClient {
 
     private RetroFitClientInitializer<MoodleRetroFitService> clientInitializer;
-    private String baseUrl;
+    private static final String LOGIN_PATH = "/login/index.php";
+    private static final String READ_DISCUSSION_PATH = "/mod/forum/discuss.php?d=";
 
     public RetrofitMoodleClient(String baseUrl) {
         clientInitializer = new RetroFitClientInitializer<>(baseUrl, MoodleRetroFitService.class);
@@ -83,7 +91,7 @@ public class RetrofitMoodleClient implements MoodleClient {
         Response<Messages> response = getMessagesCall.execute();
 
         //if the call was for unread messages
-        if(oneForReadZeroForUnread.equals("0")) {
+        if (oneForReadZeroForUnread.equals("0")) {
 
             urlCommonParts.setFunction(markAsReadFunction);
             markAllUnreadMessagesAsRead(urlCommonParts, response.body().getMessages(), timeReadInMillis);
@@ -128,9 +136,34 @@ public class RetrofitMoodleClient implements MoodleClient {
     private void markAllUnreadMessagesAsRead(MoodleUrlCommonParts urlCommonParts, List<Message> messageList,
                                              String timeReadInMillis) throws IOException {
         if (!messageList.isEmpty()) {
-            for (Message oneMessage: messageList) {
+            for (Message oneMessage : messageList) {
                 markAsReadMessage(urlCommonParts, Integer.toString(oneMessage.getId()), timeReadInMillis);
             }
         }
+    }
+
+    public String markForumDiscussionsAsRead(String baseUrl, String username, String password, int discussionId) throws IOException {
+
+        String loginPageUrl = baseUrl + LOGIN_PATH;
+        String urlYouNeedToBeLoggedInToAccess = baseUrl + READ_DISCUSSION_PATH;
+        Connection.Response discussionResponse = null;
+
+        try {
+            Connection.Response loginResponse = Jsoup
+                    .connect(loginPageUrl)
+                    .data("username", username, "password", password)
+                    .method(Connection.Method.POST)
+                    .execute();
+//This will get you cookies
+            Map<String, String> loginCookies = loginResponse.cookies();
+
+//And this is the easiest way I've found to remain in session
+            discussionResponse = Jsoup.connect(urlYouNeedToBeLoggedInToAccess + discussionId)
+                    .cookies(loginCookies)
+                    .execute();
+        } catch (org.jsoup.HttpStatusException je) {
+            return "Discussion id not found!";
+        }
+        return discussionResponse.url().toString();
     }
 }
