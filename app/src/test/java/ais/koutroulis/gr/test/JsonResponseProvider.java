@@ -530,7 +530,7 @@ public class JsonResponseProvider {
             "            \"mailnow\": 0,\n" +
             "            \"children\": [],\n" +
             "            \"canreply\": true,\n" +
-            "            \"postread\": true,\n" +
+            "            \"postread\": false,\n" +
             "            \"userfullname\": \"Christodoulos Koutroulis\",\n" +
             "            \"userpictureurl\": \"http://ais-temp.daidalos.teipir.gr/moodle/theme/image.php/clean/core/1467270948/u/f1\"\n" +
             "        },\n" +
@@ -551,7 +551,7 @@ public class JsonResponseProvider {
             "            \"mailnow\": 0,\n" +
             "            \"children\": [],\n" +
             "            \"canreply\": true,\n" +
-            "            \"postread\": true,\n" +
+            "            \"postread\": false,\n" +
             "            \"userfullname\": \"Dimitris Skarpetis\",\n" +
             "            \"userpictureurl\": \"http://ais-temp.daidalos.teipir.gr/moodle/theme/image.php/clean/core/1467270948/u/f1\"\n" +
             "        },\n" +

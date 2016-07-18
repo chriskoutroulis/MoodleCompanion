@@ -101,7 +101,7 @@ public class RetrofitMoodleClient implements MoodleClient {
         return response;
     }
 
-    public Response<ForumByCourse> getForumByCourse(MoodleUrlCommonParts urlCommonParts, String courseId) throws IOException {
+    public Response<ForumByCourse> getForumsByCourse(MoodleUrlCommonParts urlCommonParts, String courseId) throws IOException {
         Call<ForumByCourse> getForumByCourseCall = clientInitializer.getService()
                 .getForumByCourse(urlCommonParts.getPhpScript(), urlCommonParts.getResponseFormat(),
                         urlCommonParts.getToken(), urlCommonParts.getFunction(), courseId);

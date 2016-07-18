@@ -4,9 +4,6 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.codehaus.plexus.component.configurator.converters.composite.CollectionConverter;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,8 +13,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,14 +37,18 @@ import retrofit2.Response;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.findAll;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Created by Chris on 02-Jul-16.
@@ -478,7 +477,7 @@ public class TestRetrofitMoodleClient {
         wireMockStubForGettingForumsByCourse();
 
         try {
-            Response<ForumByCourse> responseForumByCourse = moodleClient.getForumByCourse(urlCommonParts, ais0058CourseId);
+            Response<ForumByCourse> responseForumByCourse = moodleClient.getForumsByCourse(urlCommonParts, ais0058CourseId);
 
             assertNotNull("The forum was not supposed to be null.", responseForumByCourse.body().getId());
             assertEquals("The forum id should have been 1.", 1, responseForumByCourse.body().getId());
@@ -523,9 +522,6 @@ public class TestRetrofitMoodleClient {
         WireMock.reset();
     }
 
-
-    //TODO somehow enforce urlCommonParts.setFunction(...); before making a call
-
     @Test
     public void shouldReturnThreeSpecificDiscussionPosts() {
         urlCommonParts.setFunction(GET_FORUM_DISCUSSION_POSTS_FUNCTION);
@@ -555,6 +551,80 @@ public class TestRetrofitMoodleClient {
                 + "json" + "&wstoken=" + expectedToken.getToken() + "&wsfunction=" + GET_FORUM_DISCUSSION_POSTS_FUNCTION
                 + "&discussionid=" + ais0058DiscussionId)));
         WireMock.reset();
+    }
+
+    @Test
+    public void markForumDiscussionsAsReadShouldReturnHttpStatus200() {
+        //TODO i think it should be accepting a List<Integer> of discussion ids
+        // These will be the discussion ids that have "numunread" > 0
+        //The method will call the appropriate url for each of those discussion ids.
+        //It will be using Jsoup, if the discussion Id is wrong or if the user is not logged in
+        //it returns 404 status.
+    }
+
+
+    @Test
+    public void gettingDiscussionPostsShouldMarkThemAsRead() {
+        //TODO implement this test
+
+        urlCommonParts.setFunction(GET_FORUM_DISCUSSION_POSTS_FUNCTION);
+        wireMockStubForGettingForumDiscussionPosts();
+
+        //TODO add all the expected calls
+        List<String> expectedRequests = new ArrayList();
+        expectedRequests.add("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT + "?moodlewsrestformat=" + FORMAT
+                + "&wstoken=" + expectedToken.getToken() + "&wsfunction=" + GET_FORUM_DISCUSSION_POSTS_FUNCTION
+                + "&discussionid=" + ais0058DiscussionId );
+
+        try {
+            Response<Posts> responseForumDiscussionPosts = moodleClient.getForumDiscussionPosts(urlCommonParts, ais0058DiscussionId);
+
+            assertEquals("The number of posts should have been 3.", 3, responseForumDiscussionPosts.body().getPosts().size());
+
+            List<Post> posts = responseForumDiscussionPosts.body().getPosts();
+
+            //Simulate marking of all posts read.
+            for (Post onePost : posts) {
+                onePost.setPostread(true);
+            }
+
+            for (Post onePost : posts) {
+               if (!onePost.isPostread()) {
+                   fail("Unread posts were found after gettting all posts.");
+               }
+            }
+
+            List<LoggedRequest> loggedRequests = findAll(getRequestedFor(urlMatching("/moodle/.*")));
+
+            assertEquals("The number of expected calls was not the same as the ones logged.",
+                    expectedRequests.size(), loggedRequests.size());
+
+            int i = 0;
+            for (LoggedRequest loggedRequest : loggedRequests) {
+                assertEquals("One expected request was not found in the logged requests.",
+                        expectedRequests.get(i), loggedRequest.getUrl());
+                i++;
+            }
+
+        } catch (IOException ie) {
+        }
+
+        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT + "?moodlewsrestformat="
+                + "json" + "&wstoken=" + expectedToken.getToken() + "&wsfunction=" + GET_FORUM_DISCUSSION_POSTS_FUNCTION
+                + "&discussionid=" + ais0058DiscussionId)));
+        WireMock.reset();
+    }
+
+    @Test
+    public void scanForUnreadPostsShouldReturnTwo() {
+        //TODO implement this test for scanning every forum for unread posts.
+        //This method will be for getting notifications for unread posts
+    }
+
+    @Test
+    public void getAllForumPostsShouldReturnSeveralPostsFromDifferentForums() {
+        //TODO implement this test for getting all the available forum posts.
+        //This method will be for getting all forum posts to display on the phone.
     }
 
 
