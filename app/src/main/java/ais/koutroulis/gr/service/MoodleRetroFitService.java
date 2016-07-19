@@ -1,6 +1,7 @@
 package ais.koutroulis.gr.service;
 
-import ais.koutroulis.gr.model.Assignments;
+import java.util.List;
+
 import ais.koutroulis.gr.model.Courses;
 import ais.koutroulis.gr.model.Discussions;
 import ais.koutroulis.gr.model.ForumByCourse;
@@ -43,8 +44,8 @@ public interface MoodleRetroFitService {
                                                 @Query("timeread") String timeReadInMillis);
 
     @GET("webservice/rest/{script}")
-    Call<ForumByCourse> getForumByCourse (@Path("script") String script, @Query("moodlewsrestformat") String format,
-                                          @Query("wstoken") String token, @Query("wsfunction") String function, @Query("courseids[0]") String courseId);
+    Call<List<ForumByCourse>> getForumByCourse (@Path("script") String script, @Query("moodlewsrestformat") String format,
+                                                @Query("wstoken") String token, @Query("wsfunction") String function, @Query("courseids[0]") String courseId);
 
     @GET("webservice/rest/{script}")
     Call<Discussions> getForumDiscussions (@Path("script") String script, @Query("moodlewsrestformat") String format,

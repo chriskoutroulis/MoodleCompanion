@@ -22,10 +22,13 @@ import ais.koutroulis.gr.client.MoodleUrlCommonParts;
 import ais.koutroulis.gr.client.RetrofitMoodleClient;
 import ais.koutroulis.gr.model.Assignment;
 import ais.koutroulis.gr.model.Course;
+import ais.koutroulis.gr.model.CourseToDisplay;
 import ais.koutroulis.gr.model.Courses;
 import ais.koutroulis.gr.model.Discussion;
+import ais.koutroulis.gr.model.DiscussionToDisplay;
 import ais.koutroulis.gr.model.Discussions;
 import ais.koutroulis.gr.model.ForumByCourse;
+import ais.koutroulis.gr.model.ForumToDisplay;
 import ais.koutroulis.gr.model.MarkAsReadResponse;
 import ais.koutroulis.gr.model.Message;
 import ais.koutroulis.gr.model.Messages;
@@ -472,16 +475,17 @@ public class TestRetrofitMoodleClient {
     }
 
     @Test
-    public void shouldReturnOneForum() {
+    public void shouldReturnTwoForumsForSpecificCourse() {
         urlCommonParts.setFunction(GET_FORUM_BY_COURSES_FUNCTION);
         wireMockStubForGettingForumsByCourse();
 
         try {
-            Response<ForumByCourse> responseForumByCourse = moodleClient.getForumsByCourse(urlCommonParts, ais0058CourseId);
+            Response<List<ForumByCourse>> responseForumsByCourse = moodleClient.getForumsByCourse(urlCommonParts, ais0058CourseId);
 
-            assertNotNull("The forum was not supposed to be null.", responseForumByCourse.body().getId());
-            assertEquals("The forum id should have been 1.", 1, responseForumByCourse.body().getId());
-            assertEquals("The course id should have been 2.", 2, responseForumByCourse.body().getCourse());
+            assertNotNull("The forum was not supposed to be null.", responseForumsByCourse.body().get(0).getId());
+            assertNotNull("The forum was not supposed to be null.", responseForumsByCourse.body().get(1).getId());
+            assertEquals("The forum number should have been 2.", 2, responseForumsByCourse.body().size());
+            assertEquals("The first course id should have been 2.", 2, responseForumsByCourse.body().get(0).getCourse());
         } catch (IOException ie) {
         }
 
@@ -624,15 +628,40 @@ public class TestRetrofitMoodleClient {
     }
 
     @Test
-    public void scanForUnreadPostsShouldReturnTwo() {
-        //TODO implement this test for scanning every forum for unread posts.
-        //This method will be for getting notifications for unread posts
-    }
-
-    @Test
     public void getAllForumPostsShouldReturnSeveralPostsFromDifferentForums() {
         //TODO implement this test for getting all the available forum posts.
         //This method will be for getting all forum posts to display on the phone.
+        //I will do it on the live server for now, because it will take a lot of setup in WireMock.
+
+        moodleClient = new RetrofitMoodleClient("http://ais-temp.daidalos.teipir.gr/moodle/");
+        urlCommonParts.setFunction(ASSIGNMENTS_FUNCTION);
+        String liveTokenForAis0058 = "2800aeb20f71838d9405768415096765";
+        urlCommonParts.setToken(liveTokenForAis0058);
+        List<Post> postList =  new ArrayList<>();
+
+        try {
+            List<CourseToDisplay> courseToDisplayList = moodleClient.getAllForumPosts(urlCommonParts);
+            for (CourseToDisplay oneCourse : courseToDisplayList) {
+                List<ForumToDisplay> forumToDisplayList = oneCourse.getForumToDisplayList();
+                for (ForumToDisplay oneForum : forumToDisplayList) {
+                    List<DiscussionToDisplay> discussionToDisplayListList = oneForum.getDiscussionToDisplayList();
+                    for (DiscussionToDisplay oneDiscussion : discussionToDisplayListList) {
+                        postList.addAll(oneDiscussion.getPostList());
+                    }
+                }
+            }
+                assertEquals("The expected number of posts were not found.", 9, postList.size());
+        } catch (IOException ie) {
+        }
+
+
+
+    }
+
+    @Test
+    public void scanForUnreadPostsShouldReturnTwo() {
+        //TODO implement this test for scanning every forum for unread posts.
+        //This method will be for getting notifications for unread posts
     }
 
 

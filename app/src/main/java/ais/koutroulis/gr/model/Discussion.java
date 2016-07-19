@@ -11,7 +11,7 @@ public class Discussion {
 
     @SerializedName("id")
     @Expose
-    private int postId;
+    private int firstPostId;
     @SerializedName("name")
     @Expose
     private String name;
@@ -83,7 +83,7 @@ public class Discussion {
     private String usermodifiedpictureurl;
     @SerializedName("numreplies")
     @Expose
-    private String numreplies;
+    private int numreplies;
     @SerializedName("numunread")
     @Expose
     private int numunread;
@@ -92,17 +92,17 @@ public class Discussion {
     private boolean pinned;
 
     /**
-     * @return The postId
+     * @return The firstPostId
      */
-    public int getPostId() {
-        return postId;
+    public int getFirstPostId() {
+        return firstPostId;
     }
 
     /**
-     * @param postId The id
+     * @param firstPostId The id
      */
-    public void setPostId(int postId) {
-        this.postId = postId;
+    public void setFirstPostId(int firstPostId) {
+        this.firstPostId = firstPostId;
     }
 
     /**
@@ -430,14 +430,14 @@ public class Discussion {
     /**
      * @return The numreplies
      */
-    public String getNumreplies() {
+    public int getNumreplies() {
         return numreplies;
     }
 
     /**
      * @param numreplies The numreplies
      */
-    public void setNumreplies(String numreplies) {
+    public void setNumreplies(int numreplies) {
         this.numreplies = numreplies;
     }
 

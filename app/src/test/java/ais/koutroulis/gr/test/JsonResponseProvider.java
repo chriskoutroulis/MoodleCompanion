@@ -419,34 +419,64 @@ public class JsonResponseProvider {
             "  \"warnings\": []\n" +
             "}";
 
-    private static String ais0058ForumsByCourseJsonString = "{\n" +
-            "    \"id\": 1,\n" +
-            "    \"course\": 2,\n" +
-            "    \"type\": \"news\",\n" +
-            "    \"name\": \"Announcements\",\n" +
-            "    \"intro\": \"General news and announcements\",\n" +
-            "    \"introformat\": 1,\n" +
-            "    \"assessed\": 0,\n" +
-            "    \"assesstimestart\": 0,\n" +
-            "    \"assesstimefinish\": 0,\n" +
-            "    \"scale\": 0,\n" +
-            "    \"maxbytes\": 0,\n" +
-            "    \"maxattachments\": 1,\n" +
-            "    \"forcesubscribe\": 1,\n" +
-            "    \"trackingtype\": 1,\n" +
-            "    \"rsstype\": 0,\n" +
-            "    \"rssarticles\": 0,\n" +
-            "    \"timemodified\": 1467304056,\n" +
-            "    \"warnafter\": 0,\n" +
-            "    \"blockafter\": 0,\n" +
-            "    \"blockperiod\": 0,\n" +
-            "    \"completiondiscussions\": 0,\n" +
-            "    \"completionreplies\": 0,\n" +
-            "    \"completionposts\": 0,\n" +
-            "    \"cmid\": 1,\n" +
-            "    \"numdiscussions\": 1,\n" +
-            "    \"cancreatediscussions\": true\n" +
-            "  }";
+    private static String ais0058ForumsByCourseJsonString = "[\n"+
+            "    {\n"+
+            "        \"id\": 1,\n"+
+            "        \"course\": 2,\n"+
+            "        \"type\": \"news\",\n"+
+            "        \"name\": \"Announcements\",\n"+
+            "        \"intro\": \"General news and announcements\",\n"+
+            "        \"introformat\": 1,\n"+
+            "        \"assessed\": 0,\n"+
+            "        \"assesstimestart\": 0,\n"+
+            "        \"assesstimefinish\": 0,\n"+
+            "        \"scale\": 0,\n"+
+            "        \"maxbytes\": 0,\n"+
+            "        \"maxattachments\": 1,\n"+
+            "        \"forcesubscribe\": 1,\n"+
+            "        \"trackingtype\": 1,\n"+
+            "        \"rsstype\": 0,\n"+
+            "        \"rssarticles\": 0,\n"+
+            "        \"timemodified\": 1467304056,\n"+
+            "        \"warnafter\": 0,\n"+
+            "        \"blockafter\": 0,\n"+
+            "        \"blockperiod\": 0,\n"+
+            "        \"completiondiscussions\": 0,\n"+
+            "        \"completionreplies\": 0,\n"+
+            "        \"completionposts\": 0,\n"+
+            "        \"cmid\": 1,\n"+
+            "        \"numdiscussions\": 4,\n"+
+            "        \"cancreatediscussions\": true\n"+
+            "    },\n"+
+            "    {\n"+
+            "        \"id\": 5,\n"+
+            "        \"course\": 2,\n"+
+            "        \"type\": \"general\",\n"+
+            "        \"name\": \"Δεύτερο Forum\",\n"+
+            "        \"intro\": \"<p>Ε΄δω θα συζητούνται διαφορετικά θέματα από το πρώτο forum.</p>\",\n"+
+            "        \"introformat\": 1,\n"+
+            "        \"assessed\": 0,\n"+
+            "        \"assesstimestart\": 0,\n"+
+            "        \"assesstimefinish\": 0,\n"+
+            "        \"scale\": 100,\n"+
+            "        \"maxbytes\": 512000,\n"+
+            "        \"maxattachments\": 9,\n"+
+            "        \"forcesubscribe\": 0,\n"+
+            "        \"trackingtype\": 1,\n"+
+            "        \"rsstype\": 0,\n"+
+            "        \"rssarticles\": 0,\n"+
+            "        \"timemodified\": 1468920227,\n"+
+            "        \"warnafter\": 0,\n"+
+            "        \"blockafter\": 0,\n"+
+            "        \"blockperiod\": 0,\n"+
+            "        \"completiondiscussions\": 0,\n"+
+            "        \"completionreplies\": 0,\n"+
+            "        \"completionposts\": 0,\n"+
+            "        \"cmid\": 7,\n"+
+            "        \"numdiscussions\": 0,\n"+
+            "        \"cancreatediscussions\": true\n"+
+            "    }\n"+
+            "]";
 
     private static String ais0058ForumDiscussionsJsonString = "{\n" +
             "  \"discussions\": [\n" +
