@@ -49,7 +49,12 @@ public class RetrofitMoodleClient implements MoodleClient {
     private static final String FUNCTIONS_SCRIPT = "server.php";
     private static final String LOGIN_SERVICE = "moodle_mobile_app";
 
+    private String baseUrl;
+
+
+
     public RetrofitMoodleClient(String baseUrl) {
+        this.baseUrl = baseUrl;
         clientInitializer = new RetroFitClientInitializer<>(baseUrl, MoodleRetroFitService.class);
     }
 
@@ -175,7 +180,7 @@ public class RetrofitMoodleClient implements MoodleClient {
         return discussionResponse.url().toString();
     }
 
-    public List<CourseToDisplay> getAllForumPosts(MoodleUrlCommonParts urlCommonParts) throws IOException {
+    public List<CourseToDisplay> getAllForumPosts(MoodleUrlCommonParts urlCommonParts, String username, String password) throws IOException {
 
         List<CourseToDisplay> courseToDisplayList = new ArrayList<>();
 
@@ -222,6 +227,13 @@ public class RetrofitMoodleClient implements MoodleClient {
                     List<Post> postList = postsResponse.body().getPosts();
                     oneDiscussionToDisplay.setPostList(postList);
                     discussionToDisplayList.add(oneDiscussionToDisplay);
+
+                    //Mark each discussion as read only if there are unread posts
+                    int numberOfUnreadPosts = oneDiscussion.getNumunread();
+                    if (numberOfUnreadPosts>0) {
+                        markForumDiscussionsAsRead(baseUrl, username, password,
+                                oneDiscussion.getdiscussionId());
+                    }
                 }
 
                 oneForumToDisplay.setDiscussionToDisplayList(discussionToDisplayList);
@@ -241,5 +253,9 @@ public class RetrofitMoodleClient implements MoodleClient {
                 markAsReadMessage(urlCommonParts, Integer.toString(oneMessage.getId()), timeReadInMillis);
             }
         }
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
     }
 }

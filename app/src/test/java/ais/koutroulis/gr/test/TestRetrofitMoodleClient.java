@@ -640,7 +640,8 @@ public class TestRetrofitMoodleClient {
         List<Post> postList =  new ArrayList<>();
 
         try {
-            List<CourseToDisplay> courseToDisplayList = moodleClient.getAllForumPosts(urlCommonParts);
+            List<CourseToDisplay> courseToDisplayList = moodleClient.getAllForumPosts(urlCommonParts,
+                    callingUsername, callingPassword);
             for (CourseToDisplay oneCourse : courseToDisplayList) {
                 List<ForumToDisplay> forumToDisplayList = oneCourse.getForumToDisplayList();
                 for (ForumToDisplay oneForum : forumToDisplayList) {
