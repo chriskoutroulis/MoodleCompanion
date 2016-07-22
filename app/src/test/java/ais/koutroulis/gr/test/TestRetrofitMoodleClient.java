@@ -577,7 +577,7 @@ public class TestRetrofitMoodleClient {
 
     @Test
     public void gettingDiscussionPostsShouldMarkThemAsRead() {
-        //TODO implement this test
+        //TODO implement this test - NOT FINISHED
 
         urlCommonParts.setFunction(GET_FORUM_DISCUSSION_POSTS_FUNCTION);
         wireMockStubForGettingForumDiscussionPosts();
@@ -628,7 +628,7 @@ public class TestRetrofitMoodleClient {
     }
 
     @Test
-    public void getAllForumPostsShouldReturnSeveralPostsFromDifferentForums() {
+    public void getAllForumPostsShouldReturnSSpecificNumberOfTotalPosts() {
         //TODO implement this test for getting all the available forum posts.
         //This method will be for getting all forum posts to display on the phone.
         //I will do it on the live server for now, because it will take a lot of setup in WireMock.

@@ -150,15 +150,6 @@ public class RetrofitMoodleClient implements MoodleClient {
         return response;
     }
 
-    private void markAllUnreadMessagesAsRead(MoodleUrlCommonParts urlCommonParts, List<Message> messageList,
-                                             String timeReadInMillis) throws IOException {
-        if (!messageList.isEmpty()) {
-            for (Message oneMessage : messageList) {
-                markAsReadMessage(urlCommonParts, Integer.toString(oneMessage.getId()), timeReadInMillis);
-            }
-        }
-    }
-
     public String markForumDiscussionsAsRead(String baseUrl, String username, String password, int discussionId) throws IOException {
 
         String loginPageUrl = baseUrl + LOGIN_PATH;
@@ -185,15 +176,16 @@ public class RetrofitMoodleClient implements MoodleClient {
     }
 
     public List<CourseToDisplay> getAllForumPosts(MoodleUrlCommonParts urlCommonParts) throws IOException {
+
         List<CourseToDisplay> courseToDisplayList = new ArrayList<>();
-        List<ForumToDisplay> forumToDisplayList = new ArrayList<>();
-        List<DiscussionToDisplay> discussionToDisplayList = new ArrayList<>();
 
         Response<Courses> coursesResponse = getCourses(urlCommonParts);
         List<Course> coursesList = coursesResponse.body().getCourses();
 
         //Iterate Courses
         for (Course oneCourse : coursesList) {
+            List<ForumToDisplay> forumToDisplayList = new ArrayList<>();
+
             CourseToDisplay oneCourseToDisplay = new CourseToDisplay();
             oneCourseToDisplay.setId(oneCourse.getId());
             oneCourseToDisplay.setFullName(oneCourse.getFullname());
@@ -205,11 +197,10 @@ public class RetrofitMoodleClient implements MoodleClient {
 
             List<ForumByCourse> forumByCourseList = forumByCourseResponse.body();
 
-            //TODO remove this
-//            System.out.println("The forums number for the course " + courseIdString + " is " + forumByCourseList.size());
-
             //Iterate Forums
             for (ForumByCourse oneForum : forumByCourseList) {
+                List<DiscussionToDisplay> discussionToDisplayList = new ArrayList<>();
+
                 ForumToDisplay oneForumToDisplay = new ForumToDisplay();
                 oneForumToDisplay.setId(oneForum.getId());
 
@@ -218,9 +209,6 @@ public class RetrofitMoodleClient implements MoodleClient {
                 Response<Discussions> discussionsResponse = getForumDiscussions(urlCommonParts, forumIdString);
 
                 List<Discussion> discussionList = discussionsResponse.body().getDiscussions();
-
-                //TODO remove this
-//                System.out.println("The discussion number for the forum " + forumIdString + " is " + discussionList.size());
 
                 for (Discussion oneDiscussion : discussionList) {
                     DiscussionToDisplay oneDiscussionToDisplay = new DiscussionToDisplay();
@@ -234,10 +222,6 @@ public class RetrofitMoodleClient implements MoodleClient {
                     List<Post> postList = postsResponse.body().getPosts();
                     oneDiscussionToDisplay.setPostList(postList);
                     discussionToDisplayList.add(oneDiscussionToDisplay);
-
-                    //TODO remove this
-                    System.out.println("The posts number for the discussion " + discussionIdString + " is " + postList.size());
-
                 }
 
                 oneForumToDisplay.setDiscussionToDisplayList(discussionToDisplayList);
@@ -248,5 +232,14 @@ public class RetrofitMoodleClient implements MoodleClient {
         }
 
         return courseToDisplayList;
+    }
+
+    private void markAllUnreadMessagesAsRead(MoodleUrlCommonParts urlCommonParts, List<Message> messageList,
+                                             String timeReadInMillis) throws IOException {
+        if (!messageList.isEmpty()) {
+            for (Message oneMessage : messageList) {
+                markAsReadMessage(urlCommonParts, Integer.toString(oneMessage.getId()), timeReadInMillis);
+            }
+        }
     }
 }
