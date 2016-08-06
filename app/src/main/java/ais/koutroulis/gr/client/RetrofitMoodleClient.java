@@ -33,8 +33,8 @@ import retrofit2.Response;
 public class RetrofitMoodleClient implements MoodleClient {
 
     private RetroFitClientInitializer<MoodleRetroFitService> clientInitializer;
-    private static final String LOGIN_PATH = "/login/index.php";
-    private static final String READ_DISCUSSION_PATH = "/mod/forum/discuss.php?d=";
+    private static final String LOGIN_PATH = "login/index.php";
+    private static final String READ_DISCUSSION_PATH = "mod/forum/discuss.php?d=";
 
     private static final String FORMAT = "json";
     private static final String ASSIGNMENTS_FUNCTION = "mod_assign_get_assignments";
@@ -148,14 +148,16 @@ public class RetrofitMoodleClient implements MoodleClient {
     }
 
     public Response<Posts> getForumDiscussionPosts(MoodleUrlCommonParts urlCommonParts, String discussionId) throws IOException {
+
         Call<Posts> getForumDiscussionPostsCall = clientInitializer.getService()
                 .getForumDiscussionPosts(urlCommonParts.getPhpScript(), urlCommonParts.getResponseFormat(),
                         urlCommonParts.getToken(), urlCommonParts.getFunction(), discussionId);
         Response<Posts> response = getForumDiscussionPostsCall.execute();
+
         return response;
     }
 
-    public String markForumDiscussionsAsRead(String baseUrl, String username, String password, int discussionId) throws IOException {
+    public String markForumDiscussionPostsAsRead(String baseUrl, String username, String password, int discussionId) throws IOException {
 
         String loginPageUrl = baseUrl + LOGIN_PATH;
         String urlYouNeedToBeLoggedInToAccess = baseUrl + READ_DISCUSSION_PATH;
@@ -180,7 +182,7 @@ public class RetrofitMoodleClient implements MoodleClient {
         return discussionResponse.url().toString();
     }
 
-    public List<CourseToDisplay> getAllForumPosts(MoodleUrlCommonParts urlCommonParts, String username, String password) throws IOException {
+    public List<CourseToDisplay> getAllForumPostsAndMarkAsRead(MoodleUrlCommonParts urlCommonParts, String username, String password) throws IOException {
 
         List<CourseToDisplay> courseToDisplayList = new ArrayList<>();
 
@@ -231,7 +233,7 @@ public class RetrofitMoodleClient implements MoodleClient {
                     //Mark each discussion as read only if there are unread posts
                     int numberOfUnreadPosts = oneDiscussion.getNumunread();
                     if (numberOfUnreadPosts>0) {
-                        markForumDiscussionsAsRead(baseUrl, username, password,
+                        markForumDiscussionPostsAsRead(baseUrl, username, password,
                                 oneDiscussion.getdiscussionId());
                     }
                 }

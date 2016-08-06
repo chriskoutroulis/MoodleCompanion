@@ -28,9 +28,9 @@ public interface MoodleClient {
 
     public <T> T getForumDiscussionPosts(MoodleUrlCommonParts urlCommonParts, String discussionId) throws IOException;
 
-    public String  markForumDiscussionsAsRead(String baseUrl, String username, String password,
-                                            int discussionId) throws IOException;
+    public String markForumDiscussionPostsAsRead(String baseUrl, String username, String password,
+                                                 int discussionId) throws IOException;
 
-    public <T> T getAllForumPosts(MoodleUrlCommonParts urlCommonParts, String username, String password) throws IOException;
+    public <T> T getAllForumPostsAndMarkAsRead(MoodleUrlCommonParts urlCommonParts, String username, String password) throws IOException;
 
 }

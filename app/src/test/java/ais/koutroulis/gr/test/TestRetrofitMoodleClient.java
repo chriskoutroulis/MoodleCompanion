@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -44,6 +45,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.findAll;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.requestMadeFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.requestMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
@@ -535,7 +540,8 @@ public class TestRetrofitMoodleClient {
                 "<p>Το ερόμενο Σάββατο, θα γίνει συνάντηση για να συζητηθούν απορίες σχετικά με το PROFIBus.</p>"};
 
         try {
-            Response<Posts> responseForumDiscussionPosts = moodleClient.getForumDiscussionPosts(urlCommonParts, ais0058DiscussionId);
+            Response<Posts> responseForumDiscussionPosts = moodleClient.getForumDiscussionPosts(urlCommonParts,
+                    ais0058DiscussionId);
 
             assertEquals("The number of posts should have been 3.", 3, responseForumDiscussionPosts.body().getPosts().size());
 
@@ -555,108 +561,6 @@ public class TestRetrofitMoodleClient {
                 + "json" + "&wstoken=" + expectedToken.getToken() + "&wsfunction=" + GET_FORUM_DISCUSSION_POSTS_FUNCTION
                 + "&discussionid=" + ais0058DiscussionId)));
         WireMock.reset();
-    }
-
-    @Test
-    public void markForumDiscussionsAsReadShouldReturnUrlThatContainsDiscussPhp() {
-
-        String baseUrl = "http://ais-temp.daidalos.teipir.gr/moodle";
-        int httpStatusOk = 200;
-        int discussionId = 1;
-        String httpResponseUrl = null;
-        try {
-            httpResponseUrl = moodleClient.markForumDiscussionsAsRead(baseUrl, callingUsername, callingPassword, discussionId);
-        } catch (IOException e) {
-            fail("There was a network error.");
-        }
-        //if the login has failed then the response url, is pointing at the login page.
-        assertTrue("The response url shows that a redirection was made due to possible login failure or that the resource is missing.",
-                httpResponseUrl.contains("discuss.php"));
-    }
-
-
-    @Test
-    public void gettingDiscussionPostsShouldMarkThemAsRead() {
-        //TODO implement this test - NOT FINISHED
-
-        urlCommonParts.setFunction(GET_FORUM_DISCUSSION_POSTS_FUNCTION);
-        wireMockStubForGettingForumDiscussionPosts();
-
-        //TODO add all the expected calls
-        List<String> expectedRequests = new ArrayList();
-        expectedRequests.add("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT + "?moodlewsrestformat=" + FORMAT
-                + "&wstoken=" + expectedToken.getToken() + "&wsfunction=" + GET_FORUM_DISCUSSION_POSTS_FUNCTION
-                + "&discussionid=" + ais0058DiscussionId );
-
-        try {
-            Response<Posts> responseForumDiscussionPosts = moodleClient.getForumDiscussionPosts(urlCommonParts, ais0058DiscussionId);
-
-            assertEquals("The number of posts should have been 3.", 3, responseForumDiscussionPosts.body().getPosts().size());
-
-            List<Post> posts = responseForumDiscussionPosts.body().getPosts();
-
-            //Simulate marking of all posts read.
-            for (Post onePost : posts) {
-                onePost.setPostread(true);
-            }
-
-            for (Post onePost : posts) {
-               if (!onePost.isPostread()) {
-                   fail("Unread posts were found after gettting all posts.");
-               }
-            }
-
-            List<LoggedRequest> loggedRequests = findAll(getRequestedFor(urlMatching("/moodle/.*")));
-
-            assertEquals("The number of expected calls was not the same as the ones logged.",
-                    expectedRequests.size(), loggedRequests.size());
-
-            int i = 0;
-            for (LoggedRequest loggedRequest : loggedRequests) {
-                assertEquals("One expected request was not found in the logged requests.",
-                        expectedRequests.get(i), loggedRequest.getUrl());
-                i++;
-            }
-
-        } catch (IOException ie) {
-        }
-
-        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT + "?moodlewsrestformat="
-                + "json" + "&wstoken=" + expectedToken.getToken() + "&wsfunction=" + GET_FORUM_DISCUSSION_POSTS_FUNCTION
-                + "&discussionid=" + ais0058DiscussionId)));
-        WireMock.reset();
-    }
-
-    @Test
-    public void getAllForumPostsShouldReturnSSpecificNumberOfTotalPosts() {
-        //TODO implement this test for getting all the available forum posts.
-        //This method will be for getting all forum posts to display on the phone.
-        //I will do it on the live server for now, because it will take a lot of setup in WireMock.
-
-        moodleClient = new RetrofitMoodleClient("http://ais-temp.daidalos.teipir.gr/moodle/");
-        urlCommonParts.setFunction(ASSIGNMENTS_FUNCTION);
-        String liveTokenForAis0058 = "2800aeb20f71838d9405768415096765";
-        urlCommonParts.setToken(liveTokenForAis0058);
-        List<Post> postList =  new ArrayList<>();
-
-        try {
-            List<CourseToDisplay> courseToDisplayList = moodleClient.getAllForumPosts(urlCommonParts,
-                    callingUsername, callingPassword);
-            for (CourseToDisplay oneCourse : courseToDisplayList) {
-                List<ForumToDisplay> forumToDisplayList = oneCourse.getForumToDisplayList();
-                for (ForumToDisplay oneForum : forumToDisplayList) {
-                    List<DiscussionToDisplay> discussionToDisplayListList = oneForum.getDiscussionToDisplayList();
-                    for (DiscussionToDisplay oneDiscussion : discussionToDisplayListList) {
-                        postList.addAll(oneDiscussion.getPostList());
-                    }
-                }
-            }
-                assertEquals("The expected number of posts were not found.", 9, postList.size());
-        } catch (IOException ie) {
-        }
-
-
-
     }
 
     @Test
