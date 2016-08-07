@@ -5,4 +5,12 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name = "moodle_platform">Moodle - Open-source learning platform</string>
+    <string name = "moodle_url">https://moodle.com/</string>
+
+    <string name="moodle_assignments">Current Assignments</string>
+    <string name="moodle_messages">Private Messages</string>
+    <string name="moodle_posts">Forum Posts</string>
+    <string name="moodle_settings">Settings</string>
 </resources>
