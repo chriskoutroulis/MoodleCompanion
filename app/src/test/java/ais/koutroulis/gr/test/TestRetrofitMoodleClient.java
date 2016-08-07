@@ -88,7 +88,12 @@ public class TestRetrofitMoodleClient {
     private String readFalse = "0";
     private String readTrue = "1";
     private String unReadMessageId = "4";
-    private String timeReadinMillis = "1468315655";
+
+    // Conversion from milliseconds to epoch
+    private String timeReadinMillis = "1468315655099";
+    private String epochTimeRead =
+            timeReadinMillis.substring(0, timeReadinMillis.length() - 3);
+
     private String ais0058CourseId = "2";
     private String ais0058ForumId = "1";
     private String ais0058DiscussionId = "1";
@@ -182,7 +187,7 @@ public class TestRetrofitMoodleClient {
         assertNotNull("The response string is null!", JsonResponseProvider.getFourCoursesAndTwoAssignmentsJsonString());
         wireMockStubForFunction(ASSIGNMENTS_FUNCTION);
         try {
-            Response<Courses> responseCourses = moodleClient.getCourses(urlCommonParts);
+            Response<Courses> responseCourses = moodleClient.getCoursesAndAssignments(urlCommonParts);
             Assert.assertEquals("The status code is not 200.", 200, responseCourses.code());
             assertEquals("There should be 4 courses in this response.", 4, responseCourses.body().getCourses().size());
         } catch (IOException ie) {
@@ -200,7 +205,7 @@ public class TestRetrofitMoodleClient {
         wireMockStubForFunction(ASSIGNMENTS_FUNCTION);
 
         try {
-            Response<Courses> responseCourses = moodleClient.getCourses(urlCommonParts);
+            Response<Courses> responseCourses = moodleClient.getCoursesAndAssignments(urlCommonParts);
             List<Course> courses = responseCourses.body().getCourses();
             List<Assignment> aggregatedAssignments = new ArrayList<>();
             for (Course oneCourse : courses) {
@@ -223,7 +228,7 @@ public class TestRetrofitMoodleClient {
         wireMockStubForFunction(ASSIGNMENTS_FUNCTION);
 
         try {
-            Response<Courses> responseCourses = moodleClient.getCourses(urlCommonParts);
+            Response<Courses> responseCourses = moodleClient.getCoursesAndAssignments(urlCommonParts);
             List<Course> courses = responseCourses.body().getCourses();
             List<Assignment> aggregatedAssignments = new ArrayList<>();
             for (Course oneCourse : courses) {
@@ -247,14 +252,56 @@ public class TestRetrofitMoodleClient {
     }
 
     @Test
-    public void scanForActiveAssignments() {
-        //TODO implement this feature
-        //It will probable be based on the variable "assignment.getDuedate()"
-        //to determine if the assignment is still active.
-        //It looks like there is no Moodle REST service for new assignments...
-        //But there is one for seeing the submission file for a specific assignment.
-        //Maybe I should just make a method that compares the current date to the due date of an assignment
-        //and fetch only those that are still pending.
+    //Test pending assignments when "current" date is before any of the assignment's due date.
+    public void scanForCurrentAssignmentsShouldReturnTwoAssignments() {
+
+        urlCommonParts.setFunction(ASSIGNMENTS_FUNCTION);
+        wireMockStubForFunction(ASSIGNMENTS_FUNCTION);
+        int expectedAssignments = 2;
+
+        // Time before any of the 2 assignments' due date
+        long currentTimeInMillis = 1470585791967L;
+        long currentEpochTime = currentTimeInMillis/1000;
+
+        try {
+            List<Assignment> currentAssignmentsList = moodleClient.scanForCurrentAssignments(urlCommonParts,
+                    currentEpochTime);
+
+            assertEquals("The assignments should have been 2.", expectedAssignments, currentAssignmentsList.size());
+
+        } catch (IOException e) {
+        }
+
+        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT + "?moodlewsrestformat="
+                + "json" + "&wstoken="
+                + expectedToken.getToken() + "&wsfunction=" + ASSIGNMENTS_FUNCTION)));
+        WireMock.reset();
+    }
+
+    @Test
+    //Test pending assignments when "current" date is after the due date of one of the assignments.
+    //But also before the due date of the other assignment.
+    public void scanForCurrentAssignmentsShouldReturnOneAssignment() {
+
+        urlCommonParts.setFunction(ASSIGNMENTS_FUNCTION);
+        wireMockStubForFunction(ASSIGNMENTS_FUNCTION);
+        int expectedAssignments = 1;
+
+        long futureEpochTime = 1471076400;
+
+        try {
+            List<Assignment> currentAssignmentsList = moodleClient.scanForCurrentAssignments(urlCommonParts,
+                    futureEpochTime);
+
+            assertEquals("The assignments should have been 2.", expectedAssignments, currentAssignmentsList.size());
+
+        } catch (IOException e) {
+        }
+
+        WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT + "?moodlewsrestformat="
+                + "json" + "&wstoken="
+                + expectedToken.getToken() + "&wsfunction=" + ASSIGNMENTS_FUNCTION)));
+        WireMock.reset();
     }
 
     @Test
@@ -299,7 +346,8 @@ public class TestRetrofitMoodleClient {
 
         try {
             Response<Messages> responseUnreadMessages = moodleClient.getMessages(urlCommonParts, MARK_AS_READ_FUNCTION,
-                    ais0058UserId, anyUser, readFalse, timeReadinMillis);
+                    ais0058UserId, anyUser, readFalse, epochTimeRead);
+
             messageList = responseUnreadMessages.body().getMessages();
 
             assertEquals("The unread messages were not 2 as expected.", 2, responseUnreadMessages.body().getMessages().size());
@@ -324,7 +372,7 @@ public class TestRetrofitMoodleClient {
                 WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT + "?moodlewsrestformat="
                         + "json" + "&wstoken="
                         + expectedToken.getToken() + "&wsfunction=" + MARK_AS_READ_FUNCTION
-                        + "&messageid=" + oneMessage.getId() + "&timeread=" + timeReadinMillis)));
+                        + "&messageid=" + oneMessage.getId() + "&timeread=" + epochTimeRead)));
             }
         } else {
             Assert.fail("The messsage list should have had 2 messages, but it was null.");
@@ -341,7 +389,7 @@ public class TestRetrofitMoodleClient {
         wireMockStubForGettingReadMessages();
         try {
             Response<Messages> responseReadMessages = moodleClient.getMessages(urlCommonParts, MARK_AS_READ_FUNCTION,
-                    ais0058UserId, anyUser, readTrue, timeReadinMillis);
+                    ais0058UserId, anyUser, readTrue, epochTimeRead);
             assertEquals("The read messages were not 3 as expected.", 3, responseReadMessages.body().getMessages().size());
             assertTrue("The first message is not the one that was expected.",
                     responseReadMessages.body().getMessages().get(0).getFullmessage()
@@ -369,7 +417,7 @@ public class TestRetrofitMoodleClient {
         wireMockStubForMarkingAsReadMessages();
         try {
             Response<MarkAsReadResponse> responseMarkAsRead = moodleClient.markAsReadMessage(urlCommonParts,
-                    unReadMessageId, timeReadinMillis);
+                    unReadMessageId, epochTimeRead);
 
             assertNotNull("There was no read message id returned.", responseMarkAsRead.body().getMessageIdAsRead());
             assertEquals("The returned read message id was not 4", 4, responseMarkAsRead.body().getMessageIdAsRead());
@@ -380,7 +428,7 @@ public class TestRetrofitMoodleClient {
         WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT + "?moodlewsrestformat="
                 + "json" + "&wstoken="
                 + expectedToken.getToken() + "&wsfunction=" + MARK_AS_READ_FUNCTION
-                + "&messageid=" + unReadMessageId + "&timeread=" + timeReadinMillis)));
+                + "&messageid=" + unReadMessageId + "&timeread=" + epochTimeRead)));
         WireMock.reset();
     }
 
@@ -402,7 +450,7 @@ public class TestRetrofitMoodleClient {
 
         try {
             Response<Messages> responseUnreadMessages = moodleClient.getMessages(urlCommonParts, MARK_AS_READ_FUNCTION,
-                    ais0058UserId, anyUser, readFalse, timeReadinMillis);
+                    ais0058UserId, anyUser, readFalse, epochTimeRead);
             messageList = responseUnreadMessages.body().getMessages();
         } catch (IOException e) {
         }
@@ -417,12 +465,12 @@ public class TestRetrofitMoodleClient {
 
                 expectedRequests.add("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT + "?moodlewsrestformat=" + FORMAT +
                         "&wstoken=" + expectedToken.getToken() + "&wsfunction=" + MARK_AS_READ_FUNCTION +
-                        "&messageid=" + oneMessage.getId() + "&timeread=" + timeReadinMillis);
+                        "&messageid=" + oneMessage.getId() + "&timeread=" + epochTimeRead);
 
                 WireMock.verify(WireMock.getRequestedFor(WireMock.urlEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT + "?moodlewsrestformat="
                         + "json" + "&wstoken="
                         + expectedToken.getToken() + "&wsfunction=" + MARK_AS_READ_FUNCTION
-                        + "&messageid=" + oneMessage.getId() + "&timeread=" + timeReadinMillis)));
+                        + "&messageid=" + oneMessage.getId() + "&timeread=" + epochTimeRead)));
             }
 
             List<LoggedRequest> loggedRequests = findAll(getRequestedFor(urlMatching("/moodle/.*")));
@@ -457,7 +505,7 @@ public class TestRetrofitMoodleClient {
 
         try {
             Response<Messages> responseUnreadMessages = moodleClient.getMessages(urlCommonParts, MARK_AS_READ_FUNCTION,
-                    ais0058UserId, anyUser, readTrue, timeReadinMillis);
+                    ais0058UserId, anyUser, readTrue, epochTimeRead);
         } catch (IOException e) {
         }
 
@@ -498,6 +546,8 @@ public class TestRetrofitMoodleClient {
 
         } catch (IOException ie) {
         }
+
+        WireMock.reset();
     }
 
     @Test
@@ -661,7 +711,7 @@ public class TestRetrofitMoodleClient {
                 .withQueryParam("wsfunction", equalTo(MARK_AS_READ_FUNCTION))
 //                .withQueryParam("messageid", equalTo(unReadMessageId))
                 .withQueryParam("messageid", matching("^[1-9][0-9]*$")) //any digit greater than zero
-                .withQueryParam("timeread", equalTo(timeReadinMillis))
+                .withQueryParam("timeread", equalTo(epochTimeRead))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json; charset=utf-8")

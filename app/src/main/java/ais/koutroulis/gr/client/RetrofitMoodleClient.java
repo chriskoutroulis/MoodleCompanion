@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import ais.koutroulis.gr.model.Assignment;
 import ais.koutroulis.gr.model.Course;
 import ais.koutroulis.gr.model.CourseToDisplay;
 import ais.koutroulis.gr.model.Courses;
@@ -87,13 +88,33 @@ public class RetrofitMoodleClient implements MoodleClient {
         return response;
     }
 
-    public Response<Courses> getCourses(MoodleUrlCommonParts urlCommonParts) throws IOException {
+    public Response<Courses> getCoursesAndAssignments(MoodleUrlCommonParts urlCommonParts) throws IOException {
         Call<Courses> getCoursesCall = clientInitializer.getService()
                 .getCourses(urlCommonParts.getPhpScript(), urlCommonParts.getResponseFormat(),
                         urlCommonParts.getToken(), urlCommonParts.getFunction());
         Response<Courses> response = getCoursesCall.execute();
 
         return response;
+    }
+
+    public List<Assignment> scanForCurrentAssignments(MoodleUrlCommonParts urlCommonParts,
+                                                      long currentEpochTime) throws IOException {
+        List<Assignment> currentAssignmentsList = new ArrayList<>();
+
+        Response<Courses> responseCourses = getCoursesAndAssignments(urlCommonParts);
+        List<Course> courses = responseCourses.body().getCourses();
+        List<Assignment> totalAssignments = new ArrayList<>();
+        for (Course oneCourse : courses) {
+            totalAssignments.addAll(oneCourse.getAssignments());
+        }
+
+        for (Assignment assignment : totalAssignments) {
+            if (assignment.getDuedate() > currentEpochTime) {
+                currentAssignmentsList.add(assignment);
+            }
+        }
+
+        return currentAssignmentsList;
     }
 
     public Response<User> getUserDetails(MoodleUrlCommonParts urlCommonParts, String byField,
@@ -208,7 +229,7 @@ public class RetrofitMoodleClient implements MoodleClient {
             int totalNumberOfUnreadPosts = 0;
             List<CourseToDisplay> courseToDisplayList = new ArrayList<>();
 
-            Response<Courses> coursesResponse = getCourses(urlCommonParts);
+            Response<Courses> coursesResponse = getCoursesAndAssignments(urlCommonParts);
             List<Course> coursesList = coursesResponse.body().getCourses();
 
             //Iterate Courses
@@ -268,7 +289,7 @@ public class RetrofitMoodleClient implements MoodleClient {
 
         List<CourseToDisplay> courseToDisplayList = new ArrayList<>();
 
-        Response<Courses> coursesResponse = getCourses(urlCommonParts);
+        Response<Courses> coursesResponse = getCoursesAndAssignments(urlCommonParts);
         List<Course> coursesList = coursesResponse.body().getCourses();
 
         //Iterate Courses

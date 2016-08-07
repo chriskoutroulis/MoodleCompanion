@@ -12,7 +12,9 @@ public interface MoodleClient {
 
     public <T> T login(String script, String loginService, String username, String password) throws IOException;
 
-    public <T> T getCourses(MoodleUrlCommonParts urlCommonParts) throws IOException;
+    public <T> T getCoursesAndAssignments(MoodleUrlCommonParts urlCommonParts) throws IOException;
+
+    public <T> T scanForCurrentAssignments(MoodleUrlCommonParts urlCommonParts, long currentEpochTime) throws IOException;
 
     public <T> T getUserDetails(MoodleUrlCommonParts urlCommonParts, String byField, String fieldValue) throws IOException;
 
