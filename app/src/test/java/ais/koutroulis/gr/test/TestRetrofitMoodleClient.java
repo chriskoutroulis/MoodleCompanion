@@ -484,7 +484,7 @@ public class TestRetrofitMoodleClient {
             int actualNumberOfUnreadMessages = moodleClient.scanForUnreadMessages(urlCommonParts,
                     ais0058UserId, anyUser);
 
-            assertEquals("The number of unread messages should have been 0.", expectedNumberOfUnreadMessages,
+            assertEquals("The number of unread messages should have been 2.", expectedNumberOfUnreadMessages,
                    actualNumberOfUnreadMessages);
 
         } catch (IOException ie) {
