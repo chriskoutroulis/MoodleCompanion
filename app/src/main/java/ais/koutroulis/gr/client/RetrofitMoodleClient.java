@@ -182,6 +182,67 @@ public class RetrofitMoodleClient implements MoodleClient {
         return discussionResponse.url().toString();
     }
 
+    public Integer scanForUnreadForumDiscussionPosts(MoodleUrlCommonParts urlCommonParts) throws IOException {
+
+            int totalNumberOfUnreadPosts = 0;
+            List<CourseToDisplay> courseToDisplayList = new ArrayList<>();
+
+            Response<Courses> coursesResponse = getCourses(urlCommonParts);
+            List<Course> coursesList = coursesResponse.body().getCourses();
+
+            //Iterate Courses
+            for (Course oneCourse : coursesList) {
+                List<ForumToDisplay> forumToDisplayList = new ArrayList<>();
+
+                CourseToDisplay oneCourseToDisplay = new CourseToDisplay();
+                oneCourseToDisplay.setId(oneCourse.getId());
+                oneCourseToDisplay.setFullName(oneCourse.getFullname());
+
+                //Get all the forums for a specific course
+                urlCommonParts.setFunction(GET_FORUM_BY_COURSES_FUNCTION);
+                String courseIdString = Integer.toString(oneCourse.getId());
+                Response<List<ForumByCourse>> forumByCourseResponse = getForumsByCourse(urlCommonParts, courseIdString);
+
+                List<ForumByCourse> forumByCourseList = forumByCourseResponse.body();
+
+                //Iterate Forums
+                for (ForumByCourse oneForum : forumByCourseList) {
+                    List<DiscussionToDisplay> discussionToDisplayList = new ArrayList<>();
+
+                    ForumToDisplay oneForumToDisplay = new ForumToDisplay();
+                    oneForumToDisplay.setId(oneForum.getId());
+
+                    urlCommonParts.setFunction(GET_FORUM_DISCUSSIONS_FUNCTION);
+                    String forumIdString = Integer.toString(oneForum.getId());
+                    Response<Discussions> discussionsResponse = getForumDiscussions(urlCommonParts, forumIdString);
+
+                    List<Discussion> discussionList = discussionsResponse.body().getDiscussions();
+
+                    for (Discussion oneDiscussion : discussionList) {
+                        DiscussionToDisplay oneDiscussionToDisplay = new DiscussionToDisplay();
+                        oneDiscussionToDisplay.setId(oneDiscussion.getdiscussionId());
+                        oneDiscussionToDisplay.setNumReplies(oneDiscussion.getNumreplies());
+                        oneDiscussionToDisplay.setNumUnread(oneDiscussion.getNumunread());
+
+                        discussionToDisplayList.add(oneDiscussionToDisplay);
+
+                        //Mark each discussion as read only if there are unread posts
+                        int numberOfUnreadPosts = oneDiscussion.getNumunread();
+                        if (numberOfUnreadPosts>0) {
+                            totalNumberOfUnreadPosts = totalNumberOfUnreadPosts + numberOfUnreadPosts;
+                        }
+                    }
+
+                    oneForumToDisplay.setDiscussionToDisplayList(discussionToDisplayList);
+                    forumToDisplayList.add(oneForumToDisplay);
+                }
+                oneCourseToDisplay.setForumToDisplayList(forumToDisplayList);
+                courseToDisplayList.add(oneCourseToDisplay);
+            }
+
+        return totalNumberOfUnreadPosts;
+    }
+
     public List<CourseToDisplay> getAllForumPostsAndMarkAsRead(MoodleUrlCommonParts urlCommonParts, String username, String password) throws IOException {
 
         List<CourseToDisplay> courseToDisplayList = new ArrayList<>();

@@ -8,7 +8,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -23,13 +22,10 @@ import ais.koutroulis.gr.client.MoodleUrlCommonParts;
 import ais.koutroulis.gr.client.RetrofitMoodleClient;
 import ais.koutroulis.gr.model.Assignment;
 import ais.koutroulis.gr.model.Course;
-import ais.koutroulis.gr.model.CourseToDisplay;
 import ais.koutroulis.gr.model.Courses;
 import ais.koutroulis.gr.model.Discussion;
-import ais.koutroulis.gr.model.DiscussionToDisplay;
 import ais.koutroulis.gr.model.Discussions;
 import ais.koutroulis.gr.model.ForumByCourse;
-import ais.koutroulis.gr.model.ForumToDisplay;
 import ais.koutroulis.gr.model.MarkAsReadResponse;
 import ais.koutroulis.gr.model.Message;
 import ais.koutroulis.gr.model.Messages;
@@ -45,10 +41,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.findAll;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.requestMadeFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.requestMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
@@ -56,7 +48,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * Created by Chris on 02-Jul-16.
@@ -480,6 +471,11 @@ public class TestRetrofitMoodleClient {
     }
 
     @Test
+    public void scanForUnreadMessagesShouldReturnTwo() {
+        //TODO implement this test and feature
+    }
+
+    @Test
     public void shouldReturnTwoForumsForSpecificCourse() {
         urlCommonParts.setFunction(GET_FORUM_BY_COURSES_FUNCTION);
         wireMockStubForGettingForumsByCourse();
@@ -562,13 +558,6 @@ public class TestRetrofitMoodleClient {
                 + "&discussionid=" + ais0058DiscussionId)));
         WireMock.reset();
     }
-
-    @Test
-    public void scanForUnreadPostsShouldReturnTwo() {
-        //TODO implement this test for scanning every forum for unread posts.
-        //This method will be for getting notifications for unread posts
-    }
-
 
     private void createAppropriateStubForThisUser(String username, String password) {
         if (isRegisteredUser()) {

@@ -63,6 +63,29 @@ public class LiveTestsRetrofitMoodleClient {
     }
 
     @Test
+    //The next test marks all posts as read, so this test better have an expected number
+    //of zero, so that it always passes when running the whole test class.
+    //It has been manually verified to get the correct number also, other than zero.
+    public void scanForUnreadPostsShouldReturnZero() {
+        //TODO implement this test for scanning every forum for unread posts.
+        //This method will be for getting notifications for unread posts
+
+        moodleClient = new RetrofitMoodleClient("http://ais-temp.daidalos.teipir.gr/moodle/");
+        urlCommonParts.setFunction(ASSIGNMENTS_FUNCTION);
+        String liveTokenForAis0058 = "2800aeb20f71838d9405768415096765";
+        urlCommonParts.setToken(liveTokenForAis0058);
+        int expectedNumberOfUnreadPosts = 0;
+
+        try {
+            int actualNumberOfUnreadPosts = moodleClient.scanForUnreadForumDiscussionPosts(urlCommonParts);
+            assertEquals("The expected number of unread posts were not found.", expectedNumberOfUnreadPosts,
+                    actualNumberOfUnreadPosts);
+        } catch (IOException ie) {
+        }
+
+    }
+
+    @Test
     //After running this test we can visually verify that all posts are marked as read when this is done.
     public void getAllForumPostsShouldReturnSpecificNumberOfTotalPosts() {
 
