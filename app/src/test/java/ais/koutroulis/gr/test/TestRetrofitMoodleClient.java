@@ -247,6 +247,17 @@ public class TestRetrofitMoodleClient {
     }
 
     @Test
+    public void scanForActiveAssignments() {
+        //TODO implement this feature
+        //It will probable be based on the variable "assignment.getDuedate()"
+        //to determine if the assignment is still active.
+        //It looks like there is no Moodle REST service for new assignments...
+        //But there is one for seeing the submission file for a specific assignment.
+        //Maybe I should just make a method that compares the current date to the due date of an assignment
+        //and fetch only those that are still pending.
+    }
+
+    @Test
     public void shouldContainSpecificDetailsForAGivenUsername() {
 
         urlCommonParts.setFunction(USER_DETAILS_FUNCTION);
@@ -472,8 +483,6 @@ public class TestRetrofitMoodleClient {
 
     @Test
     public void scanForUnreadMessagesShouldReturnTwo() {
-        //TODO implement this test and feature
-
         urlCommonParts.setFunction(GET_MESSAGES_FUNCTION);
         wireMockStubForGettingUnreadMessages();
         wireMockStubForMarkingAsReadWithInvalidTimeread();
