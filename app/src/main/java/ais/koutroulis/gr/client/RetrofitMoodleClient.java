@@ -131,6 +131,27 @@ public class RetrofitMoodleClient implements MoodleClient {
         return response;
     }
 
+    public Integer scanForUnreadMessages(MoodleUrlCommonParts urlCommonParts,
+                                         String sentToId, String sentFromId) throws IOException {
+        String readFalse = "0";
+        //A null value is given so that the mark as read feature will fail.
+        //It is not desired to mark as read when just scanning for unread messages.
+        String invalidTimeReadinMillis = "invalid";
+        int numberOfUnreadMessages = 0;
+
+        try {
+            Response<Messages> responseUnreadMessages = getMessages(urlCommonParts, MARK_AS_READ_FUNCTION,
+                    sentToId, sentFromId, readFalse, invalidTimeReadinMillis);
+            List<Message> messageList = responseUnreadMessages.body().getMessages();
+            numberOfUnreadMessages = messageList.size();
+
+        } catch (IOException e) {
+        }
+        return numberOfUnreadMessages;
+    }
+
+
+
     public Response<List<ForumByCourse>> getForumsByCourse(MoodleUrlCommonParts urlCommonParts, String courseId) throws IOException {
         Call<List<ForumByCourse>> getForumByCourseCall = clientInitializer.getService()
                 .getForumByCourse(urlCommonParts.getPhpScript(), urlCommonParts.getResponseFormat(),

@@ -22,6 +22,8 @@ public interface MoodleClient {
     public <T> T markAsReadMessage(MoodleUrlCommonParts urlCommonParts, String unreadMessageId,
                                    String timeReadInMillis) throws IOException;
 
+    public <T> T scanForUnreadMessages(MoodleUrlCommonParts urlCommonParts, String sentToId, String sentFromId) throws IOException;
+
     public <T> T getForumsByCourse(MoodleUrlCommonParts urlCommonParts, String courseId) throws IOException;
 
     public <T> T getForumDiscussions(MoodleUrlCommonParts urlCommonParts, String forumId) throws IOException;

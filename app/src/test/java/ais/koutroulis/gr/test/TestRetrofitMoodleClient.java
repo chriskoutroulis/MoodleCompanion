@@ -473,6 +473,22 @@ public class TestRetrofitMoodleClient {
     @Test
     public void scanForUnreadMessagesShouldReturnTwo() {
         //TODO implement this test and feature
+
+        urlCommonParts.setFunction(GET_MESSAGES_FUNCTION);
+        wireMockStubForGettingUnreadMessages();
+        wireMockStubForMarkingAsReadWithInvalidTimeread();
+
+        int expectedNumberOfUnreadMessages = 2;
+
+        try {
+            int actualNumberOfUnreadMessages = moodleClient.scanForUnreadMessages(urlCommonParts,
+                    ais0058UserId, anyUser);
+
+            assertEquals("The number of unread messages should have been 0.", expectedNumberOfUnreadMessages,
+                   actualNumberOfUnreadMessages);
+
+        } catch (IOException ie) {
+        }
     }
 
     @Test
@@ -641,6 +657,21 @@ public class TestRetrofitMoodleClient {
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json; charset=utf-8")
                         .withBody(JsonResponseProvider.getAis0058MarkAsReadMessageJsonString())));
+    }
+
+    private void wireMockStubForMarkingAsReadWithInvalidTimeread() {
+        stubFor(get(urlPathEqualTo("/moodle/webservice/rest/" + FUNCTIONS_SCRIPT))
+                .withQueryParam("moodlewsrestformat", equalTo(FORMAT))
+                .withQueryParam("wstoken", equalTo(expectedToken.getToken()))
+                .withQueryParam("wsfunction", equalTo(MARK_AS_READ_FUNCTION))
+//                .withQueryParam("messageid", equalTo(unReadMessageId))
+                .withQueryParam("messageid", matching("^[1-9][0-9]*$")) //any digit greater than zero
+                .withQueryParam("timeread", equalTo("invalid"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json; charset=utf-8")
+                        .withBody(JsonResponseProvider.getAis0058MarkAsReadMessageJsonString())));
+
     }
 
     private void wireMockStubForGettingZeroUnreadMessages() {
