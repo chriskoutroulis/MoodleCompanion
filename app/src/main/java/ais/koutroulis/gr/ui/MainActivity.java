@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        ContentFragment fragment = new ContentFragment();
+        SettingsFragment fragment = new SettingsFragment();
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame,fragment);
         fragmentTransaction.commit();
@@ -90,20 +90,36 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_assignments) {
             // Handle the assignments action
-            Snackbar.make(coord, "Go to the Assignments screen.", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+            /*Snackbar.make(coord, "Go to the Assignments screen.", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();*/
+            ContentFragment fragment = new ContentFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.frame,fragment);
+            fragmentTransaction.commit();
+
         } else if (id == R.id.nav_messages) {
-            Snackbar.make(coord, "Go to the Messages screen.", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+            /*Snackbar.make(coord, "Go to the Messages screen.", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();*/
+            ContentFragment fragment = new ContentFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.frame,fragment);
+            fragmentTransaction.commit();
 
         } else if (id == R.id.nav_forum) {
-            Snackbar.make(coord, "Go to the Forum screen.", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+            /*Snackbar.make(coord, "Go to the Forum screen.", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();*/
+            ContentFragment fragment = new ContentFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.frame,fragment);
+            fragmentTransaction.commit();
 
         } else if (id == R.id.nav_settings) {
-            Snackbar.make(coord, "Go to the Settings screen.", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-
+           /* Snackbar.make(coord, "Go to the Settings screen.", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();*/
+            SettingsFragment fragment = new SettingsFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.frame,fragment);
+            fragmentTransaction.commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
