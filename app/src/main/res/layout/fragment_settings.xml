@@ -44,10 +44,13 @@
                 <EditText
                     android:id="@+id/urlEditText"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginRight="8dp"
                     android:layout_weight="1"
-                    android:hint="http://eais.teipir.gr/moodle/" />
+                    android:hint="http://eais.teipir.gr/moodle/"
+                    android:textSize="16sp"
+                    android:maxLines="1"
+                    android:inputType="textUri"/>
             </LinearLayout>
 
             <LinearLayout
@@ -57,21 +60,22 @@
 
                 <TextView
                     android:id="@+id/username_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:layout_weight="0.5"
+                    android:layout_weight="2"
                     android:padding="16dp"
                     android:text="Username:" />
 
                 <EditText
                     android:id="@+id/usernameEditText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_marginRight="8dp"
-                    android:layout_weight="2"
+                    android:layout_weight="1"
                     android:hint="username"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:maxLines="1" />
                 <!--android:ems="10"-->
             </LinearLayout>
 
@@ -82,21 +86,22 @@
 
                 <TextView
                     android:id="@+id/password_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:layout_weight="0.5"
+                    android:layout_weight="2"
                     android:padding="16dp"
                     android:text="Password:" />
 
                 <EditText
                     android:id="@+id/passwordEditText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_marginRight="8dp"
-                    android:layout_weight="2"
+                    android:layout_weight="1"
                     android:hint="password"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:maxLines="1" />
 
                 <!--android:ems="10"-->
             </LinearLayout>
@@ -113,7 +118,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/save_button_text"
-                    android:id="@+id/button" />
+                    android:id="@+id/save_button" />
             </LinearLayout>
 
         </LinearLayout>
