@@ -52,11 +52,16 @@ public class MainActivity extends AppCompatActivity
                 !sharedPref.getAll().containsKey(SettingsFragment.USERNAME_KEY) ||
                 !sharedPref.getAll().containsKey(SettingsFragment.PASSWORD_KEY)) {
 
+            navigationView.setCheckedItem(R.id.nav_settings);
+
             SettingsFragment fragment = new SettingsFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.coordinator, fragment);
             fragmentTransaction.commit();
+
         } else {
+            navigationView.setCheckedItem(R.id.nav_assignments);
+
             ContentFragment fragment = new ContentFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.coordinator, fragment);
