@@ -1,5 +1,7 @@
 package ais.koutroulis.gr.ui;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -43,10 +45,23 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        SettingsFragment fragment = new SettingsFragment();
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.frame,fragment);
-        fragmentTransaction.commit();
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+
+        //If the shared preferences do not contain the required user details.
+        if (!sharedPref.getAll().containsKey(SettingsFragment.URL_KEY) ||
+                !sharedPref.getAll().containsKey(SettingsFragment.USERNAME_KEY) ||
+                !sharedPref.getAll().containsKey(SettingsFragment.PASSWORD_KEY)) {
+
+            SettingsFragment fragment = new SettingsFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.coordinator, fragment);
+            fragmentTransaction.commit();
+        } else {
+            ContentFragment fragment = new ContentFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.coordinator, fragment);
+            fragmentTransaction.commit();
+        }
     }
 
     @Override
@@ -94,7 +109,7 @@ public class MainActivity extends AppCompatActivity
                     .setAction("Action", null).show();*/
             ContentFragment fragment = new ContentFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.frame,fragment);
+            fragmentTransaction.replace(R.id.coordinator, fragment);
             fragmentTransaction.commit();
 
         } else if (id == R.id.nav_messages) {
@@ -102,7 +117,7 @@ public class MainActivity extends AppCompatActivity
                     .setAction("Action", null).show();*/
             ContentFragment fragment = new ContentFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.frame,fragment);
+            fragmentTransaction.replace(R.id.coordinator, fragment);
             fragmentTransaction.commit();
 
         } else if (id == R.id.nav_forum) {
@@ -110,7 +125,7 @@ public class MainActivity extends AppCompatActivity
                     .setAction("Action", null).show();*/
             ContentFragment fragment = new ContentFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.frame,fragment);
+            fragmentTransaction.replace(R.id.coordinator, fragment);
             fragmentTransaction.commit();
 
         } else if (id == R.id.nav_settings) {
@@ -118,7 +133,7 @@ public class MainActivity extends AppCompatActivity
                     .setAction("Action", null).show();*/
             SettingsFragment fragment = new SettingsFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.frame,fragment);
+            fragmentTransaction.replace(R.id.coordinator, fragment);
             fragmentTransaction.commit();
         }
 

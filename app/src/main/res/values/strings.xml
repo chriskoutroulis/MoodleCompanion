@@ -13,5 +13,10 @@
     <string name="moodle_messages">Private Messages</string>
     <string name="moodle_posts">Forum Posts</string>
     <string name="moodle_settings">Settings</string>
-    \<string name="save_button_text">Save</string>
+    <string name="save_button_text">Save</string>
+
+    <string name="invalid_url_message">Please enter a valid Url value and tap SAVE again.</string>
+    <string name="invalid_username_message">Please enter a valid Username value and tap SAVE again.</string>
+    <string name="invalid_password_message">Please enter a valid Password value and tap SAVE again.</string>
+    <string name="save_successful_message">"Save was successful.</string>
 </resources>
