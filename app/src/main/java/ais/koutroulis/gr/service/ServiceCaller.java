@@ -122,10 +122,12 @@ public class ServiceCaller {
                             } else {
                                 Snackbar.make(activity.getCurrentFocus(), "Login failed. Please enter the correct details and try again.", Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
+                                return;
                             }
                         } else {
                             Snackbar.make(activity.getCurrentFocus(), "Internet connection error or server error.", Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
+                            return;
                         }
 
                         //This is the place to perform the other calls. In the ui thread.
