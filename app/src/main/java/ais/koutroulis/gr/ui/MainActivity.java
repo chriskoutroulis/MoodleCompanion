@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity
                 !sharedPref.getAll().containsKey(SettingsFragment.PASSWORD_KEY)) {
 
             navigationView.setCheckedItem(R.id.nav_settings);
+            toolbar.setTitle(R.string.moodle_settings);
 
             SettingsFragment fragment = new SettingsFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity
                     this);
 
             navigationView.setCheckedItem(R.id.nav_assignments);
+            toolbar.setTitle(R.string.moodle_assignments);
 
             ContentFragment fragment = new ContentFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -120,11 +122,15 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         CoordinatorLayout coord = (CoordinatorLayout) findViewById(R.id.coordinator);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         if (id == R.id.nav_assignments) {
             // Handle the assignments action
             /*Snackbar.make(coord, "Go to the Assignments screen.", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();*/
+
+            toolbar.setTitle(R.string.moodle_assignments);
+
             ServiceCaller.itemsToShow = ServiceCaller.ITEM_ASSIGNMENT;
 
             ContentFragment fragment = new ContentFragment();
@@ -136,6 +142,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_messages) {
             /*Snackbar.make(coord, "Go to the Messages screen.", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();*/
+
+            toolbar.setTitle(R.string.moodle_messages);
 
             ServiceCaller.itemsToShow = ServiceCaller.ITEM_MESSAGES;
 
@@ -149,6 +157,8 @@ public class MainActivity extends AppCompatActivity
             /*Snackbar.make(coord, "Go to the Forum screen.", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();*/
 
+            toolbar.setTitle(R.string.moodle_posts);
+
             ServiceCaller.itemsToShow = ServiceCaller.ITEM_FORUMS;
 
             ContentFragment fragment = new ContentFragment();
@@ -160,6 +170,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_settings) {
            /* Snackbar.make(coord, "Go to the Settings screen.", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();*/
+
+            toolbar.setTitle(R.string.moodle_settings);
+
             SettingsFragment fragment = new SettingsFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.coordinator, fragment);

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 
 import java.io.IOException;
 import java.util.List;
@@ -208,8 +209,11 @@ public class ServiceCaller {
                         //After all the updates, populate the first fragment.
 
                         NavigationView navigationView = (NavigationView) activity.findViewById(R.id.nav_view);
+                        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
 
                         navigationView.setCheckedItem(R.id.nav_assignments);
+                        toolbar.setTitle(R.string.moodle_assignments);
+
                         itemsToShow = ITEM_ASSIGNMENT;
 
                         ContentFragment fragment = new ContentFragment();
