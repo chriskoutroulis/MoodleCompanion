@@ -1,5 +1,6 @@
 package ais.koutroulis.gr.ui;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,6 +13,19 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+
+import java.io.IOException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.RunnableFuture;
+
+import ais.koutroulis.gr.client.MoodleClient;
+import ais.koutroulis.gr.client.RetrofitMoodleClient;
+import ais.koutroulis.gr.model.Token;
+import retrofit2.Response;
 
 /**
  * Created by Chris on 08-Aug-16.
@@ -26,6 +40,9 @@ public class SettingsFragment extends Fragment {
     private String url;
     private String username;
     private String password;
+
+    private ProgressDialog progress;
+    private Response<Token> userToken;
 
     public static final String URL_KEY = "url";
     public static final String USERNAME_KEY = "username";
@@ -53,7 +70,7 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //Hide keyboard
-                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
                 url = urlEditText.getText().toString();
@@ -62,6 +79,12 @@ public class SettingsFragment extends Fragment {
 
                 if (url == null || url.isEmpty() || !url.contains("http://")) {
                     Snackbar.make(v, getString(R.string.invalid_url_message), Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    return;
+                }
+
+                if(url!=null && !url.isEmpty() && url.contains("http://") && !url.endsWith("/")) {
+                    Snackbar.make(v, getString(R.string.url_must_end_with), Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                     return;
                 }
@@ -82,6 +105,61 @@ public class SettingsFragment extends Fragment {
 
                 Snackbar.make(v, getString(R.string.save_successful_message), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
+                //Perform the login call to moodle
+                final MoodleClient moodleClient = new RetrofitMoodleClient(url);
+
+                ExecutorService service = Executors.newCachedThreadPool();
+                final Future<Response<Token>> futureLoginResponse = service.submit(new Callable<Response<Token>>() {
+                    @Override
+                    public Response<Token> call() throws Exception {
+                        Response<Token> response = null;
+                        try {
+                            response = moodleClient.login("token.php", "moodle_mobile_app", username, password);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            response = null;
+                        }
+                        return response;
+                    }
+                });
+
+                progress = ProgressDialog.show(getContext(), "Please wait...",
+                        "Logging in", true);
+
+                //Get the result from the previous login call in a blocking call.
+                service.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            userToken = futureLoginResponse.get();
+
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progress.dismiss();
+                                if (userToken != null) {
+                                    if (userToken.body().getToken() != null) {
+                                        Snackbar.make(getView(), "Login was successful.", Snackbar.LENGTH_LONG)
+                                                .setAction("Action", null).show();
+                                    } else {
+                                        Snackbar.make(getView(), "Login failed. Please enter the correct details and try again.", Snackbar.LENGTH_LONG)
+                                                .setAction("Action", null).show();
+                                    }
+                                } else {
+                                    Snackbar.make(getView(), "Internet connection error or server error.", Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                }
+                            }
+                        });
+                    }
+                });
             }
         });
 
