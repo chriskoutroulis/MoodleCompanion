@@ -32,7 +32,7 @@ public class ContentFragment extends Fragment {
         if (ServiceCaller.itemsToShow == null) {
             items.add("No data were found");
         } else if (ServiceCaller.itemsToShow.equals(ServiceCaller.ITEM_ASSIGNMENT)) {
-            if (getArguments() != null) {
+            if (getArguments() != null && getArguments().getSerializable(ServiceCaller.COURSES_KEY) != null) {
                 Courses courses = (Courses) getArguments().getSerializable(ServiceCaller.COURSES_KEY);
                 List<Course> courseList = courses.getCourses();
                 for (Course oneCourse : courseList) {
@@ -45,14 +45,16 @@ public class ContentFragment extends Fragment {
             } else {
                 items.add("No data were found.");
             }
-        } else if(ServiceCaller.itemsToShow.equals(ServiceCaller.ITEM_MESSAGES)) {
-            if (getArguments() != null) {
-               //TODO implement this
+        } else if (ServiceCaller.itemsToShow.equals(ServiceCaller.ITEM_MESSAGES)) {
+            //TODO add one more condition below (... && getArguments().getSerializable(..))
+            if (getArguments() != null ) {
+                //TODO implement this
                 items.add("Inside the Messages fragment");
             } else {
                 items.add("No data were found.");
             }
-        } else if(ServiceCaller.itemsToShow.equals(ServiceCaller.ITEM_FORUMS)) {
+        } else if (ServiceCaller.itemsToShow.equals(ServiceCaller.ITEM_FORUMS)) {
+            //TODO add one more condition below (... && getArguments().getSerializable(..))
             if (getArguments() != null) {
                 //TODO implement this
                 items.add("Inside the Forums fragment");
