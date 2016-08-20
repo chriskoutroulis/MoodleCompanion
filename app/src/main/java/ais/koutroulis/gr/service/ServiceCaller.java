@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -20,6 +21,7 @@ import java.util.concurrent.Future;
 import ais.koutroulis.gr.client.MoodleClient;
 import ais.koutroulis.gr.client.MoodleUrlCommonParts;
 import ais.koutroulis.gr.client.RetrofitMoodleClient;
+import ais.koutroulis.gr.model.Assignment;
 import ais.koutroulis.gr.model.Course;
 import ais.koutroulis.gr.model.Courses;
 import ais.koutroulis.gr.model.Token;
@@ -34,12 +36,13 @@ public class ServiceCaller {
 
     private static Response<Token> tokenResponse;
     private static Response<Courses> coursesResponse;
-    private static Bundle fragmentArgs = new Bundle();
+    public static Bundle fragmentArgs;
     private static MoodleUrlCommonParts urlCommonParts;
     private static MoodleClient moodleClient;
 
-    private static final String COURSES_KEY = "courses";
-    private static final String TOKEN_KEY = "token";
+    public static final String COURSES_KEY = "courses";
+    public static final String TOKEN_KEY = "token";
+
     private static final String LOGIN_SCRIPT = "token.php";
     private static final String FUNCTIONS_SCRIPT = "server.php";
     private static final String LOGIN_SERVICE = "moodle_mobile_app";
@@ -51,6 +54,12 @@ public class ServiceCaller {
     private static final String GET_FORUM_BY_COURSES_FUNCTION = "mod_forum_get_forums_by_courses";
     private static final String GET_FORUM_DISCUSSIONS_FUNCTION = "mod_forum_get_forum_discussions_paginated";
     private static final String GET_FORUM_DISCUSSION_POSTS_FUNCTION = "mod_forum_get_forum_discussion_posts";
+
+    public static String itemsToShow = null;
+    public static final String ITEM_ASSIGNMENT = "assignments";
+    public static final String ITEM_MESSAGES = "messages";
+    public static final String ITEM_FORUMS = "forums";
+
 
     public static void performLoginCall(String url, final String username, final String password, final Activity activity) {
         //Perform the login call to moodle
@@ -91,6 +100,7 @@ public class ServiceCaller {
 
                     //Persist the token in a Bundle that will go inside the fragment that will be called as arguments.
                     if (tokenResponse != null) {
+                        fragmentArgs = new Bundle();
                         fragmentArgs.putString(TOKEN_KEY, tokenResponse.body().getToken());
                     }
 
@@ -198,6 +208,7 @@ public class ServiceCaller {
                         NavigationView navigationView = (NavigationView) activity.findViewById(R.id.nav_view);
 
                         navigationView.setCheckedItem(R.id.nav_assignments);
+                        itemsToShow = ITEM_ASSIGNMENT;
 
                         ContentFragment fragment = new ContentFragment();
                         fragment.setArguments(fragmentArgs);

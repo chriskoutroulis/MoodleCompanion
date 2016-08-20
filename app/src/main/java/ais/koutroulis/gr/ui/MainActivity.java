@@ -27,6 +27,7 @@ import java.util.concurrent.Future;
 import ais.koutroulis.gr.client.MoodleClient;
 import ais.koutroulis.gr.client.RetrofitMoodleClient;
 import ais.koutroulis.gr.model.Token;
+import ais.koutroulis.gr.service.ServiceCaller;
 import retrofit2.Response;
 
 
@@ -42,15 +43,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -76,6 +68,11 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.commit();
 
         } else {
+
+            ServiceCaller.performLoginCall(sharedPref.getString(SettingsFragment.URL_KEY, ""),
+                    sharedPref.getString(SettingsFragment.USERNAME_KEY, ""), sharedPref.getString(SettingsFragment.PASSWORD_KEY, ""),
+                    this);
+
             navigationView.setCheckedItem(R.id.nav_assignments);
 
             ContentFragment fragment = new ContentFragment();
@@ -128,7 +125,10 @@ public class MainActivity extends AppCompatActivity
             // Handle the assignments action
             /*Snackbar.make(coord, "Go to the Assignments screen.", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();*/
+            ServiceCaller.itemsToShow = ServiceCaller.ITEM_ASSIGNMENT;
+
             ContentFragment fragment = new ContentFragment();
+            fragment.setArguments(ServiceCaller.fragmentArgs);
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.coordinator, fragment);
             fragmentTransaction.commit();
@@ -136,7 +136,11 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_messages) {
             /*Snackbar.make(coord, "Go to the Messages screen.", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();*/
+
+            ServiceCaller.itemsToShow = ServiceCaller.ITEM_MESSAGES;
+
             ContentFragment fragment = new ContentFragment();
+            fragment.setArguments(ServiceCaller.fragmentArgs);
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.coordinator, fragment);
             fragmentTransaction.commit();
@@ -144,7 +148,11 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_forum) {
             /*Snackbar.make(coord, "Go to the Forum screen.", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();*/
+
+            ServiceCaller.itemsToShow = ServiceCaller.ITEM_FORUMS;
+
             ContentFragment fragment = new ContentFragment();
+            fragment.setArguments(ServiceCaller.fragmentArgs);
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.coordinator, fragment);
             fragmentTransaction.commit();
