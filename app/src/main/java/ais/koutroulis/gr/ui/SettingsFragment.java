@@ -104,8 +104,9 @@ public class SettingsFragment extends Fragment {
 
                 saveToSharedPreferences(sharedPref);
 
-                Snackbar.make(v, getString(R.string.save_successful_message), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                // Too many notifications, so I disable this one
+//                Snackbar.make(v, getString(R.string.save_successful_message), Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
 
                ServiceCaller.performLoginCall(url, username, password, getActivity());
             }

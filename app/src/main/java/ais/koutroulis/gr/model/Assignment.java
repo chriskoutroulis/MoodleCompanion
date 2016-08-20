@@ -7,7 +7,9 @@ package ais.koutroulis.gr.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Assignment {
+import java.io.Serializable;
+
+public class Assignment implements Serializable{
 
     @SerializedName("id")
     @Expose
