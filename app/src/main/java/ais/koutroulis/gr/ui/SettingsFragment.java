@@ -14,16 +14,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import java.io.IOException;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.RunnableFuture;
-
-import ais.koutroulis.gr.client.MoodleClient;
-import ais.koutroulis.gr.client.RetrofitMoodleClient;
 import ais.koutroulis.gr.model.Token;
 import ais.koutroulis.gr.service.ServiceCaller;
 import retrofit2.Response;

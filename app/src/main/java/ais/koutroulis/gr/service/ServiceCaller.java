@@ -1,10 +1,7 @@
 package ais.koutroulis.gr.service;
 
 import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -12,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -22,8 +18,6 @@ import java.util.concurrent.Future;
 import ais.koutroulis.gr.client.MoodleClient;
 import ais.koutroulis.gr.client.MoodleUrlCommonParts;
 import ais.koutroulis.gr.client.RetrofitMoodleClient;
-import ais.koutroulis.gr.model.Assignment;
-import ais.koutroulis.gr.model.Course;
 import ais.koutroulis.gr.model.Courses;
 import ais.koutroulis.gr.model.Token;
 import ais.koutroulis.gr.ui.ContentFragment;

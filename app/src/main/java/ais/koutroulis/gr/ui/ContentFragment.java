@@ -1,6 +1,5 @@
 package ais.koutroulis.gr.ui;
 
-import android.app.Service;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
