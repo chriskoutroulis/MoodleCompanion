@@ -40,7 +40,10 @@ public class ContentFragment extends Fragment {
                     List<Assignment> assignmentsList = oneCourse.getAssignments();
 
                     for (Assignment oneAssignment : assignmentsList) {
-                        items.add(oneAssignment.getIntro());
+                        StringBuilder assignmentStringBuuilder = new StringBuilder();
+                        assignmentStringBuuilder.append(oneAssignment.getName() + "\n\n");
+                        assignmentStringBuuilder.append(oneAssignment.getIntro().substring(3, oneAssignment.getIntro().length() - 4));
+                        items.add( assignmentStringBuuilder.toString());
                     }
                 }
 
@@ -57,11 +60,15 @@ public class ContentFragment extends Fragment {
                 //TODO implement this
                 Messages unReadMessages = (Messages) getArguments().getSerializable(ServiceCaller.UNREAD_MESSAGES_KEY);
                 List<Message> unreadMessageList = unReadMessages.getMessages();
-                for (Message oneMessage : unreadMessageList) {
 
-                    items.add(oneMessage.getSmallmessage());
+                if (unreadMessageList.size() == 0) {
+                    items.add("There are no Unread Messages");
+                } else {
+                    for (Message oneMessage : unreadMessageList) {
+
+                        items.add(oneMessage.getSmallmessage());
+                    }
                 }
-
             } else {
                 items.add("No data were found.");
             }
