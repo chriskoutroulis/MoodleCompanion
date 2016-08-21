@@ -4,12 +4,13 @@ package ais.koutroulis.gr.model;
  * Created by c0nfr0ntier on 15/7/2016.
  */
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Post {
+public class Post implements Serializable {
 
     @SerializedName("id")
     @Expose

@@ -1,11 +1,12 @@
 package ais.koutroulis.gr.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by c0nfr0ntier on 19/7/2016.
  */
-public class DiscussionToDisplay {
+public class DiscussionToDisplay implements Serializable {
     private int id;
 
     private int numUnread;

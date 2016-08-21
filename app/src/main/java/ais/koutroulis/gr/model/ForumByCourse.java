@@ -7,8 +7,10 @@ package ais.koutroulis.gr.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 
-public class ForumByCourse {
+
+public class ForumByCourse implements Serializable {
 
     @SerializedName("id")
     @Expose

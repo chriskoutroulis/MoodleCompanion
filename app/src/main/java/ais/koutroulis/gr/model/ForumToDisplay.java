@@ -1,11 +1,12 @@
 package ais.koutroulis.gr.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by c0nfr0ntier on 19/7/2016.
  */
-public class ForumToDisplay {
+public class ForumToDisplay implements Serializable {
     private int id;
 
     private List<DiscussionToDisplay> discussionToDisplayList;
