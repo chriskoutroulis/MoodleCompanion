@@ -29,9 +29,9 @@ public interface MoodleRetroFitService {
                                  @Query("wstoken") String token, @Query("wsfunction") String function);
 
     @GET("webservice/rest/{script}")
-    Call<User> getUserDetails(@Path("script") String script, @Query("moodlewsrestformat") String format,
-                              @Query("wstoken") String token, @Query("wsfunction") String function, @Query("field") String field,
-                              @Query("values[0]") String username );
+    Call<List<User>> getUserDetails(@Path("script") String script, @Query("moodlewsrestformat") String format,
+                               @Query("wstoken") String token, @Query("wsfunction") String function, @Query("field") String field,
+                               @Query("values[0]") String username );
 
     @GET("webservice/rest/{script}")
     Call<Messages> getMessages(@Path("script") String script, @Query("moodlewsrestformat") String format,

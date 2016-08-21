@@ -117,12 +117,12 @@ public class RetrofitMoodleClient implements MoodleClient {
         return currentAssignmentsList;
     }
 
-    public Response<User> getUserDetails(MoodleUrlCommonParts urlCommonParts, String byField,
-                                         String fieldValue) throws IOException {
-        Call<User> getUserDetailsCall = clientInitializer.getService()
+    public Response<List<User>> getUserDetails(MoodleUrlCommonParts urlCommonParts, String byField,
+                                          String fieldValue) throws IOException {
+        Call<List<User>> getUserDetailsCall = clientInitializer.getService()
                 .getUserDetails(urlCommonParts.getPhpScript(), urlCommonParts.getResponseFormat(),
                         urlCommonParts.getToken(), urlCommonParts.getFunction(), byField, fieldValue);
-        Response<User> response = getUserDetailsCall.execute();
+        Response<List<User>> response = getUserDetailsCall.execute();
         return response;
     }
 

@@ -2,6 +2,7 @@ package ais.koutroulis.gr.service;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -19,9 +21,12 @@ import ais.koutroulis.gr.client.MoodleClient;
 import ais.koutroulis.gr.client.MoodleUrlCommonParts;
 import ais.koutroulis.gr.client.RetrofitMoodleClient;
 import ais.koutroulis.gr.model.Courses;
+import ais.koutroulis.gr.model.Messages;
 import ais.koutroulis.gr.model.Token;
+import ais.koutroulis.gr.model.User;
 import ais.koutroulis.gr.ui.ContentFragment;
 import ais.koutroulis.gr.ui.R;
+import ais.koutroulis.gr.ui.SettingsFragment;
 import retrofit2.Response;
 
 /**
@@ -31,11 +36,13 @@ public class ServiceCaller {
 
     private static Response<Token> tokenResponse;
     private static Response<Courses> coursesResponse;
+    private static Response<Messages> unReadMessagesResponse;
     public static Bundle fragmentArgs;
     private static MoodleUrlCommonParts urlCommonParts;
     private static MoodleClient moodleClient;
 
     public static final String COURSES_KEY = "courses";
+    public static final String UNREAD_MESSAGES_KEY = "unread_messages";
     public static final String TOKEN_KEY = "token";
 
     private static final String LOGIN_SCRIPT = "token.php";
@@ -54,6 +61,10 @@ public class ServiceCaller {
     public static final String ITEM_ASSIGNMENT = "assignments";
     public static final String ITEM_MESSAGES = "messages";
     public static final String ITEM_FORUMS = "forums";
+
+    private static final String ANY_USER = "0";
+    private static final String READ_FALSE = "0";
+    private static final String READ_TRUE = "1";
 
 
     public static void performLoginCall(String url, final String username, final String password, final Activity activity) {
@@ -164,12 +175,6 @@ public class ServiceCaller {
                 try {
                     coursesResponse = futureCoursesResponse.get();
 
-                    //Persist the token in the SharedPreferences
-//                    SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-//                    SharedPreferences.Editor editor = sharedPref.edit();
-//                    editor.putString(TOKEN_KEY, tokenResponse.body().getToken());
-//                    editor.commit();
-
                     //Persist the token in a Bundle that will go inside the fragment that will be called as arguments.
                     if (coursesResponse != null) {
                         fragmentArgs.putSerializable(COURSES_KEY, coursesResponse.body());
@@ -199,8 +204,100 @@ public class ServiceCaller {
                                     .setAction("Action", null).show();
                         }
 
-                        //TODO populate this fragment with the Assignmets
+                        performGetUnreadMessages(token, activity);
+                    }
+                });
+            }
+        });
+
+        service.shutdown();
+    }
+
+    public static void performGetUnreadMessages(final String token, final Activity activity) {
+
+
+        ExecutorService service = Executors.newCachedThreadPool();
+        final Future<Response<Messages>> futureUnreadMessagesResponse = service.submit(new Callable<Response<Messages>>() {
+            @Override
+            public Response<Messages> call() throws Exception {
+                Response<Messages> response = null;
+
+                Long timeReadInMillisNumber = System.currentTimeMillis();
+                String timeReadInMillis = Long.toString(timeReadInMillisNumber);
+                String epochTimeRead =
+                        timeReadInMillis.substring(0, timeReadInMillis.length() - 3);
+                try {
+                    //TODO remove the hardcoded strings below and place all of the moodle calls related strings in strings.xml
+
+                    //Find out the current user's Id number first.
+                    String currentUsername = activity.getPreferences(Context.MODE_PRIVATE).getString(SettingsFragment.USERNAME_KEY, null);
+
+                    urlCommonParts = new MoodleUrlCommonParts(FUNCTIONS_SCRIPT, FORMAT,
+                            token, USER_DETAILS_FUNCTION);
+                    Response<List<User>> responseUserDetails = moodleClient.getUserDetails(urlCommonParts, "username",
+                            currentUsername);
+
+                    int currentUserIdNumber = responseUserDetails.body().get(0).getId();
+                    String currentUserId = Integer.toString(currentUserIdNumber);
+
+                    //Prepare the urlCommonParts for the next call.
+                    urlCommonParts = new MoodleUrlCommonParts(FUNCTIONS_SCRIPT, FORMAT,
+                            token, GET_MESSAGES_FUNCTION);
+
+                    response = moodleClient.getMessages(urlCommonParts, MARK_AS_READ_FUNCTION, currentUserId,
+                            ANY_USER, READ_FALSE, epochTimeRead);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    response = null;
+                }
+                return response;
+            }
+        });
+
+        final ProgressDialog progress = ProgressDialog.show(activity, "Please wait...",
+                "Getting Unread Messages", true);
+
+        //Get the result from the previous login call in a blocking call.
+        service.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    unReadMessagesResponse = futureUnreadMessagesResponse.get();
+
+                    //Persist the token in a Bundle that will go inside the fragment that will be called as arguments.
+                    if (unReadMessagesResponse != null) {
+
+                        fragmentArgs.putSerializable(UNREAD_MESSAGES_KEY, unReadMessagesResponse.body());
+                    }
+
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progress.dismiss();
+                        if (unReadMessagesResponse != null) {
+                            if (unReadMessagesResponse.body().getMessages() != null) {
+                                Snackbar.make(activity.getCurrentFocus(), "Unread Messages updated.", Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show();
+                            } else {
+                                Snackbar.make(activity.getCurrentFocus(), "Failed updating Unread Messages.", Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show();
+                            }
+                        } else {
+                            Snackbar.make(activity.getCurrentFocus(), "Internet connection error or server error.", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                        }
+
+
                         //After all the updates, populate the first fragment.
+                        //This should be moved at the last calling method.
 
                         NavigationView navigationView = (NavigationView) activity.findViewById(R.id.nav_view);
                         Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);

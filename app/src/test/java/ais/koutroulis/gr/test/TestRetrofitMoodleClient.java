@@ -321,10 +321,11 @@ public class TestRetrofitMoodleClient {
                         .withBody(JsonResponseProvider.getAis0058UserDetailsJsonString())));
 
         try {
-            Response<User> responseUserDetails = moodleClient.getUserDetails(urlCommonParts, "username", "ais0058");
+            Response<List<User>> responseUserDetails = moodleClient.getUserDetails(urlCommonParts, "username", "ais0058");
             assertEquals("The user does not have the expected full name.", "Ioannis Antonatos",
-                    responseUserDetails.body().getFullname());
-            assertEquals("The user's email is not the expected one.", "antonatos@hotmail.com", responseUserDetails.body().getEmail());
+                    responseUserDetails.body().get(0).getFullname());
+            assertEquals("The user's email is not the expected one.", "antonatos@hotmail.com", responseUserDetails.body()
+                    .get(0).getEmail());
         } catch (IOException e) {
         }
 

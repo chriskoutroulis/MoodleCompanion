@@ -13,14 +13,15 @@ public class JsonResponseProvider {
             "  \"debuginfo\": null,\n" +
             "  \"reproductionlink\": null\n" +
             "}";
-    private static String ais0058UserDetailsJsonString = "  {\n" +
+    private static String ais0058UserDetailsJsonString = "[\n" +
+            "  {\n" +
             "    \"id\": 5,\n" +
             "    \"username\": \"ais0058\",\n" +
             "    \"fullname\": \"Ioannis Antonatos\",\n" +
             "    \"email\": \"antonatos@hotmail.com\",\n" +
             "    \"department\": \"\",\n" +
             "    \"firstaccess\": 1467307347,\n" +
-            "    \"lastaccess\": 1468219321,\n" +
+            "    \"lastaccess\": 1471768084,\n" +
             "    \"description\": \"\",\n" +
             "    \"descriptionformat\": 1,\n" +
             "    \"city\": \"Athens\",\n" +
@@ -38,18 +39,19 @@ public class JsonResponseProvider {
             "      },\n" +
             "      {\n" +
             "        \"name\": \"email_send_count\",\n" +
-            "        \"value\": \"3\"\n" +
+            "        \"value\": \"4\"\n" +
             "      },\n" +
             "      {\n" +
             "        \"name\": \"login_failed_count_since_success\",\n" +
-            "        \"value\": \"1\"\n" +
+            "        \"value\": \"14\"\n" +
             "      },\n" +
             "      {\n" +
             "        \"name\": \"_lastloaded\",\n" +
-            "        \"value\": 1468221629\n" +
+            "        \"value\": 1471768689\n" +
             "      }\n" +
             "    ]\n" +
-            "  }\n";
+            "  }\n" +
+            "]";
     private static String ais0058UnreadMessagesJsonString = "{\n" +
             "  \"messages\": [\n" +
             "    {\n" +

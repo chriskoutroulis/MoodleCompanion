@@ -15,6 +15,8 @@ import java.util.List;
 import ais.koutroulis.gr.model.Assignment;
 import ais.koutroulis.gr.model.Course;
 import ais.koutroulis.gr.model.Courses;
+import ais.koutroulis.gr.model.Message;
+import ais.koutroulis.gr.model.Messages;
 import ais.koutroulis.gr.service.ServiceCaller;
 
 /**
@@ -41,14 +43,25 @@ public class ContentFragment extends Fragment {
                         items.add(oneAssignment.getIntro());
                     }
                 }
+
+                //if needed there is code implemented for distinguishing the current assignments
+                //in the RetrofitMoodleClient.scanForCurrentAssignments(...).
+                //That method is intented to be used for background scanning and providing a notification.
+
             } else {
                 items.add("No data were found.");
             }
         } else if (ServiceCaller.itemsToShow.equals(ServiceCaller.ITEM_MESSAGES)) {
             //TODO add one more condition below (... && getArguments().getSerializable(..))
-            if (getArguments() != null ) {
+            if (getArguments() != null && getArguments().getSerializable(ServiceCaller.UNREAD_MESSAGES_KEY) != null) {
                 //TODO implement this
-                items.add("Inside the Messages fragment");
+                Messages unReadMessages = (Messages) getArguments().getSerializable(ServiceCaller.UNREAD_MESSAGES_KEY);
+                List<Message> unreadMessageList = unReadMessages.getMessages();
+                for (Message oneMessage : unreadMessageList) {
+
+                    items.add(oneMessage.getSmallmessage());
+                }
+
             } else {
                 items.add("No data were found.");
             }
