@@ -98,7 +98,7 @@ public class SettingsFragment extends Fragment {
 //                Snackbar.make(v, getString(R.string.save_successful_message), Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
 
-               ServiceCaller.performLoginCall(url, username, password, getActivity());
+               ServiceCaller.performLoginAndUpdateAll(url, username, password, getActivity());
             }
         });
 

@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity
 
         } else {
 
-            ServiceCaller.performLoginCall(sharedPref.getString(SettingsFragment.URL_KEY, ""),
+            ServiceCaller.performLoginAndUpdateAll(sharedPref.getString(SettingsFragment.URL_KEY, ""),
                     sharedPref.getString(SettingsFragment.USERNAME_KEY, ""), sharedPref.getString(SettingsFragment.PASSWORD_KEY, ""),
                     this);
 

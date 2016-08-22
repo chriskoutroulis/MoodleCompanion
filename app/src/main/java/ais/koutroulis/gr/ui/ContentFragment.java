@@ -33,8 +33,8 @@ public class ContentFragment extends Fragment {
         if (ServiceCaller.itemsToShow == null) {
             items.add("No data were found");
         } else if (ServiceCaller.itemsToShow.equals(ServiceCaller.ITEM_ASSIGNMENT)) {
-            if (getArguments() != null && getArguments().getSerializable(ServiceCaller.COURSES_KEY) != null) {
-                Courses courses = (Courses) getArguments().getSerializable(ServiceCaller.COURSES_KEY);
+            if (getArguments() != null && getArguments().getSerializable(ServiceCaller.BUNDLE_COURSES_KEY) != null) {
+                Courses courses = (Courses) getArguments().getSerializable(ServiceCaller.BUNDLE_COURSES_KEY);
                 List<Course> courseList = courses.getCourses();
                 for (Course oneCourse : courseList) {
                     List<Assignment> assignmentsList = oneCourse.getAssignments();
@@ -56,10 +56,13 @@ public class ContentFragment extends Fragment {
             }
         } else if (ServiceCaller.itemsToShow.equals(ServiceCaller.ITEM_MESSAGES)) {
             //TODO add one more condition below (... && getArguments().getSerializable(..))
-            if (getArguments() != null && getArguments().getSerializable(ServiceCaller.UNREAD_MESSAGES_KEY) != null) {
+            if (getArguments() != null && getArguments().getSerializable(ServiceCaller.BUNDLE_UNREAD_MESSAGES_KEY) != null) {
                 //TODO implement this
-                Messages unReadMessages = (Messages) getArguments().getSerializable(ServiceCaller.UNREAD_MESSAGES_KEY);
+                Messages unReadMessages = (Messages) getArguments().getSerializable(ServiceCaller.BUNDLE_UNREAD_MESSAGES_KEY);
                 List<Message> unreadMessageList = unReadMessages.getMessages();
+
+                Messages readMessages = (Messages) getArguments().getSerializable(ServiceCaller.BUNDLE_READ_MESSAGES_KEY);
+                List<Message> readMessageList = readMessages.getMessages();
 
                 if (unreadMessageList.size() == 0) {
                     items.add("There are no Unread Messages");

@@ -37,13 +37,15 @@ public class ServiceCaller {
     private static Response<Token> tokenResponse;
     private static Response<Courses> coursesResponse;
     private static Response<Messages> unReadMessagesResponse;
+    private static Response<Messages> readMessagesResponse;
     public static Bundle fragmentArgs;
     private static MoodleUrlCommonParts urlCommonParts;
     private static MoodleClient moodleClient;
 
-    public static final String COURSES_KEY = "courses";
-    public static final String UNREAD_MESSAGES_KEY = "unread_messages";
-    public static final String TOKEN_KEY = "token";
+    public static final String BUNDLE_COURSES_KEY = "courses";
+    public static final String BUNDLE_UNREAD_MESSAGES_KEY = "unread_messages";
+    public static final String BUNDLE_READ_MESSAGES_KEY = "read_messages";
+    public static final String BUNDLE_TOKEN_KEY = "token";
 
     private static final String LOGIN_SCRIPT = "token.php";
     private static final String FUNCTIONS_SCRIPT = "server.php";
@@ -67,7 +69,7 @@ public class ServiceCaller {
     private static final String READ_TRUE = "1";
 
 
-    public static void performLoginCall(String url, final String username, final String password, final Activity activity) {
+    public static void performLoginAndUpdateAll(String url, final String username, final String password, final Activity activity) {
         //Perform the login call to moodle
         moodleClient = new RetrofitMoodleClient(url);
 
@@ -98,18 +100,11 @@ public class ServiceCaller {
                 try {
                     tokenResponse = futureLoginResponse.get();
 
-                    //Persist the token in the SharedPreferences
-//                    SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-//                    SharedPreferences.Editor editor = sharedPref.edit();
-//                    editor.putString(TOKEN_KEY, tokenResponse.body().getToken());
-//                    editor.commit();
-
                     //Persist the token in a Bundle that will go inside the fragment that will be called as arguments.
                     if (tokenResponse != null) {
                         fragmentArgs = new Bundle();
-                        fragmentArgs.putString(TOKEN_KEY, tokenResponse.body().getToken());
+                        fragmentArgs.putString(BUNDLE_TOKEN_KEY, tokenResponse.body().getToken());
                     }
-
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -177,7 +172,7 @@ public class ServiceCaller {
 
                     //Persist the token in a Bundle that will go inside the fragment that will be called as arguments.
                     if (coursesResponse != null) {
-                        fragmentArgs.putSerializable(COURSES_KEY, coursesResponse.body());
+                        fragmentArgs.putSerializable(BUNDLE_COURSES_KEY, coursesResponse.body());
                     }
 
 
@@ -268,7 +263,7 @@ public class ServiceCaller {
                     //Persist the token in a Bundle that will go inside the fragment that will be called as arguments.
                     if (unReadMessagesResponse != null) {
 
-                        fragmentArgs.putSerializable(UNREAD_MESSAGES_KEY, unReadMessagesResponse.body());
+                        fragmentArgs.putSerializable(BUNDLE_UNREAD_MESSAGES_KEY, unReadMessagesResponse.body());
                     }
 
 
@@ -288,6 +283,96 @@ public class ServiceCaller {
                                         .setAction("Action", null).show();
                             } else {
                                 Snackbar.make(activity.getCurrentFocus(), "Failed updating Unread Messages.", Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show();
+                            }
+                        } else {
+                            Snackbar.make(activity.getCurrentFocus(), "Internet connection error or server error.", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                        }
+                        performGetReadMessages(token, activity);
+                    }
+                });
+            }
+        });
+
+        service.shutdown();
+    }
+
+    public static void performGetReadMessages(final String token, final Activity activity) {
+
+
+        ExecutorService service = Executors.newCachedThreadPool();
+        final Future<Response<Messages>> futureReadMessagesResponse = service.submit(new Callable<Response<Messages>>() {
+            @Override
+            public Response<Messages> call() throws Exception {
+                Response<Messages> response = null;
+
+                Long timeReadInMillisNumber = System.currentTimeMillis();
+                String timeReadInMillis = Long.toString(timeReadInMillisNumber);
+                String epochTimeRead =
+                        timeReadInMillis.substring(0, timeReadInMillis.length() - 3);
+                try {
+                    //TODO remove the hardcoded strings below and place all of the moodle calls related strings in strings.xml
+
+                    //Find out the current user's Id number first.
+                    String currentUsername = activity.getPreferences(Context.MODE_PRIVATE).getString(SettingsFragment.USERNAME_KEY, null);
+
+                    urlCommonParts = new MoodleUrlCommonParts(FUNCTIONS_SCRIPT, FORMAT,
+                            token, USER_DETAILS_FUNCTION);
+                    Response<List<User>> responseUserDetails = moodleClient.getUserDetails(urlCommonParts, "username",
+                            currentUsername);
+
+                    int currentUserIdNumber = responseUserDetails.body().get(0).getId();
+                    String currentUserId = Integer.toString(currentUserIdNumber);
+
+                    //Prepare the urlCommonParts for the next call.
+                    urlCommonParts = new MoodleUrlCommonParts(FUNCTIONS_SCRIPT, FORMAT,
+                            token, GET_MESSAGES_FUNCTION);
+
+                    response = moodleClient.getMessages(urlCommonParts, MARK_AS_READ_FUNCTION, currentUserId,
+                            ANY_USER, READ_TRUE, epochTimeRead);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    response = null;
+                }
+                return response;
+            }
+        });
+
+        final ProgressDialog progress = ProgressDialog.show(activity, "Please wait...",
+                "Getting Read Messages", true);
+
+        //Get the result from the previous login call in a blocking call.
+        service.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    readMessagesResponse = futureReadMessagesResponse.get();
+
+                    //Persist the token in a Bundle that will go inside the fragment that will be called as arguments.
+                    if (readMessagesResponse != null) {
+
+                        fragmentArgs.putSerializable(BUNDLE_READ_MESSAGES_KEY, readMessagesResponse.body());
+                    }
+
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progress.dismiss();
+                        if (readMessagesResponse != null) {
+                            if (readMessagesResponse.body().getMessages() != null) {
+                                Snackbar.make(activity.getCurrentFocus(), "Read Messages updated.", Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show();
+                            } else {
+                                Snackbar.make(activity.getCurrentFocus(), "Failed updating Read Messages.", Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
                             }
                         } else {
