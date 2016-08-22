@@ -50,7 +50,7 @@ public class ContentFragment extends Fragment {
                         assignmentStringBuuilder.append(oneAssignment.getName() + "\n\n");
 //                        assignmentStringBuuilder.append(oneAssignment.getIntro().substring(3, oneAssignment.getIntro().length() - 4));
                         assignmentStringBuuilder.append(html2text(oneAssignment.getIntro()));
-                        items.add( assignmentStringBuuilder.toString());
+                        items.add(assignmentStringBuuilder.toString());
                     }
                 }
 
@@ -84,7 +84,7 @@ public class ContentFragment extends Fragment {
                         items.add(unreadMessageStringBuilder.toString());
                     }
 
-                    for (Message oneMessage: readMessageList) {
+                    for (Message oneMessage : readMessageList) {
                         items.add(oneMessage.getSmallmessage());
                     }
                 }
@@ -101,18 +101,21 @@ public class ContentFragment extends Fragment {
                         .getSerializable(ServiceCaller.BUNDLE_FORUM_POSTS_KEY);
 
                 //Gather all Forum posts in a list
-                for (CourseToDisplay oneCourse : courseToDisplayList) {
-                    List<ForumToDisplay> forumToDisplayList = oneCourse.getForumToDisplayList();
-                    for (ForumToDisplay oneForum : forumToDisplayList) {
-                        List<DiscussionToDisplay> discussionToDisplayListList = oneForum.getDiscussionToDisplayList();
-                        for (DiscussionToDisplay oneDiscussion : discussionToDisplayListList) {
-                            postList.addAll(oneDiscussion.getPostList());
+                if (courseToDisplayList != null) {
+                    for (CourseToDisplay oneCourse : courseToDisplayList) {
+                        List<ForumToDisplay> forumToDisplayList = oneCourse.getForumToDisplayList();
+                        for (ForumToDisplay oneForum : forumToDisplayList) {
+                            List<DiscussionToDisplay> discussionToDisplayListList = oneForum.getDiscussionToDisplayList();
+                            for (DiscussionToDisplay oneDiscussion : discussionToDisplayListList) {
+                                postList.addAll(oneDiscussion.getPostList());
+                            }
                         }
                     }
-                }
-
-                for (Post onePost : postList) {
-                    items.add(html2text(onePost.getMessage()));
+                    for (Post onePost : postList) {
+                        items.add(html2text(onePost.getMessage()));
+                    }
+                } else {
+                    items.add("No data were found.");
                 }
 
             } else {
