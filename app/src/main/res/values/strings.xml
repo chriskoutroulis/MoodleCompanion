@@ -20,4 +20,9 @@
     <string name="invalid_password_message">Please enter a valid Password value and tap SAVE again.</string>
     <string name="url_must_end_with">Url must end with "/"</string>
     <string name="save_successful_message">"Save was successful.</string>
+
+    <string name="no_data">No data were found.</string>
+    <string name="no_private_messages">There are no Private Messages.</string>
+    <string name="new_message_header"># New Message #\n\n</string>
+    <string name="no_forum_posts">There are no Forum Posts.</string>
 </resources>

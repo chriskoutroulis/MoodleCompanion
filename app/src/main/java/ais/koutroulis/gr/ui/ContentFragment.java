@@ -37,7 +37,7 @@ public class ContentFragment extends Fragment {
         ArrayList<String> items = new ArrayList<>();
 
         if (ServiceCaller.itemsToShow == null) {
-            items.add("No data were found");
+            items.add(getActivity().getString(R.string.no_data));
         } else if (ServiceCaller.itemsToShow.equals(ServiceCaller.ITEM_ASSIGNMENT)) {
             if (getArguments() != null && getArguments().getSerializable(ServiceCaller.BUNDLE_COURSES_KEY) != null) {
                 Courses courses = (Courses) getArguments().getSerializable(ServiceCaller.BUNDLE_COURSES_KEY);
@@ -59,7 +59,7 @@ public class ContentFragment extends Fragment {
                 //That method is intented to be used for background scanning and providing a notification.
 
             } else {
-                items.add("No data were found.");
+                items.add(getActivity().getString(R.string.no_data));
             }
         } else if (ServiceCaller.itemsToShow.equals(ServiceCaller.ITEM_MESSAGES)) {
             //TODO add one more condition below (... && getArguments().getSerializable(..))
@@ -74,11 +74,11 @@ public class ContentFragment extends Fragment {
                 StringBuilder unreadMessageStringBuilder = new StringBuilder();
 
                 if (unreadMessageList.size() == 0 && readMessageList.size() == 0) {
-                    items.add("There are no Private Messages");
+                    items.add(getActivity().getString(R.string.no_private_messages));
                 } else {
                     for (Message oneMessage : unreadMessageList) {
 
-                        unreadMessageStringBuilder.append("# New Message #\n\n");
+                        unreadMessageStringBuilder.append(getActivity().getString(R.string.new_message_header));
                         unreadMessageStringBuilder.append(oneMessage.getSmallmessage());
 
                         items.add(unreadMessageStringBuilder.toString());
@@ -89,7 +89,7 @@ public class ContentFragment extends Fragment {
                     }
                 }
             } else {
-                items.add("No data were found.");
+                items.add(getActivity().getString(R.string.no_data));
             }
         } else if (ServiceCaller.itemsToShow.equals(ServiceCaller.ITEM_FORUMS)) {
             //TODO add one more condition below (... && getArguments().getSerializable(..))
@@ -102,12 +102,16 @@ public class ContentFragment extends Fragment {
 
                 //Gather all Forum posts in a list
                 if (courseToDisplayList != null) {
-                    for (CourseToDisplay oneCourse : courseToDisplayList) {
-                        List<ForumToDisplay> forumToDisplayList = oneCourse.getForumToDisplayList();
-                        for (ForumToDisplay oneForum : forumToDisplayList) {
-                            List<DiscussionToDisplay> discussionToDisplayListList = oneForum.getDiscussionToDisplayList();
-                            for (DiscussionToDisplay oneDiscussion : discussionToDisplayListList) {
-                                postList.addAll(oneDiscussion.getPostList());
+                    if (courseToDisplayList.size() == 0) {
+                        items.add(getActivity().getString(R.string.no_forum_posts));
+                    } else {
+                        for (CourseToDisplay oneCourse : courseToDisplayList) {
+                            List<ForumToDisplay> forumToDisplayList = oneCourse.getForumToDisplayList();
+                            for (ForumToDisplay oneForum : forumToDisplayList) {
+                                List<DiscussionToDisplay> discussionToDisplayListList = oneForum.getDiscussionToDisplayList();
+                                for (DiscussionToDisplay oneDiscussion : discussionToDisplayListList) {
+                                    postList.addAll(oneDiscussion.getPostList());
+                                }
                             }
                         }
                     }
@@ -115,11 +119,11 @@ public class ContentFragment extends Fragment {
                         items.add(html2text(onePost.getMessage()));
                     }
                 } else {
-                    items.add("No data were found.");
+                    items.add(getActivity().getString(R.string.no_data));
                 }
 
             } else {
-                items.add("No data were found.");
+                items.add(getActivity().getString(R.string.no_data));
             }
         }
 
