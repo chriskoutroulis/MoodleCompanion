@@ -11,8 +11,13 @@ import android.view.ViewGroup;
 
 import org.jsoup.Jsoup;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import ais.koutroulis.gr.model.Assignment;
 import ais.koutroulis.gr.model.Course;
@@ -45,12 +50,27 @@ public class ContentFragment extends Fragment {
                 for (Course oneCourse : courseList) {
                     List<Assignment> assignmentsList = oneCourse.getAssignments();
 
+                    StringBuilder assignmentStringBuilder = new StringBuilder();
+                    assignmentStringBuilder.append(getActivity().getString(R.string.course_name)
+                            + " " + oneCourse.getFullname() + "\n\n");
+
                     for (Assignment oneAssignment : assignmentsList) {
-                        StringBuilder assignmentStringBuuilder = new StringBuilder();
-                        assignmentStringBuuilder.append(oneAssignment.getName() + "\n\n");
-//                        assignmentStringBuuilder.append(oneAssignment.getIntro().substring(3, oneAssignment.getIntro().length() - 4));
-                        assignmentStringBuuilder.append(html2text(oneAssignment.getIntro()));
-                        items.add(assignmentStringBuuilder.toString());
+
+                        int dueDateInEpoch = oneAssignment.getDuedate();
+                        long dueDateInMillis = dueDateInEpoch * 1000L;
+                        Locale myLocale = Locale.forLanguageTag("el_GR");
+
+                        Calendar dueDate = new GregorianCalendar(TimeZone.getDefault(), myLocale);
+                        dueDate.setTimeInMillis(dueDateInMillis);
+
+
+                        assignmentStringBuilder.append(getActivity().getString(R.string.due_date)
+                                + " " + DateFormat.getDateInstance().format(dueDate.getTime())
+                                + "\n\n");
+                        assignmentStringBuilder.append(getActivity().getString(R.string.assignment_title)
+                                + " " + oneAssignment.getName() + "\n\n");
+                        assignmentStringBuilder.append(html2text(oneAssignment.getIntro()));
+                        items.add(assignmentStringBuilder.toString());
                     }
                 }
 

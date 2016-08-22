@@ -38,4 +38,7 @@
     <string name="read_messages_updated">Read Messages updated.</string>
     <string name="read_messages_failed_update">Failed updating Read Messages.</string>
     <string name="forum_posts_updated">Forum Posts updated.</string>
+    <string name="due_date">Due date:</string>
+    <string name="course_name">Course:</string>
+    <string name="assignment_title">Title:</string>
 </resources>
