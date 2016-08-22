@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -20,6 +21,7 @@ import java.util.concurrent.Future;
 import ais.koutroulis.gr.client.MoodleClient;
 import ais.koutroulis.gr.client.MoodleUrlCommonParts;
 import ais.koutroulis.gr.client.RetrofitMoodleClient;
+import ais.koutroulis.gr.model.CourseToDisplay;
 import ais.koutroulis.gr.model.Courses;
 import ais.koutroulis.gr.model.Messages;
 import ais.koutroulis.gr.model.Token;
@@ -38,10 +40,12 @@ public class ServiceCaller {
     private static Response<Courses> coursesResponse;
     private static Response<Messages> unReadMessagesResponse;
     private static Response<Messages> readMessagesResponse;
+    private static List<CourseToDisplay> forumPostsResponse;
     public static Bundle fragmentArgs;
     private static MoodleUrlCommonParts urlCommonParts;
     private static MoodleClient moodleClient;
 
+    public static final String BUNDLE_FORUM_POSTS_KEY = "forum_posts";
     public static final String BUNDLE_COURSES_KEY = "courses";
     public static final String BUNDLE_UNREAD_MESSAGES_KEY = "unread_messages";
     public static final String BUNDLE_READ_MESSAGES_KEY = "read_messages";
@@ -300,7 +304,6 @@ public class ServiceCaller {
 
     public static void performGetReadMessages(final String token, final Activity activity) {
 
-
         ExecutorService service = Executors.newCachedThreadPool();
         final Future<Response<Messages>> futureReadMessagesResponse = service.submit(new Callable<Response<Messages>>() {
             @Override
@@ -379,6 +382,75 @@ public class ServiceCaller {
                             Snackbar.make(activity.getCurrentFocus(), "Internet connection error or server error.", Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         }
+                        performGetForumPosts(token, activity);
+                    }
+                });
+            }
+        });
+
+        service.shutdown();
+    }
+
+    public static void performGetForumPosts(final String token, final Activity activity) {
+
+        ExecutorService service = Executors.newCachedThreadPool();
+        final Future<List<CourseToDisplay>> futureForumPostsResponse = service.submit(new Callable<List<CourseToDisplay>>() {
+            @Override
+            public List<CourseToDisplay> call() throws Exception {
+                List<CourseToDisplay> response = null;
+
+                try {
+                    //TODO remove the hardcoded strings below and place all of the moodle calls related strings in strings.xml
+
+                    String currentUsername = activity.getPreferences(Context.MODE_PRIVATE).getString(SettingsFragment.USERNAME_KEY, null);
+                    String currentPassword = activity.getPreferences(Context.MODE_PRIVATE).getString(SettingsFragment.PASSWORD_KEY, null);
+
+                    urlCommonParts = new MoodleUrlCommonParts(FUNCTIONS_SCRIPT, FORMAT,
+                            token, ASSIGNMENTS_FUNCTION);
+                    response = moodleClient.getAllForumPostsAndMarkAsRead(urlCommonParts,
+                            currentUsername, currentPassword);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    response = null;
+                }
+                return response;
+            }
+        });
+
+        final ProgressDialog progress = ProgressDialog.show(activity, "Please wait...",
+                "Getting Forum Posts", true);
+
+        //Get the result from the previous login call in a blocking call.
+        service.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    forumPostsResponse = futureForumPostsResponse.get();
+
+                    //Persist the token in a Bundle that will go inside the fragment that will be called as arguments.
+                    if (forumPostsResponse != null) {
+
+                        fragmentArgs.putSerializable(BUNDLE_FORUM_POSTS_KEY, (Serializable) forumPostsResponse);
+                    }
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progress.dismiss();
+                        if (forumPostsResponse != null) {
+                            Snackbar.make(activity.getCurrentFocus(), "Forum Posts updated.", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                        } else {
+                            Snackbar.make(activity.getCurrentFocus(), "Internet connection error or server error.", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                        }
 
 
                         //After all the updates, populate the first fragment.
@@ -401,7 +473,6 @@ public class ServiceCaller {
                 });
             }
         });
-
         service.shutdown();
     }
 }

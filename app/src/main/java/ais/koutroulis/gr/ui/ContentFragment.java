@@ -9,14 +9,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.jsoup.Jsoup;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import ais.koutroulis.gr.model.Assignment;
 import ais.koutroulis.gr.model.Course;
+import ais.koutroulis.gr.model.CourseToDisplay;
 import ais.koutroulis.gr.model.Courses;
+import ais.koutroulis.gr.model.DiscussionToDisplay;
+import ais.koutroulis.gr.model.ForumToDisplay;
 import ais.koutroulis.gr.model.Message;
 import ais.koutroulis.gr.model.Messages;
+import ais.koutroulis.gr.model.Post;
 import ais.koutroulis.gr.service.ServiceCaller;
 
 /**
@@ -42,7 +48,8 @@ public class ContentFragment extends Fragment {
                     for (Assignment oneAssignment : assignmentsList) {
                         StringBuilder assignmentStringBuuilder = new StringBuilder();
                         assignmentStringBuuilder.append(oneAssignment.getName() + "\n\n");
-                        assignmentStringBuuilder.append(oneAssignment.getIntro().substring(3, oneAssignment.getIntro().length() - 4));
+//                        assignmentStringBuuilder.append(oneAssignment.getIntro().substring(3, oneAssignment.getIntro().length() - 4));
+                        assignmentStringBuuilder.append(html2text(oneAssignment.getIntro()));
                         items.add( assignmentStringBuuilder.toString());
                     }
                 }
@@ -87,8 +94,27 @@ public class ContentFragment extends Fragment {
         } else if (ServiceCaller.itemsToShow.equals(ServiceCaller.ITEM_FORUMS)) {
             //TODO add one more condition below (... && getArguments().getSerializable(..))
             if (getArguments() != null) {
-                //TODO implement this
-                items.add("Inside the Forums fragment");
+
+                List<Post> postList = new ArrayList<>();
+
+                List<CourseToDisplay> courseToDisplayList = (List<CourseToDisplay>) getArguments()
+                        .getSerializable(ServiceCaller.BUNDLE_FORUM_POSTS_KEY);
+
+                //Gather all Forum posts in a list
+                for (CourseToDisplay oneCourse : courseToDisplayList) {
+                    List<ForumToDisplay> forumToDisplayList = oneCourse.getForumToDisplayList();
+                    for (ForumToDisplay oneForum : forumToDisplayList) {
+                        List<DiscussionToDisplay> discussionToDisplayListList = oneForum.getDiscussionToDisplayList();
+                        for (DiscussionToDisplay oneDiscussion : discussionToDisplayListList) {
+                            postList.addAll(oneDiscussion.getPostList());
+                        }
+                    }
+                }
+
+                for (Post onePost : postList) {
+                    items.add(html2text(onePost.getMessage()));
+                }
+
             } else {
                 items.add("No data were found.");
             }
@@ -109,5 +135,9 @@ public class ContentFragment extends Fragment {
 
         );
         return v;
+    }
+
+    private String html2text(String html) {
+        return Jsoup.parse(html).text();
     }
 }
