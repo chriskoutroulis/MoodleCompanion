@@ -94,8 +94,8 @@ public class ServiceCaller {
             }
         });
 
-        final ProgressDialog progress = ProgressDialog.show(activity, "Please wait...",
-                "Logging in", true);
+        final ProgressDialog progress = ProgressDialog.show(activity, activity.getString(R.string.please_wait),
+                activity.getString(R.string.logging_in), true);
 
         //Get the result from the previous login call in a blocking call.
         service.execute(new Runnable() {
@@ -122,15 +122,15 @@ public class ServiceCaller {
                         progress.dismiss();
                         if (tokenResponse != null) {
                             if (tokenResponse.body().getToken() != null) {
-                                Snackbar.make(activity.getCurrentFocus(), "Login was successful.", Snackbar.LENGTH_LONG)
+                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.login_sucess), Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
                             } else {
-                                Snackbar.make(activity.getCurrentFocus(), "Login failed. Please enter the correct details and try again.", Snackbar.LENGTH_LONG)
+                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.login_fail), Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
                                 return;
                             }
                         } else {
-                            Snackbar.make(activity.getCurrentFocus(), "Internet connection error or server error.", Snackbar.LENGTH_LONG)
+                            Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.internet_error), Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                             return;
                         }
@@ -164,7 +164,7 @@ public class ServiceCaller {
             }
         });
 
-        final ProgressDialog progress = ProgressDialog.show(activity, "Please wait...",
+        final ProgressDialog progress = ProgressDialog.show(activity, activity.getString(R.string.please_wait),
                 "Getting Assignments", true);
 
         //Get the result from the previous login call in a blocking call.
@@ -192,14 +192,14 @@ public class ServiceCaller {
                         progress.dismiss();
                         if (coursesResponse != null) {
                             if (coursesResponse.body().getCourses() != null) {
-                                Snackbar.make(activity.getCurrentFocus(), "Assignments updated.", Snackbar.LENGTH_LONG)
+                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.assignments_updated), Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
                             } else {
-                                Snackbar.make(activity.getCurrentFocus(), "Failed updating Assingments.", Snackbar.LENGTH_LONG)
+                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.assignments_failed_update), Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
                             }
                         } else {
-                            Snackbar.make(activity.getCurrentFocus(), "Internet connection error or server error.", Snackbar.LENGTH_LONG)
+                            Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.internet_error), Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         }
 
@@ -254,7 +254,7 @@ public class ServiceCaller {
             }
         });
 
-        final ProgressDialog progress = ProgressDialog.show(activity, "Please wait...",
+        final ProgressDialog progress = ProgressDialog.show(activity, activity.getString(R.string.please_wait),
                 "Getting Unread Messages", true);
 
         //Get the result from the previous login call in a blocking call.
@@ -283,14 +283,14 @@ public class ServiceCaller {
                         progress.dismiss();
                         if (unReadMessagesResponse != null) {
                             if (unReadMessagesResponse.body().getMessages() != null) {
-                                Snackbar.make(activity.getCurrentFocus(), "Unread Messages updated.", Snackbar.LENGTH_LONG)
+                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.unread_messages_updated), Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
                             } else {
-                                Snackbar.make(activity.getCurrentFocus(), "Failed updating Unread Messages.", Snackbar.LENGTH_LONG)
+                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.unread_messages_failed_update), Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
                             }
                         } else {
-                            Snackbar.make(activity.getCurrentFocus(), "Internet connection error or server error.", Snackbar.LENGTH_LONG)
+                            Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.internet_error), Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         }
                         performGetReadMessages(token, activity);
@@ -343,7 +343,7 @@ public class ServiceCaller {
             }
         });
 
-        final ProgressDialog progress = ProgressDialog.show(activity, "Please wait...",
+        final ProgressDialog progress = ProgressDialog.show(activity, activity.getString(R.string.please_wait),
                 "Getting Read Messages", true);
 
         //Get the result from the previous login call in a blocking call.
@@ -372,14 +372,14 @@ public class ServiceCaller {
                         progress.dismiss();
                         if (readMessagesResponse != null) {
                             if (readMessagesResponse.body().getMessages() != null) {
-                                Snackbar.make(activity.getCurrentFocus(), "Read Messages updated.", Snackbar.LENGTH_LONG)
+                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.read_messages_updated), Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
                             } else {
-                                Snackbar.make(activity.getCurrentFocus(), "Failed updating Read Messages.", Snackbar.LENGTH_LONG)
+                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.read_messages_failed_update), Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
                             }
                         } else {
-                            Snackbar.make(activity.getCurrentFocus(), "Internet connection error or server error.", Snackbar.LENGTH_LONG)
+                            Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.internet_error), Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         }
                         performGetForumPosts(token, activity);
@@ -418,7 +418,7 @@ public class ServiceCaller {
             }
         });
 
-        final ProgressDialog progress = ProgressDialog.show(activity, "Please wait...",
+        final ProgressDialog progress = ProgressDialog.show(activity, activity.getString(R.string.please_wait),
                 "Getting Forum Posts", true);
 
         //Get the result from the previous login call in a blocking call.
@@ -445,10 +445,10 @@ public class ServiceCaller {
                     public void run() {
                         progress.dismiss();
                         if (forumPostsResponse != null) {
-                            Snackbar.make(activity.getCurrentFocus(), "Forum Posts updated.", Snackbar.LENGTH_LONG)
+                            Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.forum_posts_updated), Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         } else {
-                            Snackbar.make(activity.getCurrentFocus(), "Internet connection error or server error.", Snackbar.LENGTH_LONG)
+                            Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.internet_error), Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         }
 

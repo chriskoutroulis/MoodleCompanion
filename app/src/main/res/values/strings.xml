@@ -25,4 +25,17 @@
     <string name="no_private_messages">There are no Private Messages.</string>
     <string name="new_message_header"># New Message #\n\n</string>
     <string name="no_forum_posts">There are no Forum Posts.</string>
+
+    <string name="please_wait">Please wait...</string>
+    <string name="logging_in">Logging in</string>
+    <string name="login_sucess">Login was successful.</string>
+    <string name="login_fail">Login failed. Please enter the correct details and try again.</string>
+    <string name="internet_error">Internet connection error or server error.</string>
+    <string name="assignments_updated">Assignments updated.</string>
+    <string name="assignments_failed_update">Failed updating Assingments.</string>
+    <string name="unread_messages_updated">Unread Messages updated.</string>
+    <string name="unread_messages_failed_update">Failed updating Unread Messages.</string>
+    <string name="read_messages_updated">Read Messages updated.</string>
+    <string name="read_messages_failed_update">Failed updating Read Messages.</string>
+    <string name="forum_posts_updated">Forum Posts updated.</string>
 </resources>
