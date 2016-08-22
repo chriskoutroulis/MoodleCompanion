@@ -64,11 +64,20 @@ public class ContentFragment extends Fragment {
                 Messages readMessages = (Messages) getArguments().getSerializable(ServiceCaller.BUNDLE_READ_MESSAGES_KEY);
                 List<Message> readMessageList = readMessages.getMessages();
 
-                if (unreadMessageList.size() == 0) {
-                    items.add("There are no Unread Messages");
+                StringBuilder unreadMessageStringBuilder = new StringBuilder();
+
+                if (unreadMessageList.size() == 0 && readMessageList.size() == 0) {
+                    items.add("There are no Private Messages");
                 } else {
                     for (Message oneMessage : unreadMessageList) {
 
+                        unreadMessageStringBuilder.append("# New Message #\n\n");
+                        unreadMessageStringBuilder.append(oneMessage.getSmallmessage());
+
+                        items.add(unreadMessageStringBuilder.toString());
+                    }
+
+                    for (Message oneMessage: readMessageList) {
                         items.add(oneMessage.getSmallmessage());
                     }
                 }
