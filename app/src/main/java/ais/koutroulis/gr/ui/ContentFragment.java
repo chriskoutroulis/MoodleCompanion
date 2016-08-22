@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import org.jsoup.Jsoup;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -63,9 +64,13 @@ public class ContentFragment extends Fragment {
                         Calendar dueDate = new GregorianCalendar(TimeZone.getDefault(), myLocale);
                         dueDate.setTimeInMillis(dueDateInMillis);
 
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+                        String readableDate = formatter.format(dueDate.getTime());
+
 
                         assignmentStringBuilder.append(getActivity().getString(R.string.due_date)
-                                + " " + DateFormat.getDateInstance().format(dueDate.getTime())
+                                + " " + readableDate
                                 + "\n\n");
                         assignmentStringBuilder.append(getActivity().getString(R.string.assignment_title)
                                 + " " + oneAssignment.getName() + "\n\n");
