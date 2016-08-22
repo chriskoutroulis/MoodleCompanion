@@ -11,10 +11,11 @@ import android.view.ViewGroup;
 
 import org.jsoup.Jsoup;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
@@ -51,31 +52,41 @@ public class ContentFragment extends Fragment {
                 for (Course oneCourse : courseList) {
                     List<Assignment> assignmentsList = oneCourse.getAssignments();
 
-                    StringBuilder assignmentStringBuilder = new StringBuilder();
-                    assignmentStringBuilder.append(getActivity().getString(R.string.course_name)
-                            + " " + oneCourse.getFullname() + "\n\n");
+                    //Sort the list from newer Assignments to Older.
+                    Collections.sort(assignmentsList, new Comparator<Assignment>() {
+                        @Override
+                        public int compare(Assignment assignment2, Assignment assignment1) {
+                            return assignment1.getTimemodified() - assignment2.getTimemodified();
+                        }
+                    });
 
                     for (Assignment oneAssignment : assignmentsList) {
+                        //if the assignment's due date has not passed yet.
+                        if (System.currentTimeMillis() <= (oneAssignment.getDuedate() * 1000L)) {
+                            StringBuilder assignmentStringBuilder = new StringBuilder();
+                            assignmentStringBuilder.append(getActivity().getString(R.string.course_name)
+                                    + " " + oneCourse.getFullname() + "\n\n");
 
-                        int dueDateInEpoch = oneAssignment.getDuedate();
-                        long dueDateInMillis = dueDateInEpoch * 1000L;
-                        Locale myLocale = Locale.forLanguageTag("el_GR");
+                            int dueDateInEpoch = oneAssignment.getDuedate();
+                            long dueDateInMillis = dueDateInEpoch * 1000L;
+                            Locale myLocale = Locale.forLanguageTag("el_GR");
 
-                        Calendar dueDate = new GregorianCalendar(TimeZone.getDefault(), myLocale);
-                        dueDate.setTimeInMillis(dueDateInMillis);
+                            Calendar dueDate = new GregorianCalendar(TimeZone.getDefault(), myLocale);
+                            dueDate.setTimeInMillis(dueDateInMillis);
 
-                        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
 
-                        String readableDate = formatter.format(dueDate.getTime());
+                            String readableDate = formatter.format(dueDate.getTime());
 
 
-                        assignmentStringBuilder.append(getActivity().getString(R.string.due_date)
-                                + " " + readableDate
-                                + "\n\n");
-                        assignmentStringBuilder.append(getActivity().getString(R.string.assignment_title)
-                                + " " + oneAssignment.getName() + "\n\n");
-                        assignmentStringBuilder.append(html2text(oneAssignment.getIntro()));
-                        items.add(assignmentStringBuilder.toString());
+                            assignmentStringBuilder.append(getActivity().getString(R.string.due_date)
+                                    + " " + readableDate
+                                    + "\n\n");
+                            assignmentStringBuilder.append(getActivity().getString(R.string.assignment_title)
+                                    + " " + oneAssignment.getName() + "\n\n");
+                            assignmentStringBuilder.append(html2text(oneAssignment.getIntro()));
+                            items.add(assignmentStringBuilder.toString());
+                        }
                     }
                 }
 
