@@ -68,16 +68,8 @@ public class ContentFragment extends Fragment {
                                     + " " + oneCourse.getFullname() + "\n\n");
 
                             int dueDateInEpoch = oneAssignment.getDuedate();
-                            long dueDateInMillis = dueDateInEpoch * 1000L;
-                            Locale myLocale = Locale.forLanguageTag("el_GR");
 
-                            Calendar dueDate = new GregorianCalendar(TimeZone.getDefault(), myLocale);
-                            dueDate.setTimeInMillis(dueDateInMillis);
-
-                            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
-
-                            String readableDate = formatter.format(dueDate.getTime());
-
+                            String readableDate = epochToFormattedDate(dueDateInEpoch);
 
                             assignmentStringBuilder.append(getActivity().getString(R.string.due_date)
                                     + " " + readableDate
@@ -107,21 +99,34 @@ public class ContentFragment extends Fragment {
                 Messages readMessages = (Messages) getArguments().getSerializable(ServiceCaller.BUNDLE_READ_MESSAGES_KEY);
                 List<Message> readMessageList = readMessages.getMessages();
 
-                StringBuilder unreadMessageStringBuilder = new StringBuilder();
-
                 if (unreadMessageList.size() == 0 && readMessageList.size() == 0) {
                     items.add(getActivity().getString(R.string.no_private_messages));
                 } else {
                     for (Message oneMessage : unreadMessageList) {
 
-                        unreadMessageStringBuilder.append(getActivity().getString(R.string.new_message_header));
+                        StringBuilder unreadMessageStringBuilder = new StringBuilder();
+
+                        unreadMessageStringBuilder.append(getActivity().getString(R.string.new_message_header) + "\n\n");
+                        unreadMessageStringBuilder.append(epochToFormattedDate(oneMessage.getTimecreated())
+                                + "\n\n");
+                        unreadMessageStringBuilder.append(getActivity().getString(R.string.message_from)
+                                + " " + oneMessage.getUserfromfullname() + "\n\n");
                         unreadMessageStringBuilder.append(oneMessage.getSmallmessage());
 
                         items.add(unreadMessageStringBuilder.toString());
                     }
 
                     for (Message oneMessage : readMessageList) {
-                        items.add(oneMessage.getSmallmessage());
+
+                        StringBuilder readMessageStringBuilder = new StringBuilder();
+
+                        readMessageStringBuilder.append(epochToFormattedDate(oneMessage.getTimecreated())
+                                + "\n\n");
+                        readMessageStringBuilder.append(getActivity().getString(R.string.message_from)
+                                + " " + oneMessage.getUserfromfullname() + "\n\n");
+                        readMessageStringBuilder.append(oneMessage.getSmallmessage());
+
+                        items.add(readMessageStringBuilder.toString());
                     }
                 }
             } else {
@@ -167,20 +172,27 @@ public class ContentFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_list_view, container, false);
 
         RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.recyclerview);
-        recyclerView.setLayoutManager(new
-
-                LinearLayoutManager(getContext()
-
-        ));
-        recyclerView.setAdapter(new
-
-                RecyclerAdapter(items)
-
-        );
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(new RecyclerAdapter(items));
         return v;
     }
 
+    private String epochToFormattedDate(int epochTime) {
+        long dateInMillis = epochTime * 1000L;
+        Locale myLocale = Locale.forLanguageTag("el_GR");
+
+        Calendar myDate = new GregorianCalendar(TimeZone.getDefault(), myLocale);
+        myDate.setTimeInMillis(dateInMillis);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
+
+        String readableDate = formatter.format(myDate.getTime());
+
+        return readableDate;
+    }
+
     private String html2text(String html) {
+
         return Jsoup.parse(html).text();
     }
 }
