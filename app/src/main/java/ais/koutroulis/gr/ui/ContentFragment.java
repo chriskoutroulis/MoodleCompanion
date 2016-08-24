@@ -158,13 +158,13 @@ public class ContentFragment extends Fragment {
                                         StringBuilder postStringBuilder = new StringBuilder();
 
                                         postStringBuilder.append(epochToFormattedDate(onePost.getModified())
-                                        + "\n\n");
+                                                + "\n\n");
                                         postStringBuilder.append(getActivity().getString(R.string.course_name)
                                                 + " " + oneCourse.getFullName() + "\n\n");
                                         postStringBuilder.append(getActivity().getString(R.string.forum_name)
                                                 + " " + oneForum.getName() + "\n\n");
                                         postStringBuilder.append(getActivity().getString(R.string.discussion_subject)
-                                        + " " + oneDiscussion.getSubject() + "\n\n");
+                                                + " " + oneDiscussion.getSubject() + "\n\n");
                                         postStringBuilder.append(getActivity().getString(R.string.posted_by_user)
                                                 + " " + onePost.getUserfullname() + "\n\n");
                                         postStringBuilder.append(html2text(onePost.getMessage()));
