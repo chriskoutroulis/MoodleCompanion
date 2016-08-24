@@ -13,6 +13,10 @@ public class DiscussionToDisplay implements Serializable {
 
     private int numReplies;
 
+    private String userFullName;
+
+    private String subject;
+
     private List<Post> postList;
 
     public List<Post> getPostList() {
@@ -45,5 +49,21 @@ public class DiscussionToDisplay implements Serializable {
 
     public void setNumReplies(int numReplies) {
         this.numReplies = numReplies;
+    }
+
+    public String getUserFullName() {
+        return userFullName;
+    }
+
+    public void setUserFullName(String userFullName) {
+        this.userFullName = userFullName;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 }

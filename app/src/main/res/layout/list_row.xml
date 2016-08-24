@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="15dp"
         android:elevation="@dimen/cardview_compat_inset_shadow"
         android:background="#ffffff">
         <!--card_view:cardBackgroundColor="@color/cardview_shadow_end_color"-->
@@ -22,10 +22,10 @@
 
         <TextView
             android:id="@+id/list_item"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="10dp"
-            android:paddingBottom="10dp"
+            android:paddingBottom="20dp"
             android:paddingTop="10dp"
             android:paddingRight="10dp"
             android:layout_gravity="left"

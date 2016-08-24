@@ -253,6 +253,7 @@ public class RetrofitMoodleClient implements MoodleClient {
 
                     ForumToDisplay oneForumToDisplay = new ForumToDisplay();
                     oneForumToDisplay.setId(oneForum.getId());
+                    oneForumToDisplay.setName(oneForum.getName());
 
                     urlCommonParts.setFunction(GET_FORUM_DISCUSSIONS_FUNCTION);
                     String forumIdString = Integer.toString(oneForum.getId());
@@ -265,6 +266,8 @@ public class RetrofitMoodleClient implements MoodleClient {
                         oneDiscussionToDisplay.setId(oneDiscussion.getdiscussionId());
                         oneDiscussionToDisplay.setNumReplies(oneDiscussion.getNumreplies());
                         oneDiscussionToDisplay.setNumUnread(oneDiscussion.getNumunread());
+                        oneDiscussionToDisplay.setUserFullName(oneDiscussion.getUserfullname());
+                        oneDiscussionToDisplay.setSubject(oneDiscussion.getSubject());
 
                         discussionToDisplayList.add(oneDiscussionToDisplay);
 
@@ -313,6 +316,7 @@ public class RetrofitMoodleClient implements MoodleClient {
 
                 ForumToDisplay oneForumToDisplay = new ForumToDisplay();
                 oneForumToDisplay.setId(oneForum.getId());
+                oneForumToDisplay.setName(oneForum.getName());
 
                 urlCommonParts.setFunction(GET_FORUM_DISCUSSIONS_FUNCTION);
                 String forumIdString = Integer.toString(oneForum.getId());
@@ -325,6 +329,8 @@ public class RetrofitMoodleClient implements MoodleClient {
                     oneDiscussionToDisplay.setId(oneDiscussion.getdiscussionId());
                     oneDiscussionToDisplay.setNumReplies(oneDiscussion.getNumreplies());
                     oneDiscussionToDisplay.setNumUnread(oneDiscussion.getNumunread());
+                    oneDiscussionToDisplay.setUserFullName(oneDiscussion.getUserfullname());
+                    oneDiscussionToDisplay.setSubject(oneDiscussion.getSubject());
 
                     urlCommonParts.setFunction(GET_FORUM_DISCUSSION_POSTS_FUNCTION);
                     String discussionIdString = Integer.toString(oneDiscussion.getdiscussionId());

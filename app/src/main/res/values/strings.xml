@@ -42,4 +42,7 @@
     <string name="course_name">Course:</string>
     <string name="assignment_title">Title:</string>
     <string name="message_from">From:</string>
+    <string name="forum_name">Forum:</string>
+    <string name="posted_by_user">Posted by:</string>
+    <string name="discussion_subject">Subject:</string>
 </resources>

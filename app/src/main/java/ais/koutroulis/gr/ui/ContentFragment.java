@@ -151,14 +151,33 @@ public class ContentFragment extends Fragment {
                             for (ForumToDisplay oneForum : forumToDisplayList) {
                                 List<DiscussionToDisplay> discussionToDisplayListList = oneForum.getDiscussionToDisplayList();
                                 for (DiscussionToDisplay oneDiscussion : discussionToDisplayListList) {
-                                    postList.addAll(oneDiscussion.getPostList());
+//                                    postList.addAll(oneDiscussion.getPostList());
+
+                                    postList = oneDiscussion.getPostList();
+                                    for (Post onePost : postList) {
+                                        StringBuilder postStringBuilder = new StringBuilder();
+
+                                        postStringBuilder.append(epochToFormattedDate(onePost.getModified())
+                                        + "\n\n");
+                                        postStringBuilder.append(getActivity().getString(R.string.course_name)
+                                                + " " + oneCourse.getFullName() + "\n\n");
+                                        postStringBuilder.append(getActivity().getString(R.string.forum_name)
+                                                + " " + oneForum.getName() + "\n\n");
+                                        postStringBuilder.append(getActivity().getString(R.string.discussion_subject)
+                                        + " " + oneDiscussion.getSubject() + "\n\n");
+                                        postStringBuilder.append(getActivity().getString(R.string.posted_by_user)
+                                                + " " + onePost.getUserfullname() + "\n\n");
+                                        postStringBuilder.append(html2text(onePost.getMessage()));
+
+                                        items.add(postStringBuilder.toString());
+                                    }
                                 }
                             }
                         }
                     }
-                    for (Post onePost : postList) {
-                        items.add(html2text(onePost.getMessage()));
-                    }
+//                    for (Post onePost : postList) {
+//                        items.add(html2text(onePost.getMessage()));
+//                    }
                 } else {
                     items.add(getActivity().getString(R.string.no_data));
                 }
