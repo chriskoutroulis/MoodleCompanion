@@ -317,6 +317,7 @@ public class RetrofitMoodleClient implements MoodleClient {
                 ForumToDisplay oneForumToDisplay = new ForumToDisplay();
                 oneForumToDisplay.setId(oneForum.getId());
                 oneForumToDisplay.setName(oneForum.getName());
+                oneForumToDisplay.setTimemodified(oneForum.getTimemodified());
 
                 urlCommonParts.setFunction(GET_FORUM_DISCUSSIONS_FUNCTION);
                 String forumIdString = Integer.toString(oneForum.getId());

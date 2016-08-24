@@ -11,6 +11,8 @@ public class ForumToDisplay implements Serializable {
 
     private String name;
 
+    private int timemodified;
+
     private List<DiscussionToDisplay> discussionToDisplayList;
 
     public List<DiscussionToDisplay> getDiscussionToDisplayList() {
@@ -35,5 +37,13 @@ public class ForumToDisplay implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getTimemodified() {
+        return timemodified;
+    }
+
+    public void setTimemodified(int timemodified) {
+        this.timemodified = timemodified;
     }
 }
