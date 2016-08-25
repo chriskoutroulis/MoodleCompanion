@@ -9,7 +9,7 @@ public class ForumPostCard {
 
     private String cardContent;
 
-    public ForumPostCard(String cardContent, int epochTime) {
+    public ForumPostCard(int epochTime, String cardContent) {
         this.cardContent = cardContent;
         this.epochTime = epochTime;
     }

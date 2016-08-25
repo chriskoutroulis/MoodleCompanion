@@ -44,6 +44,7 @@ public class ContentFragment extends Fragment {
         ArrayList<String> items = new ArrayList<>();
 
         List<AssignmentCard> assignmentCardList = new ArrayList<>();
+        List<ForumPostCard> forumPostCardList = new ArrayList<>();
 
         if (ServiceCaller.itemsToShow == null) {
             items.add(getActivity().getString(R.string.no_data));
@@ -189,15 +190,27 @@ public class ContentFragment extends Fragment {
                                                 + " " + onePost.getUserfullname() + "\n\n");
                                         postStringBuilder.append(html2text(onePost.getMessage()));
 
-                                        items.add(postStringBuilder.toString());
+                                        ForumPostCard oneForumPostCard = new ForumPostCard(onePost.getModified(),
+                                                postStringBuilder.toString());
+                                        forumPostCardList.add(oneForumPostCard);
+
+//                                        items.add(postStringBuilder.toString());
                                     }
                                 }
                             }
                         }
                     }
-//                    for (Post onePost : postList) {
-//                        items.add(html2text(onePost.getMessage()));
-//                    }
+                    //Sort the list from newer Assignments to Older.
+                    Collections.sort(forumPostCardList, new Comparator<ForumPostCard>() {
+                        @Override
+                        public int compare(ForumPostCard post2, ForumPostCard post1) {
+                            return post1.getEpochTime() - post2.getEpochTime();
+                        }
+                    });
+
+                    for (ForumPostCard oneForumPostCard : forumPostCardList) {
+                        items.add(oneForumPostCard.getCardContent());
+                    }
                 } else {
                     items.add(getActivity().getString(R.string.no_data));
                 }
