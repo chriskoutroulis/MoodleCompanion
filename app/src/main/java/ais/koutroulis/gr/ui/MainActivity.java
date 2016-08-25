@@ -70,6 +70,8 @@ public class MainActivity extends AppCompatActivity
                 }
             });
 
+            //If the Android Version of the Phone is lower that Lollipop, remove the Floating Action Button
+            //from the layout.
             int currentapiVersion = android.os.Build.VERSION.SDK_INT;
             if (currentapiVersion < android.os.Build.VERSION_CODES.LOLLIPOP){
                 fab.setVisibility(View.GONE);
