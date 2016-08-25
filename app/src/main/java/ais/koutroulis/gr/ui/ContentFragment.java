@@ -43,6 +43,8 @@ public class ContentFragment extends Fragment {
 
         ArrayList<String> items = new ArrayList<>();
 
+        List<AssignmentCard> assignmentCardList = new ArrayList<>();
+
         if (ServiceCaller.itemsToShow == null) {
             items.add(getActivity().getString(R.string.no_data));
         } else if (ServiceCaller.itemsToShow.equals(ServiceCaller.ITEM_ASSIGNMENT)) {
@@ -77,9 +79,27 @@ public class ContentFragment extends Fragment {
                             assignmentStringBuilder.append(getActivity().getString(R.string.assignment_title)
                                     + " " + oneAssignment.getName() + "\n\n");
                             assignmentStringBuilder.append(html2text(oneAssignment.getIntro()));
-                            items.add(assignmentStringBuilder.toString());
+
+                            AssignmentCard oneAssignmentCard = new AssignmentCard(oneAssignment.getTimemodified(),
+                                    assignmentStringBuilder.toString());
+
+                            assignmentCardList.add(oneAssignmentCard);
+
+//                            items.add(assignmentStringBuilder.toString());
                         }
                     }
+                }
+
+                //Sort the list from newer Assignments to Older.
+                Collections.sort(assignmentCardList, new Comparator<AssignmentCard>() {
+                    @Override
+                    public int compare(AssignmentCard assignment2, AssignmentCard assignment1) {
+                        return assignment1.getEpochTime() - assignment2.getEpochTime();
+                    }
+                });
+
+                for (AssignmentCard oneAssignmentCard : assignmentCardList) {
+                    items.add(oneAssignmentCard.getCardContent());
                 }
 
                 //if needed there is code implemented for distinguishing the current assignments
