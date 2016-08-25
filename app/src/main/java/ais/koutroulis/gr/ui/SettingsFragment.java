@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import ais.koutroulis.gr.model.Token;
-import ais.koutroulis.gr.service.ServiceCaller;
 import retrofit2.Response;
 
 /**

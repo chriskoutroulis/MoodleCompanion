@@ -30,7 +30,6 @@ import ais.koutroulis.gr.model.ForumToDisplay;
 import ais.koutroulis.gr.model.Message;
 import ais.koutroulis.gr.model.Messages;
 import ais.koutroulis.gr.model.Post;
-import ais.koutroulis.gr.service.ServiceCaller;
 
 /**
  * Created by Chris on 08-Aug-16.

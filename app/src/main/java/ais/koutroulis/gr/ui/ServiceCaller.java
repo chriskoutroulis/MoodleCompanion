@@ -1,4 +1,4 @@
-package ais.koutroulis.gr.service;
+package ais.koutroulis.gr.ui;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -26,9 +26,6 @@ import ais.koutroulis.gr.model.Courses;
 import ais.koutroulis.gr.model.Messages;
 import ais.koutroulis.gr.model.Token;
 import ais.koutroulis.gr.model.User;
-import ais.koutroulis.gr.ui.ContentFragment;
-import ais.koutroulis.gr.ui.R;
-import ais.koutroulis.gr.ui.SettingsFragment;
 import retrofit2.Response;
 
 /**
