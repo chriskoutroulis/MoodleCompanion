@@ -230,9 +230,9 @@ public class ContentFragment extends Fragment {
 
     private String epochToFormattedDate(int epochTime) {
         long dateInMillis = epochTime * 1000L;
-        Locale myLocale = Locale.forLanguageTag("el_GR");
+//        Locale myLocale = Locale.forLanguageTag("el_GR");
 
-        Calendar myDate = new GregorianCalendar(TimeZone.getDefault(), myLocale);
+        Calendar myDate = new GregorianCalendar(TimeZone.getDefault());
         myDate.setTimeInMillis(dateInMillis);
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
