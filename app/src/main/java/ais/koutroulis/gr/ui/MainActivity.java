@@ -70,6 +70,11 @@ public class MainActivity extends AppCompatActivity
                 }
             });
 
+            int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+            if (currentapiVersion < android.os.Build.VERSION_CODES.LOLLIPOP){
+                fab.setVisibility(View.GONE);
+            }
+
             ServiceCaller.performLoginAndUpdateAll(sharedPref.getString(SettingsFragment.URL_KEY, ""),
                     sharedPref.getString(SettingsFragment.USERNAME_KEY, ""), sharedPref.getString(SettingsFragment.PASSWORD_KEY, ""),
                     this);
