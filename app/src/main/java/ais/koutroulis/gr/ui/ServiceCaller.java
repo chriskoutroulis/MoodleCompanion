@@ -121,15 +121,15 @@ public class ServiceCaller {
                             progress.dismiss();
                             if (tokenResponse != null) {
                                 if (tokenResponse.body().getToken() != null) {
-                                    Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.login_sucess), Snackbar.LENGTH_LONG)
+                                    Snackbar.make(activity.findViewById(R.id.fab), activity.getString(R.string.login_sucess), Snackbar.LENGTH_LONG)
                                             .setAction("Action", null).show();
                                 } else {
-                                    Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.login_fail), Snackbar.LENGTH_LONG)
+                                    Snackbar.make(activity.findViewById(R.id.fab), activity.getString(R.string.login_fail), Snackbar.LENGTH_LONG)
                                             .setAction("Action", null).show();
                                     return;
                                 }
                             } else {
-                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.internet_error), Snackbar.LENGTH_LONG)
+                                Snackbar.make(activity.findViewById(R.id.fab), activity.getString(R.string.internet_error), Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
                                 return;
                             }
@@ -141,7 +141,7 @@ public class ServiceCaller {
                 }
             });
         } else {
-            Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.login_fail), Snackbar.LENGTH_LONG)
+            Snackbar.make(activity.findViewById(R.id.fab), activity.getString(R.string.login_fail), Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
             return;
         }
@@ -196,14 +196,14 @@ public class ServiceCaller {
                         progress.dismiss();
                         if (coursesResponse != null) {
                             if (coursesResponse.body().getCourses() != null) {
-                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.assignments_updated), Snackbar.LENGTH_LONG)
+                                Snackbar.make(activity.findViewById(R.id.fab), activity.getString(R.string.assignments_updated), Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
                             } else {
-                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.assignments_failed_update), Snackbar.LENGTH_LONG)
+                                Snackbar.make(activity.findViewById(R.id.fab), activity.getString(R.string.assignments_failed_update), Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
                             }
                         } else {
-                            Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.internet_error), Snackbar.LENGTH_LONG)
+                            Snackbar.make(activity.findViewById(R.id.fab), activity.getString(R.string.internet_error), Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         }
 
@@ -287,14 +287,14 @@ public class ServiceCaller {
                         progress.dismiss();
                         if (unReadMessagesResponse != null) {
                             if (unReadMessagesResponse.body().getMessages() != null) {
-                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.unread_messages_updated), Snackbar.LENGTH_LONG)
+                                Snackbar.make(activity.findViewById(R.id.fab), activity.getString(R.string.unread_messages_updated), Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
                             } else {
-                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.unread_messages_failed_update), Snackbar.LENGTH_LONG)
+                                Snackbar.make(activity.findViewById(R.id.fab), activity.getString(R.string.unread_messages_failed_update), Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
                             }
                         } else {
-                            Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.internet_error), Snackbar.LENGTH_LONG)
+                            Snackbar.make(activity.findViewById(R.id.fab), activity.getString(R.string.internet_error), Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         }
                         performGetReadMessages(token, activity);
@@ -376,14 +376,14 @@ public class ServiceCaller {
                         progress.dismiss();
                         if (readMessagesResponse != null) {
                             if (readMessagesResponse.body().getMessages() != null) {
-                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.read_messages_updated), Snackbar.LENGTH_LONG)
+                                Snackbar.make(activity.findViewById(R.id.fab), activity.getString(R.string.read_messages_updated), Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
                             } else {
-                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.read_messages_failed_update), Snackbar.LENGTH_LONG)
+                                Snackbar.make(activity.findViewById(R.id.fab), activity.getString(R.string.read_messages_failed_update), Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
                             }
                         } else {
-                            Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.internet_error), Snackbar.LENGTH_LONG)
+                            Snackbar.make(activity.findViewById(R.id.fab), activity.getString(R.string.internet_error), Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         }
                         performGetForumPosts(token, activity);
@@ -449,10 +449,10 @@ public class ServiceCaller {
                     public void run() {
                         progress.dismiss();
                         if (forumPostsResponse != null) {
-                            Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.forum_posts_updated), Snackbar.LENGTH_LONG)
+                            Snackbar.make(activity.findViewById(R.id.fab), activity.getString(R.string.forum_posts_updated), Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         } else {
-                            Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.internet_error), Snackbar.LENGTH_LONG)
+                            Snackbar.make(activity.findViewById(R.id.fab), activity.getString(R.string.internet_error), Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         }
 
