@@ -71,73 +71,80 @@ public class ServiceCaller {
 
 
     public static void performLoginAndUpdateAll(String url, final String username, final String password, final Activity activity) {
-        //Perform the login call to moodle
-        moodleClient = new RetrofitMoodleClient(url);
 
-        ExecutorService service = Executors.newCachedThreadPool();
-        final Future<Response<Token>> futureLoginResponse = service.submit(new Callable<Response<Token>>() {
-            @Override
-            public Response<Token> call() throws Exception {
-                Response<Token> response = null;
-                try {
-                    //TODO remove the hardcoded strings below and place all of the moodle calls related strings in strings.xml
+        if (url != null && !url.isEmpty() && username != null && !username.isEmpty() && password != null && !password.isEmpty()) {
+            //Perform the login call to moodle
+            moodleClient = new RetrofitMoodleClient(url);
 
-                    response = moodleClient.login(LOGIN_SCRIPT, LOGIN_SERVICE, username, password);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    response = null;
+            ExecutorService service = Executors.newCachedThreadPool();
+            final Future<Response<Token>> futureLoginResponse = service.submit(new Callable<Response<Token>>() {
+                @Override
+                public Response<Token> call() throws Exception {
+                    Response<Token> response = null;
+                    try {
+                        //TODO remove the hardcoded strings below and place all of the moodle calls related strings in strings.xml
+
+                        response = moodleClient.login(LOGIN_SCRIPT, LOGIN_SERVICE, username, password);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        response = null;
+                    }
+                    return response;
                 }
-                return response;
-            }
-        });
+            });
 
-        final ProgressDialog progress = ProgressDialog.show(activity, activity.getString(R.string.please_wait),
-                activity.getString(R.string.logging_in), true);
+            final ProgressDialog progress = ProgressDialog.show(activity, activity.getString(R.string.please_wait),
+                    activity.getString(R.string.logging_in), true);
 
-        //Get the result from the previous login call in a blocking call.
-        service.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    tokenResponse = futureLoginResponse.get();
+            //Get the result from the previous login call in a blocking call.
+            service.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        tokenResponse = futureLoginResponse.get();
 
-                    //Persist the token in a Bundle that will go inside the fragment that will be called as arguments.
-                    if (tokenResponse != null) {
-                        fragmentArgs = new Bundle();
-                        fragmentArgs.putString(BUNDLE_TOKEN_KEY, tokenResponse.body().getToken());
+                        //Persist the token in a Bundle that will go inside the fragment that will be called as arguments.
+                        if (tokenResponse != null) {
+                            fragmentArgs = new Bundle();
+                            fragmentArgs.putString(BUNDLE_TOKEN_KEY, tokenResponse.body().getToken());
+                        }
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
                     }
 
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progress.dismiss();
-                        if (tokenResponse != null) {
-                            if (tokenResponse.body().getToken() != null) {
-                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.login_sucess), Snackbar.LENGTH_LONG)
-                                        .setAction("Action", null).show();
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progress.dismiss();
+                            if (tokenResponse != null) {
+                                if (tokenResponse.body().getToken() != null) {
+                                    Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.login_sucess), Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                } else {
+                                    Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.login_fail), Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                    return;
+                                }
                             } else {
-                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.login_fail), Snackbar.LENGTH_LONG)
+                                Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.internet_error), Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show();
                                 return;
                             }
-                        } else {
-                            Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.internet_error), Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                            return;
-                        }
 
-                        //This is the place to perform the other calls. In the ui thread.
-                        performGetAssignments(tokenResponse.body().getToken(), activity);
-                    }
-                });
-            }
-        });
+                            //This is the place to perform the other calls. In the ui thread.
+                            performGetAssignments(tokenResponse.body().getToken(), activity);
+                        }
+                    });
+                }
+            });
+        } else {
+            Snackbar.make(activity.getCurrentFocus(), activity.getString(R.string.login_fail), Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+            return;
+        }
     }
 
     public static void performGetAssignments(final String token, final Activity activity) {

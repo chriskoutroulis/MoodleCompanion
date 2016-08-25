@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -12,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,11 +28,16 @@ public class MainActivity extends AppCompatActivity
     private ProgressDialog progress;
     private Response<Token> userToken;
 
+    private Toolbar toolbar;
+    private NavigationView navigationView;
+    private FloatingActionButton fab;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -39,10 +46,21 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                ServiceCaller.performLoginAndUpdateAll(sharedPref.getString(SettingsFragment.URL_KEY, ""),
+                        sharedPref.getString(SettingsFragment.USERNAME_KEY, ""), sharedPref.getString(SettingsFragment.PASSWORD_KEY, ""),
+                        MainActivity.this);
+            }
+        });
+
+        /*SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
 
         //If the shared preferences do not contain the required user details.
         if (!sharedPref.getAll().containsKey(SettingsFragment.URL_KEY) ||
@@ -59,16 +77,45 @@ public class MainActivity extends AppCompatActivity
 
         } else {
 
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-                    ServiceCaller.performLoginAndUpdateAll(sharedPref.getString(SettingsFragment.URL_KEY, ""),
-                            sharedPref.getString(SettingsFragment.USERNAME_KEY, ""), sharedPref.getString(SettingsFragment.PASSWORD_KEY, ""),
-                            MainActivity.this);
-                }
-            });
+            //If the Android Version of the Phone is lower that Lollipop, remove the Floating Action Button
+            //from the layout.
+            int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+            if (currentapiVersion < android.os.Build.VERSION_CODES.LOLLIPOP){
+                fab.setVisibility(View.GONE);
+            }
+
+            ServiceCaller.performLoginAndUpdateAll(sharedPref.getString(SettingsFragment.URL_KEY, ""),
+                    sharedPref.getString(SettingsFragment.USERNAME_KEY, ""), sharedPref.getString(SettingsFragment.PASSWORD_KEY, ""),
+                    this);
+
+            navigationView.setCheckedItem(R.id.nav_assignments);
+            toolbar.setTitle(R.string.moodle_assignments);
+
+            ContentFragment fragment = new ContentFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.coordinator, fragment);
+            fragmentTransaction.commit();
+        }*/
+    }
+
+    @Override
+    protected void onResume() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+
+        //If the shared preferences do not contain the required user details.
+        if (!sharedPref.getAll().containsKey(SettingsFragment.URL_KEY) ||
+                !sharedPref.getAll().containsKey(SettingsFragment.USERNAME_KEY) ||
+                !sharedPref.getAll().containsKey(SettingsFragment.PASSWORD_KEY)) {
+
+            navigationView.setCheckedItem(R.id.nav_settings);
+            toolbar.setTitle(R.string.moodle_settings);
+
+            SettingsFragment fragment = new SettingsFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.coordinator, fragment);
+            fragmentTransaction.commit();
+
+        } else {
 
             //If the Android Version of the Phone is lower that Lollipop, remove the Floating Action Button
             //from the layout.
@@ -89,6 +136,8 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.replace(R.id.coordinator, fragment);
             fragmentTransaction.commit();
         }
+
+        super.onResume();
     }
 
     @Override
