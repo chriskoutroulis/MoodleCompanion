@@ -60,46 +60,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        /*SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-
-        //If the shared preferences do not contain the required user details.
-        if (!sharedPref.getAll().containsKey(SettingsFragment.URL_KEY) ||
-                !sharedPref.getAll().containsKey(SettingsFragment.USERNAME_KEY) ||
-                !sharedPref.getAll().containsKey(SettingsFragment.PASSWORD_KEY)) {
-
-            navigationView.setCheckedItem(R.id.nav_settings);
-            toolbar.setTitle(R.string.moodle_settings);
-
-            SettingsFragment fragment = new SettingsFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.coordinator, fragment);
-            fragmentTransaction.commit();
-
-        } else {
-
-            //If the Android Version of the Phone is lower that Lollipop, remove the Floating Action Button
-            //from the layout.
-            int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-            if (currentapiVersion < android.os.Build.VERSION_CODES.LOLLIPOP){
-                fab.setVisibility(View.GONE);
-            }
-
-            ServiceCaller.performLoginAndUpdateAll(sharedPref.getString(SettingsFragment.URL_KEY, ""),
-                    sharedPref.getString(SettingsFragment.USERNAME_KEY, ""), sharedPref.getString(SettingsFragment.PASSWORD_KEY, ""),
-                    this);
-
-            navigationView.setCheckedItem(R.id.nav_assignments);
-            toolbar.setTitle(R.string.moodle_assignments);
-
-            ContentFragment fragment = new ContentFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.coordinator, fragment);
-            fragmentTransaction.commit();
-        }*/
-    }
-
-    @Override
-    protected void onResume() {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
 
         //If the shared preferences do not contain the required user details.
@@ -136,9 +96,50 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.replace(R.id.coordinator, fragment);
             fragmentTransaction.commit();
         }
-
-        super.onResume();
     }
+//    Uncomment this method to have the application update everytime
+    //that the screen goes off of the app gets minimized.
+//    @Override
+//    protected void onResume() {
+//        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+//
+//        //If the shared preferences do not contain the required user details.
+//        if (!sharedPref.getAll().containsKey(SettingsFragment.URL_KEY) ||
+//                !sharedPref.getAll().containsKey(SettingsFragment.USERNAME_KEY) ||
+//                !sharedPref.getAll().containsKey(SettingsFragment.PASSWORD_KEY)) {
+//
+//            navigationView.setCheckedItem(R.id.nav_settings);
+//            toolbar.setTitle(R.string.moodle_settings);
+//
+//            SettingsFragment fragment = new SettingsFragment();
+//            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//            fragmentTransaction.replace(R.id.coordinator, fragment);
+//            fragmentTransaction.commit();
+//
+//        } else {
+//
+//            //If the Android Version of the Phone is lower that Lollipop, remove the Floating Action Button
+//            //from the layout.
+//            int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+//            if (currentapiVersion < android.os.Build.VERSION_CODES.LOLLIPOP){
+//                fab.setVisibility(View.GONE);
+//            }
+//
+//            ServiceCaller.performLoginAndUpdateAll(sharedPref.getString(SettingsFragment.URL_KEY, ""),
+//                    sharedPref.getString(SettingsFragment.USERNAME_KEY, ""), sharedPref.getString(SettingsFragment.PASSWORD_KEY, ""),
+//                    this);
+//
+//            navigationView.setCheckedItem(R.id.nav_assignments);
+//            toolbar.setTitle(R.string.moodle_assignments);
+//
+//            ContentFragment fragment = new ContentFragment();
+//            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//            fragmentTransaction.replace(R.id.coordinator, fragment);
+//            fragmentTransaction.commit();
+//        }
+//
+//        super.onResume();
+//    }
 
     @Override
     public void onBackPressed() {
