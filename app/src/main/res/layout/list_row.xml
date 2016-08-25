@@ -29,6 +29,8 @@
             android:paddingTop="10dp"
             android:paddingRight="10dp"
             android:layout_gravity="left"
-            android:background="#ffffff" />
+            android:background="#ffffff"
+            android:elegantTextHeight="false"
+            android:textStyle="bold" />
     </android.support.v7.widget.CardView>
 </LinearLayout>
