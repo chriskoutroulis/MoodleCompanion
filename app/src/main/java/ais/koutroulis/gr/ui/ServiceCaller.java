@@ -162,7 +162,7 @@ public class ServiceCaller {
         });
 
         final ProgressDialog progress = ProgressDialog.show(activity, activity.getString(R.string.please_wait),
-                "Getting Assignments", true);
+                activity.getString(R.string.getting_assignments), true);
 
         //Get the result from the previous login call in a blocking call.
         service.execute(new Runnable() {
@@ -252,7 +252,7 @@ public class ServiceCaller {
         });
 
         final ProgressDialog progress = ProgressDialog.show(activity, activity.getString(R.string.please_wait),
-                "Getting Unread Messages", true);
+                activity.getString(R.string.getting_unread_messages), true);
 
         //Get the result from the previous login call in a blocking call.
         service.execute(new Runnable() {
@@ -341,7 +341,7 @@ public class ServiceCaller {
         });
 
         final ProgressDialog progress = ProgressDialog.show(activity, activity.getString(R.string.please_wait),
-                "Getting Read Messages", true);
+                activity.getString(R.string.getting_read_messages), true);
 
         //Get the result from the previous login call in a blocking call.
         service.execute(new Runnable() {
@@ -416,7 +416,7 @@ public class ServiceCaller {
         });
 
         final ProgressDialog progress = ProgressDialog.show(activity, activity.getString(R.string.please_wait),
-                "Getting Forum Posts", true);
+                activity.getString(R.string.getting_forum_posts), true);
 
         //Get the result from the previous login call in a blocking call.
         service.execute(new Runnable() {

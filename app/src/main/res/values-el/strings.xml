@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Moodle Companion</string>
+
+    <string name="navigation_drawer_open">Άνοιγμα πλαϊνού μενού</string>
+    <string name="navigation_drawer_close">Κλείσιμο πλαϊνού μενού</string>
+
+    <string name="action_settings">Ρυθμίσεις</string>
+
+    <string name="moodle_platform">Moodle - Πλατφόρμα Εκμάθησης</string>
+    <string name="moodle_url">https://moodle.com/</string>
+
+    <string name="moodle_assignments">Ενεργές Εργασίες</string>
+    <string name="moodle_messages">Προσωπικά Μηνύματα</string>
+    <string name="moodle_posts">Ανακοινώσεις</string>
+    <string name="moodle_settings">Ρυθμίσεις</string>
+    <string name="save_button_text">ΑΠΟΘΗΚΕΥΣΗ</string>
+    <string name="url_label">Βασικό url:</string>
+    <string name="username_label">Όνομα χρήστη:</string>
+    <string name="password_label">Κωδικός:</string>
+
+    <string name="invalid_url_message">Παρακαλώ εισάγετε ένα έγκυρο Url και πατήστε ξανά ΑΠΟΘΗΚΕΥΣΗ.</string>
+    <string name="invalid_username_message">Παρακαλώ εισάγετε ένα έγκυρο Όνομα χρήστη και πατήστε ξανά ΑΠΟΘΗΚΕΥΣΗ.</string>
+    <string name="invalid_password_message">Παρακαλώ εισάγετε έναν έγκυρο Κωδικό και πατήστε ξανά ΑΠΟΘΗΚΕΥΣΗ.</string>
+    <string name="url_must_end_with">Το Url πρέπει να έχει κατάληξη "/"</string>
+    <string name="save_successful_message">Η Αποθήκευση ήταν επιτυχής.</string>
+
+    <string name="no_data">Δεν βρέθηκαν δεδομένα.</string>
+    <string name="no_private_messages">Δεν υπάρχουν Προσωπικά Μηνύματα.</string>
+    <string name="new_message_header"># Νέο Μήνυμα #</string>
+    <string name="no_forum_posts">Δεν υπάρχουν Ανακοινώσεις.</string>
+
+    <string name="please_wait">Παρακαλώ περιμένετε...</string>
+    <string name="logging_in">Είσοδος</string>
+    <string name="login_sucess">Η είσοδος ήταν επιτυχής.</string>
+    <string name="login_fail">Η είσοδος απέτυχε. Παρακαλώ εισάγετε τα σωστά στοιχεία και προσπαθήστε ξανά.</string>
+    <string name="internet_error">Σφάλμα στην σύνδεση internet ή στον εξυπηρετητή.</string>
+    <string name="getting_assignments">Ενημέρωση Εργασιών</string>
+    <string name="getting_unread_messages">Ενημέρωση Μη Αναγνωσμένων Μηνυμάτων</string>
+    <string name="getting_read_messages">Ενημέρωση Αναγνωσμένων Μηνυμάτων</string>
+    <string name="getting_forum_posts">Ενημέρωση Ανακοινώσεων</string>
+    <string name="assignments_updated">Οι Εργασίες ενημερώθηκαν.</string>
+    <string name="assignments_failed_update">Αποτυχία ενημέρωσης των Εργασιών.</string>
+    <string name="unread_messages_updated">Τα Προσωπικά Μηνύματα ενημερώθηκαν.</string>
+    <string name="unread_messages_failed_update">Αποτυχία ενημέρωσης των Προσωπικών Μηνυμάτων.</string>
+    <string name="read_messages_updated">Ενημερώθηκαν τα Αναγνωσμένα Μηνύματα.</string>
+    <string name="read_messages_failed_update">Αποτυχία ενημέρωσης των Αναγνωσμένων Μηνυμάτων.</string>
+    <string name="forum_posts_updated">Ενημερώθηκαν οι Ανακοινώσεις.</string>
+    <string name="due_date">Προθεσμία Έως:</string>
+    <string name="course_name">Μάθημα:</string>
+    <string name="assignment_title">Τίτλος:</string>
+    <string name="message_from">Από:</string>
+    <string name="forum_name">Forum:</string>
+    <string name="posted_by_user">Από:</string>
+    <string name="discussion_subject">Θέμα:</string>
+</resources>

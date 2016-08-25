@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:padding="16dp"
-                    android:text="Base url:" />
+                    android:text="@string/url_label" />
 
                 <EditText
                     android:id="@+id/urlEditText"
@@ -66,7 +66,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="2"
                     android:padding="16dp"
-                    android:text="Username:" />
+                    android:text="@string/username_label" />
 
                 <EditText
                     android:id="@+id/usernameEditText"
@@ -92,7 +92,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="2"
                     android:padding="16dp"
-                    android:text="Password:" />
+                    android:text="@string/password_label" />
 
                 <EditText
                     android:id="@+id/passwordEditText"
