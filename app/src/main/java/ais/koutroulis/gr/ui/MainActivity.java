@@ -79,8 +79,8 @@ public class MainActivity extends AppCompatActivity
 
             //If the Android Version of the Phone is lower that Lollipop, remove the Floating Action Button
             //from the layout.
-            int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-            if (currentapiVersion < android.os.Build.VERSION_CODES.LOLLIPOP){
+            int currentApiVersion = android.os.Build.VERSION.SDK_INT;
+            if (currentApiVersion < android.os.Build.VERSION_CODES.LOLLIPOP){
                 fab.setVisibility(View.GONE);
             }
 
@@ -88,13 +88,13 @@ public class MainActivity extends AppCompatActivity
                     sharedPref.getString(SettingsFragment.USERNAME_KEY, ""), sharedPref.getString(SettingsFragment.PASSWORD_KEY, ""),
                     this);
 
-            navigationView.setCheckedItem(R.id.nav_assignments);
+            /*navigationView.setCheckedItem(R.id.nav_assignments);
             toolbar.setTitle(R.string.moodle_assignments);
 
             ContentFragment fragment = new ContentFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.coordinator, fragment);
-            fragmentTransaction.commit();
+            fragmentTransaction.commit();*/
         }
     }
 //    Uncomment this method to have the application update everytime
