@@ -471,7 +471,7 @@ public class ServiceCaller {
                         ContentFragment fragment = new ContentFragment();
                         fragment.setArguments(fragmentArgs);
                         android.support.v4.app.FragmentTransaction fragmentTransaction = ((AppCompatActivity) activity).getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.replace(R.id.coordinator, fragment);
+                        fragmentTransaction.replace(R.id.frame, fragment);
                         fragmentTransaction.commit();
                     }
                 });

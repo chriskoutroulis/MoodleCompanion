@@ -72,17 +72,17 @@ public class MainActivity extends AppCompatActivity
 
             SettingsFragment fragment = new SettingsFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.coordinator, fragment);
+            fragmentTransaction.replace(R.id.frame, fragment);
             fragmentTransaction.commit();
 
         } else {
 
             //If the Android Version of the Phone is lower that Lollipop, remove the Floating Action Button
             //from the layout.
-            int currentApiVersion = android.os.Build.VERSION.SDK_INT;
-            if (currentApiVersion < android.os.Build.VERSION_CODES.LOLLIPOP){
-                fab.setVisibility(View.GONE);
-            }
+//            int currentApiVersion = android.os.Build.VERSION.SDK_INT;
+//            if (currentApiVersion < android.os.Build.VERSION_CODES.LOLLIPOP){
+//                fab.setVisibility(View.GONE);
+//            }
 
             ServiceCaller.performLoginAndUpdateAll(sharedPref.getString(SettingsFragment.URL_KEY, ""),
                     sharedPref.getString(SettingsFragment.USERNAME_KEY, ""), sharedPref.getString(SettingsFragment.PASSWORD_KEY, ""),
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity
 
             ContentFragment fragment = new ContentFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.coordinator, fragment);
+            fragmentTransaction.replace(R.id.frame, fragment);
             fragmentTransaction.commit();*/
         }
     }
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity
 //
 //            SettingsFragment fragment = new SettingsFragment();
 //            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//            fragmentTransaction.replace(R.id.coordinator, fragment);
+//            fragmentTransaction.replace(R.id.frame, fragment);
 //            fragmentTransaction.commit();
 //
 //        } else {
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity
 //
 //            ContentFragment fragment = new ContentFragment();
 //            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//            fragmentTransaction.replace(R.id.coordinator, fragment);
+//            fragmentTransaction.replace(R.id.frame, fragment);
 //            fragmentTransaction.commit();
 //        }
 //
@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity
             ContentFragment fragment = new ContentFragment();
             fragment.setArguments(ServiceCaller.fragmentArgs);
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.coordinator, fragment);
+            fragmentTransaction.replace(R.id.frame, fragment);
             fragmentTransaction.commit();
 
         } else if (id == R.id.nav_messages) {
@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity
             ContentFragment fragment = new ContentFragment();
             fragment.setArguments(ServiceCaller.fragmentArgs);
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.coordinator, fragment);
+            fragmentTransaction.replace(R.id.frame, fragment);
             fragmentTransaction.commit();
 
         } else if (id == R.id.nav_forum) {
@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity
             ContentFragment fragment = new ContentFragment();
             fragment.setArguments(ServiceCaller.fragmentArgs);
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.coordinator, fragment);
+            fragmentTransaction.replace(R.id.frame, fragment);
             fragmentTransaction.commit();
 
         } else if (id == R.id.nav_settings) {
@@ -232,7 +232,7 @@ public class MainActivity extends AppCompatActivity
 
             SettingsFragment fragment = new SettingsFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.coordinator, fragment);
+            fragmentTransaction.replace(R.id.frame, fragment);
             fragmentTransaction.commit();
         }
 
