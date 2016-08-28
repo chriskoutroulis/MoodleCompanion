@@ -25,7 +25,6 @@
     <!--<include layout="@layout/content_main" />-->
     <!--<include layout="@layout/fragment_list_view" />-->
 
-    FrameLayout is probably not needed.
     <FrameLayout
         android:id="@+id/frame"
         android:layout_width="match_parent"
@@ -39,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_menu_rotate" />
+        android:src="@android:drawable/ic_menu_rotate"/>
     <!--android:src="@android:drawable/ic_dialog_email" />-->
 
 

@@ -16,7 +16,8 @@
         android:layout_gravity="center"
         android:layout_marginBottom="15dp"
         android:elevation="@dimen/cardview_compat_inset_shadow"
-        android:background="#ffffff">
+        android:background="#ffffff"
+        card_view:cardElevation="4dp" >
         <!--card_view:cardBackgroundColor="@color/cardview_shadow_end_color"-->
         <!--card_view:cardCornerRadius="4dp"-->
 
