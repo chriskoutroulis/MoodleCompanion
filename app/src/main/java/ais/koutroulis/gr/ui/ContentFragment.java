@@ -136,7 +136,16 @@ public class ContentFragment extends Fragment {
                         items.add(unreadMessageStringBuilder.toString());
                     }
 
+                    //Fix for the duplication of the unread messages
+                    int skipElementsNumber = unreadMessageList.size();
+                    int elementCounter = 0;
+
                     for (Message oneMessage : readMessageList) {
+                        //Fix for the duplication of the unread messages
+                        elementCounter ++;
+                        if (elementCounter <= skipElementsNumber) {
+                            continue;
+                        }
 
                         StringBuilder readMessageStringBuilder = new StringBuilder();
 
@@ -147,6 +156,8 @@ public class ContentFragment extends Fragment {
                         readMessageStringBuilder.append(oneMessage.getSmallmessage());
 
                         items.add(readMessageStringBuilder.toString());
+
+
                     }
                 }
             } else {

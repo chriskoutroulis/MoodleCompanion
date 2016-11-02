@@ -39,7 +39,7 @@ public class LiveTestsRetrofitMoodleClient {
     @Before
     public void setup() {
         callingUsername = "ais0058";
-        callingPassword = "Masterais0056!";
+        callingPassword = "Testpassword1!";
         expectedToken.setToken("grantAccessToken");
         moodleClient = new RetrofitMoodleClient(BASE_URL);
         urlCommonParts = new MoodleUrlCommonParts(FUNCTIONS_SCRIPT, FORMAT,
@@ -94,7 +94,7 @@ public class LiveTestsRetrofitMoodleClient {
         String liveTokenForAis0058 = "2800aeb20f71838d9405768415096765";
         urlCommonParts.setToken(liveTokenForAis0058);
         List<Post> postList = new ArrayList<>();
-        int expectedNumberOfPosts = 9;
+        int expectedNumberOfPosts = 0;
 
         try {
             List<CourseToDisplay> courseToDisplayList = moodleClient.getAllForumPostsAndMarkAsRead(urlCommonParts,
